@@ -1,0 +1,819 @@
+<title>Country Cutz Barbershop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Big+Shoulders+Display:wght@500;700;800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;0,6..96,800;1,6..96,400&display=swap">
+<style>
+/* ============ TOKENS — dark-first ============ */
+:root{
+  --ink:#0E0C0B; --surface:#15120F; --surface-2:#1E1A16; --raise:#262019;
+  --line:rgba(242,237,228,.14); --line-soft:rgba(242,237,228,.07);
+  --text:#F2EDE4; --dim:#A39B8E; --faint:#6F675C;
+  --accent:#A81B29; --accent-deep:#7E1420; --accent-tint:rgba(168,27,41,.16);
+  --brass:#D2A85A; --brass-deep:#8E6B22;
+  --inv-bg:#F2EDE4; --inv-surface:#E7E0D2; --inv-text:#16130F; --inv-dim:#5E574C;
+  --inv-line:rgba(18,16,14,.16); --inv-accent:#7E1420; --inv-brass:#8E6B22;
+  --chrome-a:#FFFFFF; --chrome-b:#9AA0A6; --chrome-c:#4A4E52;
+  --shadow:0 24px 60px -28px rgba(0,0,0,.85);
+  --maxw:1180px;
+  --f-display:"Bodoni Moda",Georgia,"Times New Roman",serif;
+  --f-sign:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
+  --f-body:"Archivo",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --ink:#F2EDE4; --surface:#FBF8F1; --surface-2:#E9E2D4; --raise:#FFFFFF;
+    --line:rgba(18,16,14,.16); --line-soft:rgba(18,16,14,.08);
+    --text:#16130F; --dim:#5E574C; --faint:#8A8175;
+    --accent:#7E1420; --accent-deep:#5A0E17; --accent-tint:rgba(126,20,32,.10);
+    --brass:#8E6B22; --brass-deep:#6B4F16;
+    --inv-bg:#12100E; --inv-surface:#1E1A16; --inv-text:#F2EDE4; --inv-dim:#A39B8E;
+    --inv-line:rgba(242,237,228,.16); --inv-accent:#C4313F; --inv-brass:#D2A85A;
+    --chrome-a:#3A3E42; --chrome-b:#7C838A; --chrome-c:#C9CDD1;
+    --shadow:0 24px 60px -30px rgba(30,22,10,.35);
+  }
+}
+:root[data-theme="light"]{
+  --ink:#F2EDE4; --surface:#FBF8F1; --surface-2:#E9E2D4; --raise:#FFFFFF;
+  --line:rgba(18,16,14,.16); --line-soft:rgba(18,16,14,.08);
+  --text:#16130F; --dim:#5E574C; --faint:#8A8175;
+  --accent:#7E1420; --accent-deep:#5A0E17; --accent-tint:rgba(126,20,32,.10);
+  --brass:#8E6B22; --brass-deep:#6B4F16;
+  --inv-bg:#12100E; --inv-surface:#1E1A16; --inv-text:#F2EDE4; --inv-dim:#A39B8E;
+  --inv-line:rgba(242,237,228,.16); --inv-accent:#C4313F; --inv-brass:#D2A85A;
+  --chrome-a:#3A3E42; --chrome-b:#7C838A; --chrome-c:#C9CDD1;
+  --shadow:0 24px 60px -30px rgba(30,22,10,.35);
+}
+
+/* ============ BASE ============ */
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation-duration:.001ms!important;transition-duration:.001ms!important}}
+body{margin:0;background:var(--ink);color:var(--text);font-family:var(--f-body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+img{max-width:100%}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--brass);outline-offset:3px;border-radius:2px}
+.skip{position:absolute;left:-9999px;top:0;background:var(--accent);color:#fff;padding:.7rem 1rem;z-index:200}
+.skip:focus{left:12px;top:12px}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 clamp(20px,5vw,48px)}
+.eyebrow{font-family:var(--f-sign);font-weight:700;font-size:.82rem;letter-spacing:.24em;text-transform:uppercase;color:var(--dim);margin:0 0 .9rem}
+.eyebrow b{color:var(--accent);font-weight:700}
+h1,h2,h3{text-wrap:balance;margin:0}
+.sign{font-family:var(--f-sign);font-weight:800;text-transform:uppercase;letter-spacing:.005em;line-height:.88}
+.serif{font-family:var(--f-display);font-weight:400;font-optical-sizing:auto}
+.num{font-variant-numeric:tabular-nums}
+
+/* ============ SPINE ============ */
+.spine{position:fixed;left:0;top:0;bottom:0;width:6px;z-index:60;background:var(--surface-2);border-right:1px solid var(--line-soft)}
+.spine i{position:absolute;inset:0 0 auto 0;height:0;display:block;
+  background:repeating-linear-gradient(-45deg,var(--accent) 0 8px,var(--text) 8px 16px,var(--accent-deep) 16px 24px,var(--text) 24px 32px);
+  background-size:100% 32px}
+@media (prefers-reduced-motion:no-preference){.spine i{animation:pole 1.6s linear infinite}}
+@keyframes pole{to{background-position:0 32px}}
+@media (max-width:820px){.spine{display:none}}
+
+/* ============ NAV ============ */
+header.nav{position:sticky;top:0;z-index:70;backdrop-filter:blur(14px);background:var(--ink);background:color-mix(in srgb,var(--ink) 82%,transparent);border-bottom:1px solid transparent;transition:border-color .3s,background .3s}
+header.nav.stuck{border-bottom-color:var(--line)}
+.navin{max-width:var(--maxw);margin:0 auto;padding:.75rem clamp(20px,5vw,48px);display:flex;align-items:center;gap:1.5rem}
+.brand{display:flex;align-items:center;gap:.7rem;text-decoration:none;margin-right:auto}
+.brand svg{width:30px;height:36px;flex:none}
+.brand .bn{font-family:var(--f-sign);font-weight:800;text-transform:uppercase;letter-spacing:.05em;font-size:1.18rem;line-height:1}
+.brand .bs{display:block;font-family:var(--f-body);font-size:.6rem;letter-spacing:.3em;color:var(--dim);text-transform:uppercase;margin-top:3px}
+nav.links{display:flex;gap:1.6rem;align-items:center}
+nav.links a{font-family:var(--f-sign);font-weight:700;text-transform:uppercase;letter-spacing:.13em;font-size:.9rem;text-decoration:none;color:var(--dim);padding:.3rem 0;border-bottom:2px solid transparent;transition:color .2s,border-color .2s}
+nav.links a:hover{color:var(--text);border-bottom-color:var(--accent)}
+.btn{display:inline-flex;align-items:center;gap:.5rem;font-family:var(--f-sign);font-weight:700;text-transform:uppercase;letter-spacing:.13em;font-size:.92rem;text-decoration:none;padding:.72rem 1.25rem;border:1px solid transparent;cursor:pointer;transition:transform .15s,background .2s,color .2s,border-color .2s}
+.btn:hover{transform:translateY(-2px)}
+.btn-red{background:var(--accent);color:#FFF6F3;border-color:var(--accent)}
+.btn-red:hover{background:var(--accent-deep);border-color:var(--accent-deep)}
+.btn-ghost{border-color:var(--line);color:var(--text);background:transparent}
+.btn-ghost:hover{border-color:var(--text)}
+.btn-brass{background:var(--brass);color:#1A1408;border-color:var(--brass)}
+.btn-brass:hover{background:var(--brass-deep);color:#FFF6E6}
+.burger{display:none;background:none;border:1px solid var(--line);color:var(--text);width:42px;height:38px;cursor:pointer;align-items:center;justify-content:center}
+.burger span{display:block;width:18px;height:2px;background:currentColor;position:relative}
+.burger span::before,.burger span::after{content:"";position:absolute;left:0;width:18px;height:2px;background:currentColor}
+.burger span::before{top:-6px}.burger span::after{top:6px}
+@media (max-width:900px){
+  nav.links{position:fixed;inset:64px 0 auto 0;flex-direction:column;align-items:flex-start;gap:0;background:var(--surface);border-bottom:1px solid var(--line);padding:.5rem clamp(20px,5vw,48px) 1.25rem;transform:translateY(-120%);transition:transform .3s;box-shadow:var(--shadow)}
+  nav.links[data-open="true"]{transform:translateY(0)}
+  nav.links a{width:100%;padding:.85rem 0;border-bottom:1px solid var(--line-soft);font-size:1.05rem}
+  .burger{display:flex}
+  .nav .btn-red{display:none}
+}
+
+/* ============ HERO ============ */
+.hero{position:relative;overflow:hidden;padding:clamp(3rem,7vw,5.5rem) 0 clamp(2.5rem,5vw,4rem)}
+.hero::before{content:"";position:absolute;inset:-30% -10% auto -10%;height:120%;
+  background:radial-gradient(60% 55% at 18% 12%,var(--accent-tint),transparent 70%);pointer-events:none}
+.herogrid{position:relative;display:grid;grid-template-columns:1.35fr .85fr;gap:clamp(2rem,5vw,4rem);align-items:end}
+@media (max-width:940px){.herogrid{grid-template-columns:1fr;align-items:start}}
+h1.big{font-family:var(--f-sign);font-weight:800;text-transform:uppercase;line-height:.82;letter-spacing:-.01em;
+  font-size:clamp(3.4rem,12.5vw,8.4rem);margin:0 0 1.1rem}
+h1.big em{display:block;font-style:normal;color:transparent;background:linear-gradient(178deg,var(--chrome-a) 6%,var(--chrome-b) 44%,var(--chrome-c) 58%,var(--chrome-b) 74%,var(--chrome-a) 96%);
+  -webkit-background-clip:text;background-clip:text}
+.lede{font-size:clamp(1.02rem,1.5vw,1.18rem);color:var(--dim);max-width:52ch;margin:0 0 1.9rem}
+.lede b{color:var(--text);font-weight:600}
+.herocta{display:flex;flex-wrap:wrap;gap:.75rem}
+.rail{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid var(--line);margin-top:clamp(2.5rem,5vw,3.6rem)}
+.rail div{padding:1.1rem 1rem 0 0;border-right:1px solid var(--line-soft)}
+.rail div:last-child{border-right:0}
+.rail dt{font-family:var(--f-sign);font-weight:800;font-size:clamp(1.5rem,3vw,2.1rem);line-height:1;color:var(--text)}
+.rail dd{margin:.35rem 0 0;font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+@media (max-width:620px){.rail{grid-template-columns:1fr 1fr;gap:0 0}.rail div{padding-bottom:1rem;border-bottom:1px solid var(--line-soft)}}
+
+/* status card */
+.status{background:var(--surface);border:1px solid var(--line);padding:1.4rem 1.4rem 1.2rem;box-shadow:var(--shadow);position:relative}
+.status::after{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--brass))}
+.statusrow{display:flex;align-items:center;gap:.6rem;margin-bottom:.9rem}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--faint);flex:none}
+.dot.on{background:#3FA34D;box-shadow:0 0 0 4px rgba(63,163,77,.18)}
+.dot.off{background:var(--accent);box-shadow:0 0 0 4px var(--accent-tint)}
+.statusrow strong{font-family:var(--f-sign);font-weight:800;text-transform:uppercase;letter-spacing:.14em;font-size:1rem}
+.statusrow span{margin-left:auto;font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+.status h3{font-family:var(--f-body);font-size:.95rem;font-weight:600;margin:0 0 .15rem}
+.status p{margin:0;color:var(--dim);font-size:.9rem}
+.status .until{margin-top:.9rem;padding-top:.9rem;border-top:1px solid var(--line-soft);font-size:.9rem;color:var(--dim)}
+.status .until b{color:var(--text);font-weight:600}
+.switch{display:flex;gap:.4rem;margin-bottom:1rem}
+.switch button{flex:1;background:transparent;border:1px solid var(--line);color:var(--dim);font-family:var(--f-sign);font-weight:700;text-transform:uppercase;letter-spacing:.1em;font-size:.8rem;padding:.5rem .4rem;cursor:pointer;transition:.2s}
+.switch button[aria-pressed="true"]{background:var(--text);color:var(--ink);border-color:var(--text)}
+</style>
+<style>
+/* ============ SECTIONS ============ */
+section{padding:clamp(3.4rem,7vw,6rem) 0;position:relative}
+.sechead{display:grid;grid-template-columns:1fr auto;gap:1.5rem;align-items:end;margin-bottom:clamp(2rem,4vw,3rem);padding-bottom:1.1rem;border-bottom:1px solid var(--line)}
+.sechead h2{font-family:var(--f-sign);font-weight:800;text-transform:uppercase;line-height:.9;font-size:clamp(2.1rem,5.5vw,3.6rem)}
+.sechead p{margin:.7rem 0 0;color:var(--dim);max-width:56ch}
+@media (max-width:760px){.sechead{grid-template-columns:1fr}}
+
+/* ledger (prices) */
+.ledger{display:grid;grid-template-columns:1.25fr .75fr;gap:clamp(2rem,5vw,3.5rem);align-items:start}
+@media (max-width:900px){.ledger{grid-template-columns:1fr}}
+ul.price{list-style:none;margin:0;padding:0;border-top:1px solid var(--line-soft)}
+ul.price li{display:grid;grid-template-columns:1fr auto;gap:1rem;align-items:baseline;padding:1.05rem 0;border-bottom:1px solid var(--line-soft)}
+ul.price .svc{font-family:var(--f-sign);font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-size:1.32rem;line-height:1.1}
+ul.price .desc{display:block;font-family:var(--f-body);font-weight:400;text-transform:none;letter-spacing:0;font-size:.86rem;color:var(--faint);margin-top:.25rem;max-width:46ch}
+ul.price .amt{font-family:var(--f-sign);font-weight:800;font-size:1.6rem;font-variant-numeric:tabular-nums;color:var(--text);transition:color .25s}
+ul.price li[data-surcharged="true"] .amt{color:var(--accent)}
+ul.price li[data-surcharged="true"] .amt::after{content:" ▲";font-size:.55em;vertical-align:.4em;color:var(--accent)}
+.note{font-size:.83rem;color:var(--faint);margin-top:1.1rem;line-height:1.55}
+.clockbox{background:var(--surface);border:1px solid var(--line);padding:1.25rem}
+.clockbox h3{font-family:var(--f-sign);font-weight:800;text-transform:uppercase;letter-spacing:.12em;font-size:1rem;margin:0 0 .4rem}
+.clockbox p{margin:0 0 1rem;font-size:.88rem;color:var(--dim)}
+.slider{display:flex;flex-direction:column;gap:.5rem}
+.slider input{width:100%;accent-color:var(--accent)}
+.slider .val{font-family:var(--f-sign);font-weight:800;font-size:1.9rem;font-variant-numeric:tabular-nums;line-height:1}
+.slider .val small{font-family:var(--f-body);font-weight:500;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);display:block;margin-top:.3rem}
+.band{margin-top:1rem;padding:.75rem .85rem;border-left:3px solid var(--accent);background:var(--accent-tint);font-size:.86rem;color:var(--text)}
+.band.ok{border-left-color:#3FA34D;background:rgba(63,163,77,.10)}
+
+/* locations */
+.locgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.25rem}
+@media (max-width:820px){.locgrid{grid-template-columns:1fr}}
+.loc{background:var(--surface);border:1px solid var(--line);padding:1.6rem;display:flex;flex-direction:column;gap:.55rem;transition:border-color .25s,transform .25s}
+.loc:hover{border-color:var(--accent);transform:translateY(-3px)}
+.loc .tag{font-family:var(--f-sign);font-weight:700;letter-spacing:.2em;text-transform:uppercase;font-size:.74rem;color:var(--accent)}
+.loc h3{font-family:var(--f-sign);font-weight:800;text-transform:uppercase;font-size:1.9rem;line-height:.95;margin:0}
+.loc address{font-style:normal;color:var(--dim);font-size:.95rem}
+.loc dl{display:grid;grid-template-columns:auto 1fr;gap:.35rem .9rem;margin:.6rem 0 0;font-size:.9rem}
+.loc dt{font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);padding-top:.22rem}
+.loc dd{margin:0;color:var(--text)}
+.loc dd a{text-decoration:none;border-bottom:1px solid var(--line)}
+.loc dd a:hover{border-bottom-color:var(--accent);color:var(--accent)}
+.loc .acts{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:auto;padding-top:1.1rem}
+.pill{display:inline-flex;align-items:center;gap:.4rem;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;padding:.28rem .55rem;border:1px solid var(--line);color:var(--dim)}
+.pill.live{border-color:currentColor}
+.pill.live[data-open="true"]{color:#3FA34D}
+.pill.live[data-open="false"]{color:var(--accent)}
+
+/* ============ ACADEMY (inverted) ============ */
+.academy{background:var(--inv-bg);color:var(--inv-text)}
+.academy::before{content:"";position:absolute;left:0;right:0;top:0;height:5px;
+  background:repeating-linear-gradient(90deg,var(--inv-accent) 0 22px,var(--inv-bg) 22px 44px)}
+.academy .eyebrow{color:var(--inv-brass)}
+.academy .sechead{border-bottom-color:var(--inv-line)}
+.academy .sechead p{color:var(--inv-dim)}
+.acthesis{display:grid;grid-template-columns:1.15fr .85fr;gap:clamp(2rem,5vw,4rem);align-items:center;margin-bottom:clamp(2.5rem,5vw,4rem)}
+@media (max-width:900px){.acthesis{grid-template-columns:1fr}}
+.acthesis blockquote{margin:0;font-family:var(--f-display);font-weight:400;font-size:clamp(1.9rem,4.6vw,3.15rem);line-height:1.06;letter-spacing:-.01em}
+.acthesis blockquote span{color:var(--inv-accent);font-style:italic}
+.acthesis p{color:var(--inv-dim);font-size:1.02rem;max-width:48ch}
+.acmark{display:flex;flex-direction:column;align-items:center;gap:1rem;text-align:center}
+.acmark svg{width:clamp(120px,20vw,168px);height:auto}
+.acmark .lock{font-family:var(--f-display);font-weight:800;font-size:clamp(1.6rem,3.6vw,2.3rem);letter-spacing:.02em;line-height:1}
+.acmark .sub{font-size:.66rem;letter-spacing:.34em;text-transform:uppercase;color:var(--inv-dim)}
+.progs{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem;margin-bottom:clamp(2.5rem,5vw,3.5rem)}
+@media (max-width:760px){.progs{grid-template-columns:1fr}}
+.prog{border:1px solid var(--inv-line);padding:1.5rem;background:var(--inv-surface)}
+.prog h3{font-family:var(--f-sign);font-weight:800;text-transform:uppercase;font-size:1.7rem;line-height:1;margin:0 0 .35rem}
+.prog .hrs{font-family:var(--f-sign);font-weight:700;letter-spacing:.18em;text-transform:uppercase;font-size:.76rem;color:var(--inv-brass);margin-bottom:.8rem}
+.prog p{margin:0;color:var(--inv-dim);font-size:.93rem}
+.prog ul{list-style:none;padding:0;margin:1rem 0 0;display:flex;flex-direction:column;gap:.45rem;font-size:.9rem}
+.prog li{padding-left:1.3rem;position:relative;color:var(--inv-text)}
+.prog li::before{content:"";position:absolute;left:0;top:.55em;width:8px;height:1px;background:var(--inv-accent)}
+
+/* tuition planner */
+.plan{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(1.5rem,4vw,3rem);align-items:start;border-top:1px solid var(--inv-line);padding-top:clamp(2rem,4vw,2.75rem)}
+@media (max-width:900px){.plan{grid-template-columns:1fr}}
+.plantabs{display:flex;flex-direction:column;gap:.5rem}
+.plantabs button{text-align:left;background:transparent;border:1px solid var(--inv-line);color:var(--inv-text);padding:.85rem 1rem;cursor:pointer;display:grid;grid-template-columns:1fr auto;align-items:center;gap:.75rem;transition:.2s}
+.plantabs button:hover{border-color:var(--inv-accent)}
+.plantabs button[aria-selected="true"]{background:var(--inv-accent);border-color:var(--inv-accent);color:#FFF3F1}
+.plantabs button[aria-selected="true"] .pt-b{color:rgba(255,243,241,.75)}
+.pt-a{font-family:var(--f-sign);font-weight:800;text-transform:uppercase;letter-spacing:.08em;font-size:1.15rem;line-height:1}
+.pt-b{display:block;font-family:var(--f-body);font-size:.76rem;letter-spacing:.02em;text-transform:none;color:var(--inv-dim);margin-top:.25rem}
+.pt-save{font-family:var(--f-sign);font-weight:700;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;border:1px solid currentColor;padding:.15rem .4rem;color:var(--inv-brass)}
+.planout{border:1px solid var(--inv-line);background:var(--inv-surface);padding:clamp(1.25rem,3vw,1.75rem)}
+.planout .ph{font-family:var(--f-sign);font-weight:800;text-transform:uppercase;letter-spacing:.12em;font-size:.9rem;color:var(--inv-brass);margin-bottom:1rem}
+.figs{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;padding-bottom:1.1rem;border-bottom:1px solid var(--inv-line)}
+@media (max-width:520px){.figs{grid-template-columns:1fr 1fr}}
+.figs div dt{font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--inv-dim);margin-bottom:.3rem}
+.figs div dd{margin:0;font-family:var(--f-sign);font-weight:800;font-size:clamp(1.7rem,3.6vw,2.3rem);line-height:1;font-variant-numeric:tabular-nums}
+.breakdown{list-style:none;margin:1.1rem 0 0;padding:0;font-size:.92rem}
+.breakdown li{display:flex;justify-content:space-between;gap:1rem;padding:.5rem 0;border-bottom:1px dashed var(--inv-line)}
+.breakdown li:last-child{border-bottom:0;padding-top:.75rem;font-weight:700}
+.breakdown span:last-child{font-variant-numeric:tabular-nums}
+.breakdown .tot{font-family:var(--f-sign);font-weight:800;font-size:1.15rem}
+.finenote{font-size:.78rem;color:var(--inv-dim);margin-top:1rem;line-height:1.6}
+
+.admit{display:grid;grid-template-columns:1fr 1fr;gap:clamp(1.5rem,4vw,3rem);margin-top:clamp(2.5rem,5vw,3.5rem);border-top:1px solid var(--inv-line);padding-top:clamp(2rem,4vw,2.75rem)}
+@media (max-width:820px){.admit{grid-template-columns:1fr}}
+.admit h3{font-family:var(--f-sign);font-weight:800;text-transform:uppercase;font-size:1.5rem;margin:0 0 1rem}
+.check{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.7rem}
+.check li{display:grid;grid-template-columns:auto 1fr;gap:.75rem;align-items:start;font-size:.95rem}
+.check li::before{content:"";width:16px;height:16px;margin-top:.28em;border:1px solid var(--inv-accent);position:relative;background:
+  linear-gradient(45deg,transparent 45%,var(--inv-accent) 45% 55%,transparent 55%),
+  linear-gradient(-45deg,transparent 45%,var(--inv-accent) 45% 55%,transparent 55%)}
+.schol{border:1px solid var(--inv-brass);padding:1.4rem;background:color-mix(in srgb,var(--inv-brass) 10%,transparent)}
+.schol h3{color:var(--inv-brass);font-size:1.35rem}
+.schol p{margin:0;font-size:.94rem;color:var(--inv-text)}
+.accta{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin-top:clamp(2rem,4vw,2.75rem);padding-top:clamp(1.75rem,3vw,2.25rem);border-top:1px solid var(--inv-line)}
+.accta .hot{font-family:var(--f-sign);font-weight:800;font-size:clamp(1.5rem,3.4vw,2.1rem);text-decoration:none;letter-spacing:.02em;color:var(--inv-text);border-bottom:2px solid var(--inv-accent)}
+.accta .hot:hover{color:var(--inv-accent)}
+.accta .hl{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--inv-dim);width:100%}
+</style>
+<style>
+/* ============ FAQ / CONTACT / FOOTER ============ */
+.faq{border-top:1px solid var(--line)}
+details{border-bottom:1px solid var(--line-soft)}
+details summary{list-style:none;cursor:pointer;padding:1.15rem 2.5rem 1.15rem 0;position:relative;
+  font-family:var(--f-sign);font-weight:700;text-transform:uppercase;letter-spacing:.05em;font-size:1.22rem;line-height:1.15}
+details summary::-webkit-details-marker{display:none}
+details summary::after{content:"";position:absolute;right:.4rem;top:1.5rem;width:13px;height:13px;
+  border-right:2px solid var(--accent);border-bottom:2px solid var(--accent);transform:rotate(45deg);transition:transform .25s}
+details[open] summary::after{transform:rotate(-135deg)}
+details summary:hover{color:var(--accent)}
+details .body{padding:0 0 1.3rem;color:var(--dim);max-width:66ch;font-size:.97rem}
+details .body a{color:var(--text)}
+
+.contact{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,5vw,4rem);align-items:start}
+@media (max-width:860px){.contact{grid-template-columns:1fr}}
+form.msg{display:flex;flex-direction:column;gap:.9rem}
+form.msg label{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);display:block;margin-bottom:.35rem}
+form.msg input,form.msg select,form.msg textarea{width:100%;background:var(--surface);border:1px solid var(--line);color:var(--text);
+  font-family:var(--f-body);font-size:.97rem;padding:.7rem .8rem}
+form.msg textarea{resize:vertical;min-height:110px}
+form.msg input:focus,form.msg select:focus,form.msg textarea:focus{border-color:var(--accent);outline:none}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:.9rem}
+@media (max-width:520px){.two{grid-template-columns:1fr}}
+.formnote{font-size:.78rem;color:var(--faint);line-height:1.55}
+
+footer{border-top:1px solid var(--line);background:var(--surface);padding:clamp(2.5rem,5vw,3.5rem) 0 2rem}
+.fgrid{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;gap:2rem}
+@media (max-width:820px){.fgrid{grid-template-columns:1fr 1fr}}
+@media (max-width:520px){.fgrid{grid-template-columns:1fr}}
+footer h4{font-family:var(--f-sign);font-weight:800;text-transform:uppercase;letter-spacing:.14em;font-size:.82rem;color:var(--faint);margin:0 0 .9rem}
+footer ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.5rem;font-size:.92rem}
+footer a{text-decoration:none;color:var(--dim)}
+footer a:hover{color:var(--accent)}
+.fbot{margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--line-soft);display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;font-size:.78rem;color:var(--faint)}
+.themetog{background:transparent;border:1px solid var(--line);color:var(--dim);font-family:var(--f-body);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;padding:.4rem .7rem;cursor:pointer}
+.themetog:hover{color:var(--text);border-color:var(--text)}
+
+/* reveal — starts visible, animates only when JS confirms support */
+.rv{opacity:1;transform:none}
+@media (prefers-reduced-motion:no-preference){
+  html.js .rv{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s cubic-bezier(.22,.8,.3,1)}
+  html.js .rv.in{opacity:1;transform:none}
+}
+</style>
+
+<a class="skip" href="#main">Skip to content</a>
+<div class="spine" aria-hidden="true"><i id="spinefill"></i></div>
+
+<header class="nav" id="nav">
+  <div class="navin">
+    <a class="brand" href="#top">
+      <svg viewBox="0 0 60 72" aria-hidden="true">
+        <defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="var(--chrome-a)"/><stop offset=".45" stop-color="var(--chrome-b)"/>
+          <stop offset=".62" stop-color="var(--chrome-c)"/><stop offset="1" stop-color="var(--chrome-b)"/>
+        </linearGradient></defs>
+        <path d="M30 1 58 9v30c0 16-13 26-28 32C15 65 2 55 2 39V9z" fill="var(--surface-2)" stroke="url(#cg)" stroke-width="2.5"/>
+        <path d="M12 52h5V37h-5zm8 0h6V30h-6zm9 0h5V25h-5zm8 0h6V33h-6zm9 0h5V40h-5z" fill="url(#cg)"/>
+        <path d="M30 12l2.4 5 5.6.7-4.1 3.8 1.1 5.5-5-2.7-5 2.7 1.1-5.5-4.1-3.8 5.6-.7z" fill="var(--accent)"/>
+      </svg>
+      <span><span class="bn">Country Cutz</span><span class="bs">Austin &middot; Bastrop</span></span>
+    </a>
+    <nav class="links" id="links" aria-label="Main">
+      <a href="#chair">The Chair</a>
+      <a href="#shops">Shops</a>
+      <a href="#academy">Academy</a>
+      <a href="#faq">FAQ</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <a class="btn btn-red" href="#shops">Book a Cut</a>
+    <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="links"><span></span></button>
+  </div>
+</header>
+
+<main id="main">
+<a id="top"></a>
+<section class="hero">
+  <div class="wrap">
+    <div class="herogrid">
+      <div>
+        <p class="eyebrow">San Marcos <b>&middot;</b> Bastrop <b>&middot;</b> Austin <b>&middot;</b> Buda <b>&middot;</b> Kyle</p>
+        <h1 class="big">Country<em>Cutz</em></h1>
+        <p class="lede">Two Texas shops, twelve barbers, seven days a week. Fades, beard work, hot towel shaves &mdash; <b>walk-ins are always welcome, appointments get you the chair you want.</b> And in the same building as the Menchaca shop, the next generation is learning the trade for real.</p>
+        <div class="herocta">
+          <a class="btn btn-red" href="#shops">Find your shop</a>
+          <a class="btn btn-ghost" href="#chair">See the price list</a>
+          <a class="btn btn-ghost" href="#academy">Enroll at the Academy</a>
+        </div>
+      </div>
+      <div class="status" id="statuscard">
+        <div class="switch" role="group" aria-label="Choose a shop">
+          <button type="button" data-shop="south" aria-pressed="true">South Austin</button>
+          <button type="button" data-shop="bastrop" aria-pressed="false">Bastrop</button>
+        </div>
+        <div class="statusrow"><i class="dot" id="dot"></i><strong id="statword">&mdash;</strong><span id="tznote">Central Time</span></div>
+        <h3 id="shopname">Country Cutz South Austin</h3>
+        <p id="shopaddr">5316 Menchaca Rd, Austin, TX 78745</p>
+        <p class="until" id="until">Checking today&rsquo;s hours&hellip;</p>
+      </div>
+    </div>
+    <dl class="rail rv">
+      <div><dt>2</dt><dd>Shops</dd></div>
+      <div><dt>12</dt><dd>Barbers</dd></div>
+      <div><dt>7</dt><dd>Days a week</dd></div>
+      <div><dt>1,000</dt><dd>Hour programs</dd></div>
+    </dl>
+  </div>
+</section>
+<section id="chair">
+  <div class="wrap">
+    <div class="sechead rv">
+      <div>
+        <p class="eyebrow">The price list</p>
+        <h2>What it costs<br>to sit down</h2>
+      </div>
+      <p>No surprises at the register. Slide the clock to see what your cut runs at the hour you actually want it &mdash; the shop prices before-hours and after-hours work differently.</p>
+    </div>
+    <div class="ledger">
+      <ul class="price rv" id="pricelist">
+        <li data-cut="true" data-base="40"><span class="svc">Haircut<span class="desc">Fade, taper, scissor cut, lineup. Finished with a hot towel and a straight-razor neck.</span></span><span class="amt num">$40</span></li>
+        <li data-cut="true" data-base="50"><span class="svc">Haircut &amp; Beard<span class="desc">Full cut plus beard shaped, edged and conditioned. The one most guys book.</span></span><span class="amt num">$50</span></li>
+        <li data-cut="true" data-base="35"><span class="svc">Kids Cut<span class="desc">12 and under. Patient barbers, no rush, first-haircut photos on the house.</span></span><span class="amt num">$35</span></li>
+        <li data-base="25"><span class="svc">Hot Towel Shave<span class="desc">Steamed towels, pre-shave oil, straight razor, cold finish. Twenty-five minutes of quiet.</span></span><span class="amt num">$25</span></li>
+        <li data-base="20"><span class="svc">Beard Trim<span class="desc">Shape-up and line work for beards that are already where you want them.</span></span><span class="amt num">$20</span></li>
+        <li data-base="10"><span class="svc">Eyebrow Cleanup<span class="desc">Add it to any service. Two minutes, big difference.</span></span><span class="amt num">$10</span></li>
+      </ul>
+      <div>
+        <div class="clockbox rv">
+          <h3>Off-hours pricing</h3>
+          <p>Need the chair before the doors open or after they lock? Say when.</p>
+          <div class="slider">
+            <div class="val num" id="clockval">1:00 PM<small id="clockday">Standard shop hours</small></div>
+            <input type="range" id="clock" min="6" max="23" step="1" value="13" aria-label="Time of appointment" aria-describedby="clockband">
+          </div>
+          <div class="band ok" id="clockband">Inside normal hours. Everything on the list runs at the posted price.</div>
+        </div>
+        <p class="note">Prices reflect the South Austin shop&rsquo;s posted rates and can vary by barber and by hair length. Before-hours and after-hours appointments are a flat $60 for a cut, arranged directly with your barber. Cash and card both work.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="shops">
+  <div class="wrap">
+    <div class="sechead rv">
+      <div>
+        <p class="eyebrow">Two shops, one standard</p>
+        <h2>Where to<br>find us</h2>
+      </div>
+      <p>Both shops run seven days a week. Walk in and take the next open chair, or lock a time with your barber on theCut.</p>
+    </div>
+    <div class="locgrid rv">
+      <article class="loc" data-shop="south">
+        <span class="tag">Flagship &middot; Austin</span>
+        <h3>South Austin</h3>
+        <address>5316 Menchaca Rd<br>Austin, TX 78745</address>
+        <dl>
+          <dt>Hours</dt><dd class="num">Every day, 9:00 AM &ndash; 6:00 PM</dd>
+          <dt>Booking</dt><dd>theCut app, or walk in</dd>
+          <dt>Also here</dt><dd><a href="#academy">DeLeon Barber &amp; Beauty Academy</a></dd>
+        </dl>
+        <div class="acts">
+          <span class="pill live" data-live="south" data-open="false">&mdash;</span>
+          <a class="btn btn-ghost" href="https://maps.google.com/?q=5316+Menchaca+Rd+Austin+TX+78745" target="_blank" rel="noopener">Directions</a>
+        </div>
+      </article>
+      <article class="loc" data-shop="bastrop">
+        <span class="tag">Bastrop County</span>
+        <h3>Bastrop</h3>
+        <address>1617 Pine St<br>Bastrop, TX 78602</address>
+        <dl>
+          <dt>Hours</dt><dd class="num">Every day, 9:00 AM &ndash; 7:00 PM</dd>
+          <dt>Phone</dt><dd><a href="tel:+15124093211">(512) 409-3211</a></dd>
+          <dt>Email</dt><dd><a href="mailto:countrycutz512@gmail.com">countrycutz512@gmail.com</a></dd>
+        </dl>
+        <div class="acts">
+          <span class="pill live" data-live="bastrop" data-open="false">&mdash;</span>
+          <a class="btn btn-ghost" href="https://maps.google.com/?q=1617+Pine+St+Bastrop+TX+78602" target="_blank" rel="noopener">Directions</a>
+        </div>
+      </article>
+    </div>
+    <p class="note rv">We cut across the corridor &mdash; Austin, Buda, Kyle, San Marcos and Bastrop. English and Spanish spoken in both shops.</p>
+  </div>
+</section>
+<section class="academy" id="academy">
+  <div class="wrap">
+    <div class="acthesis rv">
+      <div>
+        <p class="eyebrow">DeLeon Barber &amp; Beauty Academy</p>
+        <blockquote>Don&rsquo;t just learn the trade. <span>Learn the business.</span></blockquote>
+        <p style="margin-top:1.25rem">Most schools teach you how to pass the state board. Here you train inside a working shop, on real clients, under licensed professionals who are still behind the chair &mdash; and you learn how to build a clientele and run the business once you have one.</p>
+      </div>
+      <div class="acmark">
+        <svg viewBox="0 0 60 72" aria-hidden="true">
+          <defs><linearGradient id="cg2" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="var(--inv-text)"/><stop offset=".5" stop-color="var(--inv-dim)"/>
+            <stop offset=".64" stop-color="var(--inv-line)"/><stop offset="1" stop-color="var(--inv-dim)"/>
+          </linearGradient></defs>
+          <path d="M30 1 58 9v30c0 16-13 26-28 32C15 65 2 55 2 39V9z" fill="none" stroke="url(#cg2)" stroke-width="2.5"/>
+          <path d="M12 52h5V37h-5zm8 0h6V30h-6zm9 0h5V25h-5zm8 0h6V33h-6zm9 0h5V40h-5z" fill="url(#cg2)"/>
+          <path d="M30 12l2.4 5 5.6.7-4.1 3.8 1.1 5.5-5-2.7-5 2.7 1.1-5.5-4.1-3.8 5.6-.7z" fill="var(--inv-accent)"/>
+        </svg>
+        <div>
+          <div class="lock">DeLeon</div>
+          <div class="sub">Educate &middot; Elevate &middot; Empower</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="progs rv">
+      <article class="prog">
+        <h3>Class A Barber</h3>
+        <div class="hrs">1,000 Hours</div>
+        <p>The full Texas Class A Barber curriculum, taught on the floor of a shop that is open to the public every day.</p>
+        <ul>
+          <li>Cutting, fading, razor work and shaving</li>
+          <li>Hands-on hours with paying clients, not mannequins</li>
+          <li>State board preparation start to finish</li>
+          <li>Business ownership and clientele building</li>
+        </ul>
+      </article>
+      <article class="prog">
+        <h3>Cosmetology</h3>
+        <div class="hrs">1,000 Hours</div>
+        <p>Cut, color, chemical services and styling, with the same working-shop model and the same business training.</p>
+        <ul>
+          <li>Color, chemical services and styling</li>
+          <li>Client consultation and service pricing</li>
+          <li>State board preparation start to finish</li>
+          <li>Flexible schedules for students who work</li>
+        </ul>
+      </article>
+    </div>
+
+    <div class="plan rv">
+      <div>
+        <p class="eyebrow" style="margin-bottom:1rem">Pick a payment plan</p>
+        <div class="plantabs" role="tablist" aria-label="Payment plans">
+          <button role="tab" id="tab-full" aria-selected="true" aria-controls="planpanel" data-plan="full">
+            <span><span class="pt-a">Pay in Full</span><span class="pt-b">One payment at enrollment</span></span>
+            <span class="pt-save">Save $995</span>
+          </button>
+          <button role="tab" id="tab-12" aria-selected="false" aria-controls="planpanel" data-plan="12">
+            <span><span class="pt-a">12 Months</span><span class="pt-b">Lowest weekly payment</span></span>
+          </button>
+          <button role="tab" id="tab-9" aria-selected="false" aria-controls="planpanel" data-plan="9">
+            <span><span class="pt-a">9 Months</span><span class="pt-b">Middle of the road</span></span>
+          </button>
+          <button role="tab" id="tab-6" aria-selected="false" aria-controls="planpanel" data-plan="6">
+            <span><span class="pt-a">6 Months</span><span class="pt-b">Finish and pay off fastest</span></span>
+          </button>
+        </div>
+        <p class="finenote">Total program cost is $10,495 &mdash; $8,995 tuition, a $250 registration fee, and $1,250 for your student kit, books and supplies. A $25 TDLR student permit fee is paid to the state.</p>
+      </div>
+      <div class="planout" id="planpanel" role="tabpanel" aria-labelledby="tab-full">
+        <div class="ph" id="planname">Pay in Full</div>
+        <dl class="figs">
+          <div><dt id="l1">Due at enrollment</dt><dd class="num" id="v1">$9,500</dd></div>
+          <div><dt id="l2">Weekly</dt><dd class="num" id="v2">&mdash;</dd></div>
+          <div><dt id="l3">Term</dt><dd class="num" id="v3">Paid</dd></div>
+        </dl>
+        <ul class="breakdown">
+          <li><span>Tuition</span><span class="num">$8,995</span></li>
+          <li><span>Registration fee</span><span class="num">$250</span></li>
+          <li><span>Student kit, books &amp; supplies</span><span class="num">$1,250</span></li>
+          <li><span class="tot" id="totlabel">Program cost</span><span class="tot num" id="totval">$10,495</span></li>
+        </ul>
+        <p class="finenote" id="planfine">Paying up front settles the whole program at $9,500 and takes $995 off the posted cost.</p>
+      </div>
+    </div>
+
+    <div class="admit rv">
+      <div>
+        <h3>Admission requirements</h3>
+        <ul class="check">
+          <li>17 years or older</li>
+          <li>Valid government-issued ID</li>
+          <li>High school diploma, GED or equivalent</li>
+          <li>$25 TDLR student permit fee</li>
+          <li>$250 registration fee</li>
+        </ul>
+      </div>
+      <div class="schol">
+        <h3>The Yolanda DeLeon Scholarship</h3>
+        <p>A limited number of students each term qualify for the Yolanda DeLeon Scholarship, which reduces tuition for those who need it. Ask about eligibility when you call &mdash; it is worth the conversation before you commit to a plan.</p>
+      </div>
+    </div>
+
+    <div class="accta rv">
+      <span class="hl">Enrollment hotline &middot; open enrollment now</span>
+      <a class="hot" href="tel:+15123758142">(512) 375-8142</a>
+      <a class="btn btn-brass" href="#contact">Book a school tour</a>
+      <a class="btn btn-ghost" style="border-color:var(--inv-line);color:var(--inv-text)" href="https://deleonacademy.com" target="_blank" rel="noopener">deleonacademy.com</a>
+    </div>
+  </div>
+</section>
+
+<section class="faq" id="faq">
+  <div class="wrap">
+    <div class="sechead rv">
+      <div><p class="eyebrow">Before you come in</p><h2>Straight<br>answers</h2></div>
+      <p>The questions the front desk gets every day.</p>
+    </div>
+    <div class="rv">
+      <details open><summary>Do I need an appointment?</summary><div class="body">No. Walk-ins are always welcome at both shops and we keep chairs open for them. That said, if you want a specific barber at a specific time, book it &mdash; Saturdays fill up.</div></details>
+      <details><summary>How do I book with a specific barber?</summary><div class="body">Through theCut app. Search Country Cutz, pick your shop, pick your barber. If you would rather talk to a person, call the Bastrop shop at <a href="tel:+15124093211">(512) 409-3211</a>.</div></details>
+      <details><summary>Can I get cut before 9 AM or after close?</summary><div class="body">Yes, by arrangement with your barber. Off-hours appointments are a flat $60 for a cut. Use the clock on the price list to see how that changes what you pay.</div></details>
+      <details><summary>Do you cut kids?</summary><div class="body">All day. Kids 12 and under are $35 and our barbers are used to the wiggling. First haircut? Tell us when you sit down.</div></details>
+      <details><summary>Is the Academy a separate business from the shop?</summary><div class="body">Different function, same building and same people. DeLeon Barber &amp; Beauty Academy operates at the Menchaca Road location, which is why students train on real clients from day one instead of practicing on mannequins in a classroom.</div></details>
+      <details><summary>How long do the programs take?</summary><div class="body">Both the Class A Barber and Cosmetology programs are 1,000 hours. How fast you finish depends on the schedule you choose, and there are flexible options for students who are working. Payment plans run 6, 9 or 12 months.</div></details>
+      <details><summary>Can a haircut client be worked on by a student?</summary><div class="body">Only if you choose it. Student services are supervised by licensed instructors. Ask at the desk which chair you are being seated in.</div></details>
+      <details><summary>&iquest;Hablan espa&ntilde;ol?</summary><div class="body">S&iacute;. Both shops and the Academy operate in English and Spanish.</div></details>
+    </div>
+  </div>
+</section>
+<section id="contact">
+  <div class="wrap">
+    <div class="sechead rv">
+      <div><p class="eyebrow">Say something</p><h2>Get in<br>touch</h2></div>
+      <p>Booking a cut, asking about enrollment, or setting up a school tour &mdash; start here or just pick up the phone.</p>
+    </div>
+    <div class="contact rv">
+      <form class="msg" id="msgform">
+        <div class="two">
+          <div><label for="fn">Name</label><input id="fn" name="fn" type="text" autocomplete="name" required></div>
+          <div><label for="fp">Phone</label><input id="fp" name="fp" type="tel" autocomplete="tel" required></div>
+        </div>
+        <div class="two">
+          <div><label for="fr">I&rsquo;m writing about</label>
+            <select id="fr" name="fr">
+              <option>Booking a haircut</option>
+              <option>Barber or Cosmetology enrollment</option>
+              <option>A school tour</option>
+              <option>The Yolanda DeLeon Scholarship</option>
+              <option>Working here as a barber</option>
+              <option>Something else</option>
+            </select></div>
+          <div><label for="fl">Location</label>
+            <select id="fl" name="fl">
+              <option>South Austin &mdash; 5316 Menchaca Rd</option>
+              <option>Bastrop &mdash; 1617 Pine St</option>
+              <option>DeLeon Academy</option>
+            </select></div>
+        </div>
+        <div><label for="fm">Message</label><textarea id="fm" name="fm" placeholder="Tell us what you need and when you&rsquo;re free."></textarea></div>
+        <button class="btn btn-red" type="submit" style="align-self:flex-start">Send it</button>
+        <p class="formnote" id="formnote">This opens your email app with the message filled in, addressed to countrycutz512@gmail.com. Faster option: call the shop.</p>
+      </form>
+      <div>
+        <div class="loc" style="height:100%">
+          <span class="tag">Direct lines</span>
+          <dl style="margin-top:.4rem">
+            <dt>Shop</dt><dd><a href="tel:+15124093211">(512) 409-3211</a></dd>
+            <dt>Enrollment</dt><dd><a href="tel:+15123758142">(512) 375-8142</a></dd>
+            <dt>Email</dt><dd><a href="mailto:countrycutz512@gmail.com">countrycutz512@gmail.com</a></dd>
+            <dt>Instagram</dt><dd><a href="https://www.instagram.com/countrycutzbarbershop/" target="_blank" rel="noopener">@countrycutzbarbershop</a></dd>
+            <dt>Academy</dt><dd><a href="https://deleonacademy.com" target="_blank" rel="noopener">deleonacademy.com</a></dd>
+          </dl>
+          <p class="note" style="margin-top:1.25rem">Bastrop is open 9 AM to 7 PM every day. South Austin is open 9 AM to 6 PM every day. If nobody picks up, we are in the middle of a fade &mdash; leave a message and we call back.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="fgrid">
+      <div>
+        <a class="brand" href="#top" style="margin-bottom:1rem">
+          <svg viewBox="0 0 60 72" aria-hidden="true">
+            <path d="M30 1 58 9v30c0 16-13 26-28 32C15 65 2 55 2 39V9z" fill="none" stroke="var(--dim)" stroke-width="2.5"/>
+            <path d="M12 52h5V37h-5zm8 0h6V30h-6zm9 0h5V25h-5zm8 0h6V33h-6zm9 0h5V40h-5z" fill="var(--dim)"/>
+            <path d="M30 12l2.4 5 5.6.7-4.1 3.8 1.1 5.5-5-2.7-5 2.7 1.1-5.5-4.1-3.8 5.6-.7z" fill="var(--accent)"/>
+          </svg>
+          <span><span class="bn">Country Cutz</span><span class="bs">Barbershop</span></span>
+        </a>
+        <p class="note" style="margin:0">Austin &middot; Buda &middot; Kyle &middot; San Marcos &middot; Bastrop. Home of DeLeon Barber &amp; Beauty Academy.</p>
+      </div>
+      <div><h4>Shops</h4><ul>
+        <li><a href="https://maps.google.com/?q=5316+Menchaca+Rd+Austin+TX+78745" target="_blank" rel="noopener">5316 Menchaca Rd, Austin</a></li>
+        <li><a href="https://maps.google.com/?q=1617+Pine+St+Bastrop+TX+78602" target="_blank" rel="noopener">1617 Pine St, Bastrop</a></li>
+        <li><a href="#shops">Hours &amp; directions</a></li>
+      </ul></div>
+      <div><h4>The Chair</h4><ul>
+        <li><a href="#chair">Price list</a></li>
+        <li><a href="#chair">Off-hours cuts</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul></div>
+      <div><h4>Academy</h4><ul>
+        <li><a href="#academy">Class A Barber</a></li>
+        <li><a href="#academy">Cosmetology</a></li>
+        <li><a href="#academy">Tuition &amp; plans</a></li>
+        <li><a href="tel:+15123758142">(512) 375-8142</a></li>
+      </ul></div>
+    </div>
+    <div class="fbot">
+      <span>&copy; <span id="yr">2026</span> Country Cutz Barbershop &amp; DeLeon Barber &amp; Beauty Academy. All rights reserved.</span>
+      <button class="themetog" id="themetog" type="button">Switch theme</button>
+    </div>
+  </div>
+</footer>
+<script>
+document.documentElement.classList.add('js');
+
+/* ---- shop data ---- */
+var SHOPS = {
+  south:{name:'Country Cutz South Austin', addr:'5316 Menchaca Rd, Austin, TX 78745', open:9, close:18},
+  bastrop:{name:'Country Cutz Bastrop', addr:'1617 Pine St, Bastrop, TX 78602', open:9, close:19}
+};
+
+function centralNow(){
+  var p = new Intl.DateTimeFormat('en-US',{timeZone:'America/Chicago',hour:'numeric',minute:'numeric',hour12:false,weekday:'long'}).formatToParts(new Date());
+  var o={};
+  p.forEach(function(x){o[x.type]=x.value;});
+  var h = parseInt(o.hour,10); if(h===24) h=0;
+  return {h:h, m:parseInt(o.minute,10), day:o.weekday, mins:h*60+parseInt(o.minute,10)};
+}
+function fmt12(h){ var s=h>=12?'PM':'AM', hh=h%12; if(hh===0) hh=12; return hh+':00 '+s; }
+function span(mins){ var h=Math.floor(mins/60), m=mins%60; if(h&&m) return h+' hr '+m+' min'; if(h) return h+' hr'; return m+' min'; }
+
+function shopState(key){
+  var s=SHOPS[key], n=centralNow(), o=s.open*60, c=s.close*60;
+  if(n.mins < o) return {open:false, word:'Closed', line:'Opens at <b>'+fmt12(s.open)+'</b>, in '+span(o-n.mins)+'.'};
+  if(n.mins < c) return {open:true, word:'Open Now', line:'Last chair before <b>'+fmt12(s.close)+'</b> &mdash; '+span(c-n.mins)+' left today.'};
+  return {open:false, word:'Closed', line:'Done for the day. Doors open again at <b>'+fmt12(s.open)+'</b> tomorrow.'};
+}
+
+var currentShop='south';
+function paintStatus(){
+  var st=shopState(currentShop), s=SHOPS[currentShop];
+  var dot=document.getElementById('dot');
+  dot.className='dot '+(st.open?'on':'off');
+  document.getElementById('statword').textContent=st.word;
+  document.getElementById('shopname').textContent=s.name;
+  document.getElementById('shopaddr').textContent=s.addr;
+  document.getElementById('until').innerHTML=st.line;
+  document.getElementById('tznote').textContent=centralNow().day+' \u00b7 CT';
+  document.querySelectorAll('.pill.live').forEach(function(p){
+    var k=p.getAttribute('data-live'), ps=shopState(k);
+    p.setAttribute('data-open', ps.open?'true':'false');
+    p.textContent = ps.open ? 'Open now' : 'Closed';
+  });
+}
+document.querySelectorAll('.switch button').forEach(function(b){
+  b.addEventListener('click',function(){
+    currentShop=b.getAttribute('data-shop');
+    document.querySelectorAll('.switch button').forEach(function(x){x.setAttribute('aria-pressed', x===b?'true':'false');});
+    paintStatus();
+  });
+});
+paintStatus();
+setInterval(paintStatus, 60000);
+
+/* ---- off-hours price clock ---- */
+var clock=document.getElementById('clock');
+function paintClock(){
+  var h=parseInt(clock.value,10);
+  var off = h < 9 || h >= 19;
+  document.getElementById('clockval').firstChild.nodeValue = fmt12(h);
+  document.getElementById('clockday').textContent = off ? (h<9?'Before the doors open':'After the shop locks up') : 'Standard shop hours';
+  var band=document.getElementById('clockband');
+  band.className = 'band' + (off?'':' ok');
+  band.innerHTML = off
+    ? 'Outside posted hours. Cuts run a <b>flat $60</b>, arranged directly with your barber. Beard and shave services are by request.'
+    : 'Inside normal hours. Everything on the list runs at the posted price.';
+  document.querySelectorAll('#pricelist li').forEach(function(li){
+    var base=li.getAttribute('data-base'), isCut=li.getAttribute('data-cut')==='true';
+    var surcharged = off && isCut;
+    li.setAttribute('data-surcharged', surcharged?'true':'false');
+    li.querySelector('.amt').textContent = '$' + (surcharged ? '60' : base);
+  });
+}
+clock.addEventListener('input', paintClock);
+paintClock();
+
+/* ---- tuition plans ---- */
+var PLANS={
+  full:{name:'Pay in Full', l1:'Due at enrollment', v1:'$9,500', l2:'Weekly', v2:'—', l3:'Term', v3:'Paid',
+    totlabel:'You pay', totval:'$9,500',
+    fine:'Paying up front settles the whole program at $9,500 and takes $995 off the posted cost.'},
+  '12':{name:'12-Month Plan', l1:'Down payment', v1:'$500', l2:'Weekly', v2:'$190', l3:'Term', v3:'12 mo',
+    totlabel:'Program cost', totval:'$10,495',
+    fine:'$500 down at enrollment, then $190 a week across roughly twelve months. Exact schedule and final terms are set in your enrollment agreement.'},
+  '9':{name:'9-Month Plan', l1:'Down payment', v1:'$1,000', l2:'Weekly', v2:'$225', l3:'Term', v3:'9 mo',
+    totlabel:'Program cost', totval:'$10,495',
+    fine:'$1,000 down at enrollment, then $225 a week across roughly nine months. Exact schedule and final terms are set in your enrollment agreement.'},
+  '6':{name:'6-Month Plan', l1:'Down payment', v1:'$1,500', l2:'Weekly', v2:'$350', l3:'Term', v3:'6 mo',
+    totlabel:'Program cost', totval:'$10,495',
+    fine:'$1,500 down at enrollment, then $350 a week across roughly six months. Exact schedule and final terms are set in your enrollment agreement.'}
+};
+var tabs=document.querySelectorAll('.plantabs button');
+function setPlan(key, btn){
+  var p=PLANS[key];
+  tabs.forEach(function(t){t.setAttribute('aria-selected', t===btn?'true':'false');});
+  document.getElementById('planname').textContent=p.name;
+  ['1','2','3'].forEach(function(i){
+    document.getElementById('l'+i).textContent=p['l'+i];
+    document.getElementById('v'+i).textContent=p['v'+i];
+  });
+  document.getElementById('totlabel').textContent=p.totlabel;
+  document.getElementById('totval').textContent=p.totval;
+  document.getElementById('planfine').textContent=p.fine;
+  document.getElementById('planpanel').setAttribute('aria-labelledby', btn.id);
+}
+tabs.forEach(function(t){ t.addEventListener('click',function(){ setPlan(t.getAttribute('data-plan'), t); }); });
+
+/* ---- nav ---- */
+var nav=document.getElementById('nav'), burger=document.getElementById('burger'), links=document.getElementById('links');
+burger.addEventListener('click',function(){
+  var open = links.getAttribute('data-open')!=='true';
+  links.setAttribute('data-open', open?'true':'false');
+  burger.setAttribute('aria-expanded', open?'true':'false');
+});
+links.addEventListener('click',function(e){ if(e.target.tagName==='A'){ links.setAttribute('data-open','false'); burger.setAttribute('aria-expanded','false'); } });
+
+/* ---- scroll: sticky border + spine fill ---- */
+var fill=document.getElementById('spinefill'), ticking=false;
+function onScroll(){
+  nav.classList.toggle('stuck', window.scrollY>12);
+  var max=document.documentElement.scrollHeight-window.innerHeight;
+  fill.style.height=(max>0?Math.min(100,(window.scrollY/max)*100):0)+'%';
+  ticking=false;
+}
+window.addEventListener('scroll',function(){ if(!ticking){ requestAnimationFrame(onScroll); ticking=true; } },{passive:true});
+onScroll();
+
+/* ---- reveal ---- */
+var rv=document.querySelectorAll('.rv');
+if('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  },{rootMargin:'0px 0px -8% 0px',threshold:.08});
+  rv.forEach(function(el){ io.observe(el); });
+  setTimeout(function(){ rv.forEach(function(el){ if(el.getBoundingClientRect().top < window.innerHeight) el.classList.add('in'); }); },60);
+} else {
+  rv.forEach(function(el){ el.classList.add('in'); });
+}
+
+/* ---- theme toggle ---- */
+var tog=document.getElementById('themetog');
+try{ var saved=localStorage.getItem('cc-theme'); if(saved) document.documentElement.setAttribute('data-theme',saved); }catch(e){}
+tog.addEventListener('click',function(){
+  var cur=document.documentElement.getAttribute('data-theme');
+  if(!cur){ cur = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'; }
+  var next = cur==='dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme',next);
+  try{ localStorage.setItem('cc-theme',next); }catch(e){}
+});
+
+/* ---- contact form -> mail client ---- */
+document.getElementById('msgform').addEventListener('submit',function(e){
+  e.preventDefault();
+  var v=function(id){ return document.getElementById(id).value.trim(); };
+  var subject='Country Cutz — '+v('fr');
+  var body='Name: '+v('fn')+'\nPhone: '+v('fp')+'\nLocation: '+v('fl')+'\nAbout: '+v('fr')+'\n\n'+v('fm');
+  window.location.href='mailto:countrycutz512@gmail.com?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+  document.getElementById('formnote').textContent='Your email app should be opening now. If nothing happened, call (512) 409-3211 instead.';
+});
+
+document.getElementById('yr').textContent=new Date().getFullYear();
+</script>
