@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fairway Forward</title>
+<meta name="description" content="Business plan for a 4-bay golf simulator lounge in Hampton Roads that doubles as a golf career and STEM academy for local school divisions.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap">
+<style>
+:root{
+  --ground:#F6F4EE; --surface:#FFFFFF; --surface2:#EEF2EC; --ink:#1B211D; --ink2:#4A554E; --muted:#7C877F;
+  --line:#D9DED8; --green:#1F4E3D; --green2:#2E6B54; --sand:#D9C7A3; --flag:#B8412E; --gold:#8A6D2B;
+  --bar:#2E6B54; --bar2:#A6C4B4;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#121715; --surface:#1A221E; --surface2:#222C27; --ink:#E9E7DF; --ink2:#B7BDB6; --muted:#8B958D;
+    --line:#2F3A34; --green:#8FC3A9; --green2:#6FA98C; --sand:#B39C6A; --flag:#E06A55; --gold:#C9A75C;
+    --bar:#6FA98C; --bar2:#3B5A4B; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#121715; --surface:#1A221E; --surface2:#222C27; --ink:#E9E7DF; --ink2:#B7BDB6; --muted:#8B958D;
+  --line:#2F3A34; --green:#8FC3A9; --green2:#6FA98C; --sand:#B39C6A; --flag:#E06A55; --gold:#C9A75C;
+  --bar:#6FA98C; --bar2:#3B5A4B; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:"Source Sans 3",-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;font-size:17px;line-height:1.55;padding-block:0 64px;padding-inline:16px}
+h1,h2,h3,h4{font-family:Fraunces,Georgia,"Times New Roman",serif;text-wrap:balance;line-height:1.15;margin:0}
+h1{font-size:clamp(2.2rem,6vw,3.6rem);font-weight:700;letter-spacing:-.01em}
+h2{font-size:clamp(1.55rem,3.2vw,2.1rem);font-weight:700;color:var(--green);margin-block:0 .5rem}
+h3{font-size:1.2rem;font-weight:700;margin-block:1.4rem .4rem}
+h4{font-size:1rem;font-weight:700;margin-block:1rem .3rem;font-family:"Source Sans 3",sans-serif}
+p{margin:0 0 .9rem;max-width:68ch}
+ul,ol{margin:0 0 1rem;padding-left:1.3rem;max-width:70ch}
+li{margin-bottom:.35rem}
+a{color:var(--green2)}
+.wrap{max-width:1100px;margin:0 auto}
+.eyebrow{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:700}
+header.hero{padding-block:56px 32px;border-bottom:1px solid var(--line)}
+header.hero .lede{font-size:1.2rem;color:var(--ink2);max-width:62ch;margin-top:1rem}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-top:28px;border-radius:6px;overflow:hidden}
+.kpi{background:var(--surface);padding:14px 16px}
+.kpi b{display:block;font-family:Fraunces,serif;font-size:1.55rem;font-weight:700;color:var(--green);font-variant-numeric:tabular-nums;line-height:1.1}
+.kpi span{font-size:.82rem;color:var(--muted)}
+.layout{display:grid;grid-template-columns:220px 1fr;gap:40px;align-items:start;margin-top:8px}
+nav.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px);font-size:.9rem;padding-top:24px}
+nav.toc ol{list-style:none;padding:0;margin:0}
+nav.toc li{margin:0;border-left:2px solid var(--line)}
+nav.toc a{display:block;padding:5px 12px;color:var(--ink2);text-decoration:none}
+nav.toc a:hover,nav.toc a:focus-visible{color:var(--green);border-left:2px solid var(--green);margin-left:-2px;outline:none}
+main{min-width:0}
+section{padding-block:36px;border-bottom:1px solid var(--line)}
+section:last-child{border-bottom:none}
+.callout{background:var(--surface2);border-left:4px solid var(--green);padding:14px 18px;margin:1rem 0 1.2rem;max-width:72ch;border-radius:0 6px 6px 0}
+.callout.warn{border-left-color:var(--flag)}
+.callout p:last-child{margin-bottom:0}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin:1rem 0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px 20px}
+.card h4{margin-top:0}
+.card p:last-child,.card ul:last-child{margin-bottom:0}
+.tablewrap{overflow-x:auto;margin:1rem 0 1.4rem;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.93rem;min-width:520px}
+th,td{padding:9px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+th{background:var(--surface2);font-weight:700;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;color:var(--ink2)}
+tr:last-child td{border-bottom:none}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.total td{font-weight:700;border-top:2px solid var(--line);background:var(--surface2)}
+.neg{color:var(--flag)}
+.phase{display:grid;grid-template-columns:110px 1fr;gap:16px;padding:16px 0;border-top:1px solid var(--line)}
+.phase:last-child{border-bottom:1px solid var(--line)}
+.phase .when{font-family:Fraunces,serif;font-weight:700;color:var(--green);font-size:1.05rem}
+.phase h4{margin-top:0}
+.council{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin:1rem 0}
+.council .card{border-top:4px solid var(--sand)}
+.council .card.chair{grid-column:1/-1;border-top-color:var(--green)}
+.chart{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px 18px;margin:1rem 0 1.4rem}
+.chart h4{margin:0 0 .2rem}
+.chart .sub{font-size:.85rem;color:var(--muted);margin-bottom:10px}
+.chart svg{width:100%;height:auto;display:block;max-width:100%}
+.chart .lbl{font-size:12px;fill:var(--ink2);font-family:"Source Sans 3",sans-serif}
+.chart .val{font-size:12px;fill:var(--ink);font-weight:600;font-family:"Source Sans 3",sans-serif;font-variant-numeric:tabular-nums}
+.chart .grid{stroke:var(--line);stroke-width:1}
+.chart rect.bar{fill:var(--bar)}
+.chart rect.bar:hover{fill:var(--green)}
+.chart rect.bar2{fill:var(--bar2)}
+.legend{display:flex;gap:16px;font-size:.85rem;color:var(--ink2);margin-top:6px;flex-wrap:wrap}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:2px;vertical-align:-1px;margin-right:6px}
+.small{font-size:.88rem;color:var(--muted)}
+.steps li{margin-bottom:.6rem}
+.tag{display:inline-block;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--surface2);color:var(--green);margin-right:6px;vertical-align:middle}
+@media (max-width:860px){.layout{grid-template-columns:1fr}nav.toc{position:static;padding-top:0}nav.toc ol{display:flex;flex-wrap:wrap;gap:6px}nav.toc li{border:1px solid var(--line);border-radius:999px}nav.toc a{padding:4px 10px}nav.toc a:hover{border-left:none;margin-left:0}}
+@media (max-width:520px){.phase{grid-template-columns:1fr;gap:4px}}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<header class="hero">
+  <div class="eyebrow">Business plan · Hampton Roads, Virginia · September 2026</div>
+  <h1>Fairway Forward</h1>
+  <p class="lede">A four-bay golf simulator lounge built for the serious golfer, sharing a roof with a golf career and STEM academy that puts kids from Hampton, Newport News and the wider Peninsula in front of the game, the math inside it, and the jobs around it.</p>
+  <p class="small">"Fairway Forward" is a working name. Every number below comes from the companion Excel model and changes when its blue input cells change.</p>
+  <div class="kpis">
+    <div class="kpi"><b>4</b><span>bays at opening (not 2)</span></div>
+    <div class="kpi"><b>4,900 sf</b><span>lounge, kitchen, classroom</span></div>
+    <div class="kpi"><b>$1.13M</b><span>total project cost incl. 6 mo reserve</span></div>
+    <div class="kpi"><b>$1.08M</b><span>Year 3 revenue</span></div>
+    <div class="kpi"><b>20%</b><span>Year 3 EBITDA margin</span></div>
+    <div class="kpi"><b>720</b><span>students served per year by Year 3</span></div>
+  </div>
+</header>
+
+<div class="layout">
+<nav class="toc" aria-label="Sections">
+<ol>
+<li><a href="#summary">Executive summary</a></li>
+<li><a href="#concept">Two engines, one roof</a></li>
+<li><a href="#golfer">The serious golfer</a></li>
+<li><a href="#academy">The Academy</a></li>
+<li><a href="#space">Space program</a></li>
+<li><a href="#fnb">Food, beverage, ABC</a></li>
+<li><a href="#wellness">Wellness services</a></li>
+<li><a href="#financials">Financials</a></li>
+<li><a href="#roadmap">Growth roadmap</a></li>
+<li><a href="#funding">Funding stack</a></li>
+<li><a href="#risks">Risk register</a></li>
+<li><a href="#council">Council review</a></li>
+<li><a href="#ninety">First 90 days</a></li>
+<li><a href="#appendix">Appendix</a></li>
+</ol>
+</nav>
+
+<main>
+
+<section id="summary">
+<h2>Executive summary</h2>
+<p>Most simulator lounges sell the same three things: bay time, beer, and a burger. That business works in winter and limps through summer, and every one of them competes on the same Instagram ads. Fairway Forward runs two engines under one roof. The first is a premium lounge for golfers who already play: members get priority booking windows, leagues, coaching on real launch-monitor data, and a kitchen and bar worth staying for. The second is an academy, run by a separate nonprofit, that buys the bays during the hours no adult golfer wants them, weekday mornings and afternoons and the dead summer months, and fills them with students from school divisions that serve mostly Black and brown families.</p>
+<p>The two engines are not in tension. They are complementary on the calendar and complementary on the P&amp;L. Members and the public pay for nights and weekends. Schools, grant funders and sponsors pay for weekdays. The Foundation covers roughly a third of the Director of Golf's salary and buys bay time at a contracted rate, so the mission is a customer, not a charity line.</p>
+<div class="callout">
+<p><strong>The core opinion in this plan:</strong> open with four bays, a limited kitchen and a beer-and-wine license, not two bays. The fixed costs that make this concept work (a general manager, a PGA professional, a kitchen that satisfies Virginia ABC, a lease with a classroom) are the same at two bays and four. Two bays never clear debt service in the model. Four bays reach 1.4x coverage in Year 3 and 2.1x by Year 5.</p>
+</div>
+<h3>What is different about it</h3>
+<ul>
+<li><strong>Preferred tee times as a product.</strong> Booking windows are tiered (7, 10, 14 days out) so a member who pays more always gets the Tuesday 6pm slot. That is the club-membership psychology, applied indoors.</li>
+<li><strong>A curriculum, not a clinic.</strong> Launch-monitor data is a math and physics lab. Turfgrass and weather are earth science. The golf economy is a careers unit. The academy maps modules to Virginia Standards of Learning and Career and Technical Education pathways so a principal can justify the bus.</li>
+<li><strong>Careers beyond the Tour.</strong> Superintendent, club professional, general manager, club fitter, turf equipment technician, golf course architect, rules official, sports marketer, hospitality manager. Most pay well, many are short-staffed, and almost none have a recruiting pipeline into Hampton or Newport News.</li>
+<li><strong>Services golfers actually want.</strong> Sports massage and sports pedicure suites, rented to newly licensed practitioners, sit next to the bays. No other lounge in the market does this.</li>
+<li><strong>A path to a campus.</strong> Phase 3 is a converted big box with real bunkers, a putting green, an education wing and event space. The financing tools for that, New Markets Tax Credits, Opportunity Zone equity, SBA 504, are ones you already understand as a developer.</li>
+</ul>
+</section>
+
+<section id="concept">
+<h2>Two engines, one roof</h2>
+<div class="grid2">
+<div class="card">
+<h4>OpCo · Fairway Forward LLC (for-profit)</h4>
+<ul>
+<li>Owns the lease, the simulators, the kitchen, the ABC license, the brand.</li>
+<li>Sells hourly bay time, memberships, leagues, lessons, events, F&amp;B, retail, wellness suite rent.</li>
+<li>Employs the GM, the Director of Golf &amp; Education, kitchen and floor staff.</li>
+<li>Sells bay time and half the Director's time to the Foundation at contracted rates.</li>
+</ul>
+</div>
+<div class="card">
+<h4>Foundation · Fairway Forward Academy (501(c)(3))</h4>
+<ul>
+<li>Year 1 under a fiscal sponsor (a community foundation) while the IRS determination is pending; stands alone from Year 2.</li>
+<li>Contracts with school divisions, applies for grants, signs corporate sponsors, runs the annual fundraising scramble.</li>
+<li>Pays OpCo for bay-hours, the Director's academy time, and the classroom.</li>
+<li>Owns the curriculum, the scholarship fund and the career-pathway relationships.</li>
+</ul>
+</div>
+</div>
+<p>Keep the wall between them clean. The Foundation's board needs independent members (a school administrator, a PGA professional from a local club, a corporate sponsor, a Hampton University faculty member), and the contract between the two entities has to be at fair market value. Funders will ask, and a clean structure is what lets a bank give the OpCo credit for the education revenue while a community foundation gives the Foundation a grant.</p>
+<h3>Why the calendar makes this work</h3>
+<div class="tablewrap"><table>
+<tr><th>Time block</th><th>Who is in the bays</th><th>Who pays</th></tr>
+<tr><td>Weekdays 9am to 3pm, school year</td><td>Class field trips, CTE cohorts, high school teams (winter)</td><td>School division contracts, Foundation grants</td></tr>
+<tr><td>Weekdays 3pm to 6pm</td><td>After-school cohorts, junior league, off-peak members</td><td>Foundation, Range-tier members</td></tr>
+<tr><td>Weekdays 6pm to 11pm</td><td>Members, leagues, public, corporate</td><td>Dues, hourly, league fees, F&amp;B</td></tr>
+<tr><td>Weekends</td><td>Public, members, birthday and corporate events</td><td>Hourly, events, F&amp;B</td></tr>
+<tr><td>June to August</td><td>Summer academies (weekdays), public (evenings)</td><td>Foundation, sliding-scale camp fees</td></tr>
+</table></div>
+<p>By Year 3, education takes about 14% of used bay-hours but lands almost entirely in hours that would otherwise produce nothing. That is the whole trick.</p>
+</section>
+
+<section id="golfer">
+<h2>Serving the serious golfer</h2>
+<p>The lounge must be excellent on its own terms or the academy has no home. Design for the 12-handicap who plays real courses April through October and wants a winter home, a data-driven coach, and people to play with.</p>
+<h3>Membership tiers</h3>
+<div class="tablewrap"><table>
+<tr><th>Tier</th><th class="n">Monthly</th><th class="n">Annual prepaid</th><th>Booking window</th><th>What it includes</th></tr>
+<tr><td>Range (off-peak)</td><td class="n">$119</td><td class="n">$1,190</td><td>7 days</td><td>Unlimited weekday 9am to 4pm bay time, 20% off peak hourly, 10% off F&amp;B</td></tr>
+<tr><td>Player</td><td class="n">$199</td><td class="n">$1,990</td><td>10 days</td><td>Unlimited off-peak plus 6 peak hours a month, 2 guest passes, league priority, bag storage, 10% off F&amp;B</td></tr>
+<tr><td>Founders / Premier</td><td class="n">$299</td><td class="n">$2,400</td><td>14 days</td><td>Unlimited any time, 4 guest passes, locker, annual fitting, 15% off F&amp;B, one event-room booking a year, name on the founders wall</td></tr>
+<tr><td>Corporate (per seat, 4 minimum)</td><td class="n">$249</td><td class="n">$2,490</td><td>10 days</td><td>Shared peak-hour bank, quarterly team event, invoiced, logo on the league board</td></tr>
+<tr><td>Youth / family add-on</td><td class="n">$49</td><td class="n">—</td><td>—</td><td>Junior league, two clinics a month, academy content for an under-18 on an adult account</td></tr>
+</table></div>
+<p>Blended dues in the model are $198 a month at a 30 / 45 / 20 / 5 mix. Cap membership near 30 per bay (about 115 at four bays) or the prime slots stop being available and the tier promise breaks.</p>
+<h3>Founding members fund the build</h3>
+<p>Sell 40 Founders memberships at $2,400 prepaid during construction. That is $96,000 of working capital before the doors open, and 40 people with a reason to bring their friends on opening weekend. Founders get the wall, the locker and first pick of league nights. Run the campaign through the Peninsula's club pros, the Hampton University alumni network, and the Divine Nine chapters.</p>
+<h3>The rest of the golfer product</h3>
+<div class="grid2">
+<div class="card"><h4>Leagues</h4><p>Three eight-week seasons (fall, winter, spring), four-player teams, $250 a player. Six teams per bay-night. League nights are the highest F&amp;B hours of the week.</p></div>
+<div class="card"><h4>Coaching on data</h4><p>A PGA or LPGA professional as Director of Golf. Lessons at $100 an hour on a 50/50 split. Every member gets a launch-monitor profile: club speed, ball speed, smash factor, launch angle, spin, dispersion. Quarterly progress reports keep the renewal.</p></div>
+<div class="card"><h4>Club fitting and retail</h4><p>Fitting days with a shaft and head matrix; a small retail wall (gloves, balls, apparel, a fitting-partner brand). Retail is small money but high trust.</p></div>
+<div class="card"><h4>Corporate and events</h4><p>Full buyouts at $350 to $500 an hour with F&amp;B minimums. The classroom doubles as a meeting room. Target Newport News Shipbuilding suppliers, Langley contractors, banks, healthcare systems and law firms.</p></div>
+</div>
+<h3>Technology choice</h3>
+<p>The model budgets $52,000 per bay for a Foresight GCQuad or GCHawk class system with enclosure, impact screen, projector, turf, PC and software. Trackman iO bays run $70,000 and up. Trackman carries more prestige with low-handicap players; Foresight measures club data as well and costs less. Pick one platform and standardize so members' data follows them bay to bay. Get quotes for both before the SBA application.</p>
+</section>
+
+<section id="academy">
+<h2>The Academy: golf as a classroom and a career</h2>
+<p>An Achievable Dream in Newport News started in 1992 as a tennis program and grew into full academies because it tied a sport to academics and character, and because it built a durable relationship with the school division. This academy does the same with golf, with one added layer: the golf industry is a large employer with a workforce shortage and almost no pipeline into communities like Hampton and Newport News. Superintendents, assistant pros, equipment technicians and club managers are hired every season. Very few of the people hired look like the students in these schools.</p>
+<h3>Curriculum map (Virginia SOL and CTE hooks)</h3>
+<div class="tablewrap"><table>
+<tr><th>Subject</th><th>Golf module</th><th>What students do in the bay or classroom</th><th>Standards hook</th></tr>
+<tr><td>Math (grades 6 to 8)</td><td>The numbers in a swing</td><td>Read launch-monitor output; compute averages, ranges, percent change; graph carry distance vs club speed</td><td>Statistics and data, proportional reasoning, graphing</td></tr>
+<tr><td>Algebra and geometry</td><td>Angles, arcs, and the flight of a ball</td><td>Launch angle, apex, descent angle; the geometry of a dogleg; handicap math</td><td>Linear relationships, trigonometric ratios, functions</td></tr>
+<tr><td>Physics</td><td>Why the ball goes where it goes</td><td>Projectile motion, spin and lift, coefficient of restitution, energy transfer at impact</td><td>Force and motion, energy</td></tr>
+<tr><td>Earth science and weather</td><td>Wind, humidity, air density, turf</td><td>Adjust a shot for weather in the sim; soil, water and grass science from the Golf Course Superintendents Association's First Green program</td><td>Atmosphere, weather systems, ecosystems, water resources</td></tr>
+<tr><td>Business and economics</td><td>How a golf course makes money</td><td>Build a simple course P&amp;L: rounds, rates, labor, water; price a membership; pitch a sponsor</td><td>Economics and personal finance, CTE business and marketing</td></tr>
+<tr><td>English and communication</td><td>Etiquette, negotiation, the business round</td><td>Rules and etiquette as a code of conduct; introductions, small talk, following up after a round</td><td>Communication and multimodal literacies; Profile of a Virginia Graduate</td></tr>
+<tr><td>CTE work-based learning</td><td>Jobs at Fairway Forward</td><td>Paid internships as bay technicians, front desk, kitchen, and junior coaches for 16 to 18 year olds</td><td>Work-based learning credit, industry credentials</td></tr>
+</table></div>
+<h3>Career pathways students actually get shown</h3>
+<div class="tablewrap"><table>
+<tr><th>Career</th><th>How you get there</th><th>Credential or program</th><th>Why it matters</th></tr>
+<tr><td>Golf course superintendent / assistant</td><td>Two- or four-year turfgrass degree, then assistant roles</td><td>Virginia Tech turfgrass science; GCSAA certification</td><td>Six-figure salaries at top clubs; chronic national shortage</td></tr>
+<tr><td>PGA club professional / GM</td><td>PGA Golf Management university program or the PGA Associate path while working at a club</td><td>PGA of America PGM programs (Campbell, NC State and others); PGA Associate program</td><td>Runs the business of a club; management track to GM and COO</td></tr>
+<tr><td>Club fitter, equipment technician</td><td>Manufacturer certifications while working retail or at a fitting studio</td><td>Titleist, Callaway, TaylorMade, Ping fitting certifications</td><td>Skilled trade with fast entry</td></tr>
+<tr><td>Turf equipment technician</td><td>Community college diesel or small-engine program plus on-course work</td><td>GCSAA equipment manager certification</td><td>Every course needs one; few young people apply</td></tr>
+<tr><td>Golf course architect, civil and landscape</td><td>Landscape architecture or civil engineering degree</td><td>ASGCA path; Timmons Group as a real-world guest employer</td><td>Ties to your own network</td></tr>
+<tr><td>Rules official, tournament operations</td><td>Volunteer, then USGA/PGA rules certification</td><td>Virginia State Golf Association volunteer track</td><td>Paid officiating and event careers</td></tr>
+<tr><td>Hospitality, F&amp;B, events</td><td>Work at the facility, then club or resort roles</td><td>Tidewater Community College hospitality; CMAA</td><td>Largest headcount in the industry</td></tr>
+<tr><td>Caddie scholarships</td><td>Caddie at a private club through high school</td><td>Evans Scholars (full tuition and housing at partner universities)</td><td>Direct college pathway most families have never heard of</td></tr>
+<tr><td>Collegiate golf, HBCU golf</td><td>Junior competition and the academy's team</td><td>Hampton University golf; PGA WORKS Collegiate Championship</td><td>Recruiting exposure and scholarships</td></tr>
+</table></div>
+<h3>Program formats</h3>
+<div class="grid2">
+<div class="card"><h4>Field-trip blocks</h4><p>Two-hour blocks for 16 to 24 students, four bays plus the classroom. One curriculum module per visit. Priced to the division at about $600 a block, mostly grant-reimbursed.</p></div>
+<div class="card"><h4>After-school cohorts</h4><p>Eight-week cohorts, twice a week, 12 to 16 students. Golf skills plus one academic module plus one careers session. Transportation is the make-or-break cost; budget it.</p></div>
+<div class="card"><h4>Summer academies</h4><p>One-week day camps, June to August, sliding-scale fees with Foundation scholarships. This is what fills the bays in the months the adult market dies.</p></div>
+<div class="card"><h4>High school teams and a Peninsula junior league</h4><p>Winter practice contracts for school golf teams that have no indoor option. A junior league in the spring feeds the membership base a decade out.</p></div>
+<div class="card"><h4>Work-based learning</h4><p>Paid roles at the facility for 16 to 18 year olds that count for CTE credit: bay tech, front desk, kitchen, junior coach. The facility becomes its own first employer.</p></div>
+<div class="card"><h4>Career days and site visits</h4><p>A superintendent day at a local course, a Virginia Tech turfgrass visit, a fitting-van day, a Hampton University golf practice, an industry panel. Two a semester.</p></div>
+</div>
+<h3>Partners to line up</h3>
+<ul>
+<li><strong>School divisions:</strong> Hampton City Schools, Newport News Public Schools first; then Portsmouth, Norfolk, Suffolk. Enter through the CTE director and the Title IV-A coordinator, not the athletic department.</li>
+<li><strong>An Achievable Dream:</strong> a partner and a model, not a competitor. Offer their students a golf elective before you approach anyone else.</li>
+<li><strong>First Tee Hampton Roads:</strong> partner for the youngest ages and share curriculum; position the academy as the careers and STEM layer on top of their life-skills work.</li>
+<li><strong>Hampton University:</strong> the golf team, the business school, and the alumni network for donors and mentors.</li>
+<li><strong>PGA REACH and PGA WORKS, the USGA, the Virginia State Golf Association Foundation:</strong> grants, scholarships and fellowships aimed at exactly this population.</li>
+<li><strong>GCSAA First Green and Virginia Tech turfgrass:</strong> the earth science curriculum and the superintendent pipeline.</li>
+<li><strong>Local clubs:</strong> a caddie and junior-employment agreement with two or three private clubs unlocks the Evans Scholars route.</li>
+</ul>
+<h3>Foundation budget (from the model)</h3>
+<div class="tablewrap"><table>
+<tr><th></th><th class="n">Year 1</th><th class="n">Year 2</th><th class="n">Year 3</th></tr>
+<tr><td>Students served</td><td class="n">240</td><td class="n">480</td><td class="n">720</td></tr>
+<tr><td>Total support (contracts, grants, sponsors, fees, events)</td><td class="n">$114,000</td><td class="n">$191,000</td><td class="n">$267,000</td></tr>
+<tr><td>Total expenses</td><td class="n">$115,600</td><td class="n">$182,200</td><td class="n">$225,000</td></tr>
+<tr><td>Paid to OpCo (bay time plus Director reimbursement)</td><td class="n">$46,600</td><td class="n">$60,200</td><td class="n">$71,000</td></tr>
+<tr><td>Cost per student</td><td class="n">$482</td><td class="n">$380</td><td class="n">$313</td></tr>
+</table></div>
+<p>Funders benchmark youth sports and STEM programs at roughly $250 to $600 per student per year, so Year 3 lands where a program officer expects. The Year 1 number is high because the coordinator and curriculum are being built for a small first cohort; say that plainly in the grant narrative.</p>
+</section>
+
+<section id="space">
+<h2>Space program: 4,900 square feet</h2>
+<div class="tablewrap"><table>
+<tr><th>Area</th><th class="n">Approx. sf</th><th>Notes</th></tr>
+<tr><td>Four simulator bays with seating</td><td class="n">3,400</td><td>Each bay about 16 feet wide, 28 feet deep, 10.5-foot clear ceiling minimum (11 feet preferred). Left- and right-handed hitting positions in every bay.</td></tr>
+<tr><td>Kitchen (limited menu) and bar</td><td class="n">500</td><td>Hood, fryer, flat-top, walk-in or reach-ins. Sized to satisfy Virginia ABC's restaurant requirements, not to be a restaurant.</td></tr>
+<tr><td>Classroom / event room</td><td class="n">350</td><td>Seats 24 at tables. Two displays, a data station mirroring a bay's launch monitor. Doubles as the corporate meeting room.</td></tr>
+<tr><td>Lobby, lounge, retail wall, restrooms, storage</td><td class="n">500</td><td>Bag storage and founders lockers here.</td></tr>
+<tr><td>Wellness suites (Phase 1: one, expandable to two)</td><td class="n">150</td><td>Plumbed for a pedicure chair; sound-isolated for massage.</td></tr>
+</table></div>
+<h3>Site criteria</h3>
+<ul>
+<li>Second-generation retail or flex with 11-foot clear height. Former fitness, furniture, or restaurant space converts cheapest. Restaurant space brings a hood and grease trap, worth $40,000 or more.</li>
+<li>Within 15 minutes of both Hampton and Newport News schools; on a bus-accessible corridor (Mercury Boulevard and Coliseum Central in Hampton, Jefferson Avenue and Oyster Point in Newport News are the obvious corridors to vet).</li>
+<li>A 7- to 10-year lease with a TI allowance. The model assumes $17 base rent, $4.50 NNN and $20 per square foot of TI. Your landlord relationships are worth real money here.</li>
+<li>Check whether the parcel sits in an Opportunity Zone or a qualified low-income census tract now; it matters for Phase 3 financing and it may matter for local incentives in Phase 1.</li>
+</ul>
+</section>
+
+<section id="fnb">
+<h2>Food, beverage and the ABC license</h2>
+<p>Serious golfers stay for a drink; leagues run on it. F&amp;B is 27% of Year 3 revenue in the model, in line with mature lounges. But in Virginia the kitchen is not a nice-to-have: an on-premises license of any kind requires operating as a restaurant that serves meals, and a mixed beverage (liquor) license requires meeting a food-to-alcohol sales ratio. The historical requirement is that at least 45% of gross sales come from food and non-alcoholic beverages. Confirm the current ratio and fees with Virginia ABC before signing the lease, because it dictates kitchen size and menu.</p>
+<div class="grid2">
+<div class="card"><h4>Phase 1: beer and wine on-premises</h4><p>Apply as soon as the lease is signed; approval runs 60 to 90 days with local notice requirements. Draft beer, canned cocktails, a short wine list. Lower food ratio burden, faster approval, lower liquor-liability premium.</p></div>
+<div class="card"><h4>Phase 2: mixed beverage restaurant</h4><p>Convert once the kitchen has a track record and the food ratio is provable. Bourbon and golf go together; expect F&amp;B per bay-hour to rise from about $20 to $30.</p></div>
+<div class="card"><h4>Menu</h4><p>Smash burgers, wings, flatbreads, loaded fries, a salad, a kids' menu for academy families. Twelve items. Everything cooks on a flat-top or in a fryer so a two-person kitchen can run it.</p></div>
+<div class="card"><h4>Guardrails</h4><p>No alcohol service during school blocks; the bar closes physically (roll-down or gate) from 9am to 3pm on program days. Write that into the school contracts before they ask.</p></div>
+</div>
+</section>
+
+<section id="wellness">
+<h2>Wellness services golfers will pay for</h2>
+<p>Sports massage, sports pedicures, and eventually stretch and mobility sessions belong next to a golf bay; nobody in the market offers them. The right model is suite rent plus a revenue share to a licensed practitioner, not employees, and not students.</p>
+<div class="callout warn">
+<p><strong>Licensing reality.</strong> In Virginia, massage therapists are licensed by the Board of Nursing and nail technicians by the Board for Barbers and Cosmetology. Students may only perform services in a licensed school clinic under supervision. So "up and coming" practitioners means newly licensed graduates on their first chair, not students. If you have a relationship with a barber, beauty or massage school, the cleaner long-term move is for that school to license a satellite clinic inside the Phase 3 campus, which lets students serve golfers legally with the school's oversight.</p>
+</div>
+<ul>
+<li><strong>Terms:</strong> $900 a month suite rent plus 15% of service revenue, month to month for the first six months, then a one-year agreement. One suite in Year 2, two by Year 4 in the model, about $14,400 per suite per year to the OpCo.</li>
+<li><strong>Booking:</strong> integrated into the member app so a 60-minute bay session and a 30-minute sports massage book as one package.</li>
+<li><strong>Insurance:</strong> practitioners carry their own professional liability; OpCo's general liability names them as additional insureds.</li>
+</ul>
+</section>
+
+<section id="financials">
+<h2>Financials</h2>
+<p>All figures are from the companion Excel model, base case, four bays. Blue cells on the Assumptions sheet drive every line. Utilization is the number to argue about: the base case ramps from 28% of a 14-hour day in Year 1 to 44% in Year 5, which is conservative for winter and generous for August.</p>
+<h3>Uses and sources</h3>
+<div class="tablewrap"><table>
+<tr><th>Uses</th><th class="n">4 bays</th></tr>
+<tr><td>Simulator packages (4 at $52,000)</td><td class="n">$208,000</td></tr>
+<tr><td>Interior build-out (4,900 sf at $75) net of $20 per sf TI allowance</td><td class="n">$269,500</td></tr>
+<tr><td>Kitchen with hood and suppression; bar and draft system</td><td class="n">$93,000</td></tr>
+<tr><td>FF&amp;E, classroom fit-out, signage and AV, POS and IT</td><td class="n">$102,000</td></tr>
+<tr><td>Architect, permits, legal, ABC fees</td><td class="n">$36,500</td></tr>
+<tr><td>Pre-opening marketing, payroll and training, opening inventory</td><td class="n">$69,000</td></tr>
+<tr><td>Contingency (10%)</td><td class="n">$77,800</td></tr>
+<tr><td>Working capital reserve (6 months of Year 1 operating expense)</td><td class="n">$278,600</td></tr>
+<tr class="total"><td>Total project cost</td><td class="n">$1,134,400</td></tr>
+<tr><th>Sources</th><th class="n"></th></tr>
+<tr><td>Founding membership pre-sales (40 at $2,400)</td><td class="n">$96,000</td></tr>
+<tr><td>Owner equity (20%)</td><td class="n">$226,900</td></tr>
+<tr><td>SBA 7(a) loan, 10 years at 10.25%</td><td class="n">$811,500</td></tr>
+<tr class="total"><td>Annual debt service</td><td class="n">$133,500</td></tr>
+</table></div>
+<h3>Five-year projection (four bays)</h3>
+<div class="tablewrap"><table>
+<tr><th></th><th class="n">Year 1</th><th class="n">Year 2</th><th class="n">Year 3</th><th class="n">Year 4</th><th class="n">Year 5</th></tr>
+<tr><td>Bay utilization</td><td class="n">28%</td><td class="n">35%</td><td class="n">40%</td><td class="n">42%</td><td class="n">44%</td></tr>
+<tr><td>Members at year end</td><td class="n">60</td><td class="n">88</td><td class="n">104</td><td class="n">112</td><td class="n">116</td></tr>
+<tr><td>Total revenue</td><td class="n">$565,000</td><td class="n">$870,400</td><td class="n">$1,079,000</td><td class="n">$1,202,600</td><td class="n">$1,299,100</td></tr>
+<tr><td>Gross profit</td><td class="n">$476,300</td><td class="n">$723,500</td><td class="n">$896,200</td><td class="n">$1,003,700</td><td class="n">$1,084,300</td></tr>
+<tr><td>Operating expenses</td><td class="n">$557,100</td><td class="n">$622,500</td><td class="n">$675,300</td><td class="n">$698,400</td><td class="n">$724,700</td></tr>
+<tr class="total"><td>EBITDA</td><td class="n neg">($80,800)</td><td class="n">$100,900</td><td class="n">$220,900</td><td class="n">$305,300</td><td class="n">$359,600</td></tr>
+<tr><td>EBITDA margin</td><td class="n neg">(14%)</td><td class="n">12%</td><td class="n">20%</td><td class="n">25%</td><td class="n">28%</td></tr>
+<tr><td>Free cash flow after debt service, tax, maintenance capex</td><td class="n neg">($225,600)</td><td class="n neg">($49,900)</td><td class="n">$58,500</td><td class="n">$115,000</td><td class="n">$150,200</td></tr>
+<tr><td>Cumulative free cash flow</td><td class="n neg">($225,600)</td><td class="n neg">($275,600)</td><td class="n neg">($217,100)</td><td class="n neg">($102,100)</td><td class="n">$48,100</td></tr>
+<tr><td>Debt service coverage</td><td class="n neg">—</td><td class="n">0.63x</td><td class="n">1.44x</td><td class="n">1.86x</td><td class="n">2.13x</td></tr>
+</table></div>
+<p>The cash trough is $275,600 at the end of Year 2. The six-month working capital reserve of $278,600 is sized to cover it with almost nothing to spare, which is why the reserve is not optional and why the founding-member campaign matters. If Year 1 utilization comes in at 33% instead of 28%, the trough shrinks by roughly $60,000.</p>
+
+<div class="chart">
+<h4>Year 3 revenue mix</h4>
+<div class="sub">Four bays, $1.08M total. F&amp;B, memberships and public bay time are three quarters of the business; education is small on the P&amp;L and large on the calendar.</div>
+<svg viewBox="0 0 640 300" role="img" aria-label="Horizontal bar chart of Year 3 revenue by line">
+<g class="lbl">
+<text x="150" y="26" text-anchor="end">Food &amp; beverage</text>
+<text x="150" y="56" text-anchor="end">Membership dues</text>
+<text x="150" y="86" text-anchor="end">Public bay rental</text>
+<text x="150" y="116" text-anchor="end">Lessons &amp; fitting (gross)</text>
+<text x="150" y="146" text-anchor="end">Leagues</text>
+<text x="150" y="176" text-anchor="end">Corporate &amp; events</text>
+<text x="150" y="206" text-anchor="end">Education bay time</text>
+<text x="150" y="236" text-anchor="end">Retail</text>
+<text x="150" y="266" text-anchor="end">Wellness suites</text>
+</g>
+<line class="grid" x1="160" y1="8" x2="160" y2="280"/>
+<g>
+<rect class="bar" x="160" y="14" width="430" height="16" rx="3"><title>Food &amp; beverage: $286,600 (27%)</title></rect>
+<rect class="bar" x="160" y="44" width="362" height="16" rx="3"><title>Membership dues: $241,400 (22%)</title></rect>
+<rect class="bar" x="160" y="74" width="295" height="16" rx="3"><title>Public bay rental: $196,300 (18%)</title></rect>
+<rect class="bar" x="160" y="104" width="191" height="16" rx="3"><title>Lessons &amp; fitting: $127,300 (12%)</title></rect>
+<rect class="bar" x="160" y="134" width="115" height="16" rx="3"><title>Leagues: $76,400 (7%)</title></rect>
+<rect class="bar" x="160" y="164" width="111" height="16" rx="3"><title>Corporate &amp; events: $74,300 (7%)</title></rect>
+<rect class="bar" x="160" y="194" width="54" height="16" rx="3"><title>Education bay time: $35,900 (3%)</title></rect>
+<rect class="bar" x="160" y="224" width="38" height="16" rx="3"><title>Retail: $25,500 (2%)</title></rect>
+<rect class="bar" x="160" y="254" width="23" height="16" rx="3"><title>Wellness suites: $15,300 (1%)</title></rect>
+</g>
+<g class="val">
+<text x="596" y="26">$287k</text>
+<text x="528" y="56">$241k</text>
+<text x="461" y="86">$196k</text>
+<text x="357" y="116">$127k</text>
+<text x="281" y="146">$76k</text>
+<text x="277" y="176">$74k</text>
+<text x="220" y="206">$36k</text>
+<text x="204" y="236">$25k</text>
+<text x="189" y="266">$15k</text>
+</g>
+</svg>
+</div>
+
+<h3>Two bays vs three vs four</h3>
+<div class="tablewrap"><table>
+<tr><th></th><th class="n">2 bays</th><th class="n">3 bays</th><th class="n">4 bays</th></tr>
+<tr><td>Total project cost</td><td class="n">$826,300</td><td class="n">$980,300</td><td class="n">$1,134,400</td></tr>
+<tr><td>Year 3 revenue</td><td class="n">$547,100</td><td class="n">$813,100</td><td class="n">$1,079,000</td></tr>
+<tr><td>Year 3 EBITDA</td><td class="n neg">($25,200)</td><td class="n">$97,800</td><td class="n">$220,900</td></tr>
+<tr><td>Year 3 debt service coverage</td><td class="n neg">—</td><td class="n">0.70x</td><td class="n">1.44x</td></tr>
+<tr><td>Five-year cumulative free cash flow</td><td class="n neg">($766,900)</td><td class="n neg">($326,700)</td><td class="n">$48,100</td></tr>
+</table></div>
+<p>Two bays with a kitchen, an ABC license and a GM loses money every year in the model. If the capital is only there for two bays, the honest alternative is a different concept: an academy-first pilot with two bays inside a partner's building (a rec center, a church campus, a school), no kitchen, no license, and the Foundation as the primary customer. That is a proof of concept, not the business described here.</p>
+<h3>What moves the number</h3>
+<ul>
+<li><strong>Utilization:</strong> each five points of utilization is worth about $35,000 of Year 3 EBITDA at $45 an hour (Sensitivity sheet).</li>
+<li><strong>F&amp;B attach:</strong> every $5 of F&amp;B per used bay-hour is worth about $26,000 of gross profit a year at four bays.</li>
+<li><strong>Rent and TI:</strong> $3 per square foot of rent is $14,700 a year, every year. A $10 per square foot bump in TI allowance is $49,000 off the loan.</li>
+<li><strong>Payroll:</strong> hourly labor is the largest line after rent. The model staffs to demand (75% of mature staffing in Year 1).</li>
+</ul>
+</section>
+
+<section id="roadmap">
+<h2>Growth roadmap</h2>
+<div class="phase"><div class="when">Phase 1<br><span class="small">Months 0 to 24</span></div><div><h4>Four-bay flagship, one classroom, one wellness suite</h4><p>Prove three things: members renew above 75%, at least two school divisions sign a second-year contract, and the Foundation raises more than it spends. Convert to a mixed beverage license in Year 2. Add the second wellness suite. Hit 40% utilization.</p></div></div>
+<div class="phase"><div class="when">Phase 2<br><span class="small">Years 2 to 3</span></div><div><h4>Densify and prove the second market</h4><p>Either add two bays at the flagship (if the lease allows expansion into adjacent space) or open a three-bay academy satellite on the Southside (Portsmouth or Norfolk) inside a partner facility with no kitchen. The satellite exists to serve a second set of school divisions and to test whether the academy travels. Begin the site search and the financing stack for Phase 3 in Year 2, because tax-credit deals take 12 to 18 months.</p></div></div>
+<div class="phase"><div class="when">Phase 3<br><span class="small">Years 3 to 5</span></div><div><h4>The campus: a converted big box</h4><p>A 60,000 to 90,000 square foot former Kmart, Sears, grocery or sporting goods box on a transit corridor, ideally in an Opportunity Zone or a qualified low-income census tract. Program below. Capital cost of $4M to $7M depending on the box, the roof and how much of it you condition in phase one of the build.</p>
+<div class="tablewrap"><table>
+<tr><th>Campus component</th><th class="n">Approx. sf</th><th>What it is</th></tr>
+<tr><td>Simulator hall</td><td class="n">18,000</td><td>16 to 24 bays including four private membership suites and two teaching bays with cameras and force plates</td></tr>
+<tr><td>Indoor short-game park</td><td class="n">15,000</td><td>Real sand bunkers, a 6,000 sf synthetic putting green with contour, chipping stations, a wedge range into nets</td></tr>
+<tr><td>Education wing</td><td class="n">6,000</td><td>Three classrooms, a turfgrass and soils lab, a maker space for club building and repair, a careers center</td></tr>
+<tr><td>Restaurant, bar, event hall</td><td class="n">9,000</td><td>Full kitchen, 150-seat event room for corporate outings, banquets and the annual scramble dinner</td></tr>
+<tr><td>Wellness studio</td><td class="n">3,000</td><td>Four treatment rooms, a pedicure suite, a mobility and stretch room; licensed as a school satellite clinic if a partner school signs on</td></tr>
+<tr><td>Retail, fitting and repair</td><td class="n">3,000</td><td>Fitting studio with a shaft matrix, a repair bench that doubles as a training lab</td></tr>
+<tr><td>Offices, Foundation, incubator</td><td class="n">3,000</td><td>Foundation staff, a small incubator for golf-adjacent businesses started by alumni</td></tr>
+<tr><td>Circulation, back of house, unconditioned reserve</td><td class="n">18,000+</td><td>Phase the build-out; condition what you can lease and program</td></tr>
+</table></div>
+<p><strong>Big-box due diligence:</strong> clear height (14 feet or more for the simulator hall and 20 feet for the short-game park), column spacing (40-foot bays are ideal), roof condition and age, sprinkler and electrical service, parking ratio, whether the reciprocal easement agreement with the shopping center restricts use (many REAs prohibit "recreation" or "schools" and must be amended), and stormwater. You already know this checklist; it is the same one you run for any redevelopment.</p></div></div>
+</section>
+
+<section id="funding">
+<h2>Funding stack</h2>
+<h3>Phase 1 (about $1.13M)</h3>
+<ul>
+<li><strong>SBA 7(a) term loan, about $811,000.</strong> Ten-year blended term on equipment and leasehold improvements. Lenders will want a signed lease, quotes for the simulators, the founding-member pre-sale evidence and your personal guarantee. TowneBank, Old Point and the local SBA preferred lenders know the market.</li>
+<li><strong>Owner equity, about $227,000</strong> (20%). Some lenders accept 10% for an experienced operator; the model uses 20% to be safe.</li>
+<li><strong>Founding memberships, $96,000.</strong> Deferred revenue on the books, cash in the bank.</li>
+<li><strong>Local incentives to pursue:</strong> Hampton and Newport News economic development grants for jobs and facade or interior improvements; Virginia Enterprise Zone job creation and real property investment grants if the site qualifies; Virginia Small Business Financing Authority loan guaranty as an alternative to SBA.</li>
+<li><strong>Landlord TI.</strong> Every dollar of TI is a dollar off the loan. Trade term length for TI.</li>
+</ul>
+<h3>Foundation (about $115,000 in Year 1)</h3>
+<ul>
+<li>A fiscal sponsor (the Hampton Roads Community Foundation or the Peninsula Community Foundation of Virginia) so grants can flow before the 501(c)(3) determination arrives.</li>
+<li>School division contracts funded by Title IV-A (well-rounded education and enrichment), 21st Century Community Learning Centers, and CTE work-based learning budgets.</li>
+<li>PGA REACH, PGA WORKS, USGA grants, the Virginia State Golf Association Foundation.</li>
+<li>Corporate sponsors with a Community Reinvestment Act motive (banks) or a workforce motive (Newport News Shipbuilding and its suppliers, Sentara, Dominion Energy, Langley contractors).</li>
+</ul>
+<h3>Phase 3 (about $4M to $7M)</h3>
+<ul>
+<li><strong>SBA 504</strong> for owner-occupied real estate at a fixed rate, if you buy the box.</li>
+<li><strong>New Markets Tax Credits</strong> if the site is in a qualified low-income census tract; the education and workforce story is exactly what community development entities look for.</li>
+<li><strong>Opportunity Zone equity</strong> from investors with capital gains to defer; the program was renewed under 2025 federal tax legislation with new tract designations rolling out, so check the target parcel's status at the time.</li>
+<li><strong>HUD Section 108</strong> through the city, city economic development authority participation, Virginia Enterprise Zone grants, and CRA-motivated bank debt.</li>
+<li><strong>Philanthropic capital</strong> for the education wing specifically: naming rights, a capital campaign run by the Foundation.</li>
+</ul>
+</section>
+
+<section id="risks">
+<h2>Risk register</h2>
+<div class="tablewrap"><table>
+<tr><th>Risk</th><th>Why it is real</th><th>Mitigation</th></tr>
+<tr><td>Summer collapse</td><td>Adult simulator demand drops by half or more from June to August in a market with plentiful outdoor golf</td><td>Summer academies, junior league, corporate events, and a summer membership pause option instead of cancellation</td></tr>
+<tr><td>Competition</td><td>Topgolf in Virginia Beach and existing lounges on both sides of the water; more will open</td><td>Compete on membership, coaching and community, not on hourly price; the academy is a moat no one else will build</td></tr>
+<tr><td>Cash trough in Year 2</td><td>Cumulative cash bottoms at about $276,000 before turning</td><td>Six-month reserve, founding-member pre-sales, a lender-approved line of credit sized at $100,000 before opening</td></tr>
+<tr><td>ABC food ratio</td><td>Failing the ratio can cost the mixed beverage license</td><td>Menu and pricing designed to the ratio; monthly ratio tracking in the POS; stay on beer and wine until the kitchen proves it</td></tr>
+<tr><td>Foundation dependence on grants</td><td>Grants are lumpy and late; school budgets shift annually</td><td>Diversify: contracts, sponsors, fees and events each under 35% of support; three months of Foundation reserve by Year 3</td></tr>
+<tr><td>Mission drift into free bay time</td><td>Every free hour for a good cause is an hour not sold</td><td>The Foundation pays a contracted rate for every hour; scholarships come from its budget, not OpCo's</td></tr>
+<tr><td>Key person</td><td>The Director of Golf &amp; Education is both the coach and the face to schools</td><td>Hire early, pay a retention bonus at 24 months, document the curriculum so it survives a departure</td></tr>
+<tr><td>Youth safety and liability</td><td>Minors on site, alcohol on site, physical activity</td><td>Background checks for all staff and volunteers, no alcohol during program hours, two-adult rule, abuse-prevention training, an insurance program built for youth sports</td></tr>
+<tr><td>Technology obsolescence</td><td>Launch monitors and software move fast; projectors and mats wear out</td><td>2% of revenue reserved for maintenance capex; standardize on one platform with an upgrade path</td></tr>
+</table></div>
+</section>
+
+<section id="council">
+<h2>Council review</h2>
+<p>Five advisers, one chairman, as you asked for in your brief. They argued the plan as written.</p>
+<div class="council">
+<div class="card"><h4><span class="tag">Contrarian</span>What will fail</h4><p>The model assumes 60 members at the end of Year 1 and 40 founders before opening. Founders are sold on a rendering and your name; if you get 20, the reserve is gone by month 14. The academy is a cost center with a nonprofit wrapper until a division actually signs, and divisions sign slowly, so year one will feel like a bar with a classroom nobody uses. And the wellness suites are a distraction at four bays; do them in Phase 3.</p></div>
+<div class="card"><h4><span class="tag">First principles</span>What is true underneath</h4><p>A bay is a fixed asset that earns only when a body is in it. The business is a utilization problem with a 14-hour window, and adult demand only exists for about six of those hours. Any concept that fills the other eight at any positive rate wins on the same rent. Schools are the only customer in the market who want the empty hours. So the academy is not a mission bolted onto a lounge; it is the correct answer to the utilization problem, and the mission is a bonus.</p></div>
+<div class="card"><h4><span class="tag">Expansionist</span>Where the upside is</h4><p>Nobody owns "the golf career pipeline for Black and brown kids in Virginia." Get two divisions and Hampton University on board and the Foundation becomes fundable at a scale that dwarfs the lounge: PGA REACH, USGA, the shipyard, the banks. The campus in Phase 3 is not a bigger lounge; it is a regional workforce asset, and that is what NMTC and city money fund. The curriculum itself is licensable to other lounges nationally.</p></div>
+<div class="card"><h4><span class="tag">Outsider</span>Knows nothing about golf</h4><p>Why would a 14-year-old care about golf? The plan sells careers and math to principals but says little about what makes the kid come back on a Tuesday. Make the first visit a competition with a scoreboard and a prize, let them hit a driver as hard as they can, and give them the data on their phone. Also: parents. Where is the parent product? A parent watching from the lounge with a drink is a member you have not sold yet.</p></div>
+<div class="card"><h4><span class="tag">Executor</span>Monday morning</h4><p>Three calls this week: a Foresight and a Trackman rep for quotes, the CTE director at Newport News Public Schools, and a PGA professional you would hire as Director. One meeting with a landlord who has 5,000 square feet with an 11-foot ceiling and a grease trap. Open the Foundation's fiscal sponsorship conversation with a community foundation before the LLC is even formed, because their calendar is slower than yours.</p></div>
+<div class="card chair"><h4><span class="tag">Chairman</span>The call</h4><p>Go, at four bays, and treat the Contrarian's founding-member point as the go/no-go gate: if 30 founders are not signed at $2,400 by the time the lease is ready for signature, pause and fix the demand story before spending on build-out. Push wellness to Year 2 as the model already does. Get one school division signed before opening even if the first contract is small; a signed $24,000 contract is worth more to a lender and a funder than a $96,000 forecast. The plan's structural insight, that schools are the only buyer for the dead hours, is correct and is the reason this can outlast the other lounges in the market.</p></div>
+</div>
+</section>
+
+<section id="ninety">
+<h2>First 90 days</h2>
+<ol class="steps">
+<li><strong>Weeks 1 to 2: entities and people.</strong> Form the LLC. Engage counsel for the Foundation and the OpCo-Foundation services agreement. Approach a community foundation about fiscal sponsorship. Start the Director of Golf &amp; Education search through the Middle Atlantic PGA Section.</li>
+<li><strong>Weeks 1 to 4: technology and site.</strong> Quotes from Foresight and Trackman for four bays. Tour candidate spaces in Hampton and Newport News with your broker; screen for 11-foot clear height, hood or grease trap, and TI appetite. Pull census tract and Opportunity Zone status on every candidate.</li>
+<li><strong>Weeks 2 to 6: schools.</strong> Meetings with the CTE director and Title IV-A coordinator at Hampton City Schools and Newport News Public Schools. Bring the curriculum map and a one-page block pricing sheet. Ask for a pilot: two field-trip blocks a month in the spring semester after opening. Meet An Achievable Dream's leadership and First Tee Hampton Roads.</li>
+<li><strong>Weeks 3 to 8: money.</strong> Lender conversations with two SBA preferred lenders using this plan and the model. Confirm ABC requirements and fees with Virginia ABC. Ask the city's economic development office what it can do for a site on its corridor.</li>
+<li><strong>Weeks 4 to 12: founding members.</strong> Landing page, rendering, a founders event at a local club. Goal: 30 signed by lease execution, 40 by opening. Track it weekly; it is the demand signal for everything else.</li>
+<li><strong>Week 10 to 12: decide.</strong> Lease terms, lender term sheet, founders count and one signed or verbally committed school pilot in hand. If three of four are there, sign. If not, the plan says why, and you have lost 90 days and a few thousand dollars instead of a million.</li>
+</ol>
+</section>
+
+<section id="appendix">
+<h2>Appendix</h2>
+<h3>Things to verify before financing</h3>
+<ul>
+<li>Virginia ABC: current food-to-alcohol ratio for mixed beverage restaurant licenses, current license fees, local notice and hearing timelines.</li>
+<li>SBA 7(a) rate and equity injection requirement at the time of application; whether the lender will blend the term across equipment and leasehold improvements.</li>
+<li>Simulator quotes, installed, with the enclosure and screen included; software subscription costs per bay per year.</li>
+<li>Whether a specific target parcel is in an Opportunity Zone or a qualified low-income census tract under the current designations.</li>
+<li>Each school division's procurement threshold for a contract that can be signed without a board vote.</li>
+<li>Insurance quotes that include liquor liability and youth programming; some carriers will not write both on one policy.</li>
+</ul>
+<h3>Companion files</h3>
+<ul>
+<li><strong>Fairway_Forward_Financial_Model.xlsx:</strong> Assumptions, Startup, three P&amp;L scenarios (2, 3, 4 bays), Summary, Membership Tiers, Foundation budget, Sensitivity. Edit the blue cells.</li>
+<li>This plan, as an HTML file in the same folder of the repository.</li>
+</ul>
+<p class="small">Prepared for internal planning. Market figures are estimates from 2026 listings, vendor pricing and operator benchmarks and should be re-underwritten with site-specific bids before any commitment.</p>
+</section>
+
+</main>
+</div>
+</div>
+</body>
+</html>
