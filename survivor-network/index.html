@@ -1,0 +1,343 @@
+<title>Harbor Line Blueprint</title>
+<meta name="description" content="Launch blueprint for a Hampton Roads survivor navigation network: housing, money, counseling, and legal pathways for people leaving abusive relationships.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+:root{
+  --ground:#F3F5F4;
+  --paper:#FFFFFF;
+  --ink:#16262B;
+  --ink-soft:#4A5A5F;
+  --line:#D5DDDB;
+  --harbor:#1F5F5B;
+  --harbor-tint:#E1ECEA;
+  --plum:#5E4466;
+  --plum-tint:#EEE7F0;
+  --warn:#8A4B0F;
+  --warn-tint:#FBEFE0;
+  --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --sans:"IBM Plex Sans",-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ground:#101719;--paper:#172124;--ink:#E4ECEA;--ink-soft:#A3B3B1;--line:#2B3A3D;
+    --harbor:#6FB8B1;--harbor-tint:#1A3432;--plum:#C4A6CE;--plum-tint:#2A2130;
+    --warn:#E8A865;--warn-tint:#33261A;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ground:#101719;--paper:#172124;--ink:#E4ECEA;--ink-soft:#A3B3B1;--line:#2B3A3D;
+  --harbor:#6FB8B1;--harbor-tint:#1A3432;--plum:#C4A6CE;--plum-tint:#2A2130;
+  --warn:#E8A865;--warn-tint:#33261A;
+}
+*{box-sizing:border-box}
+body{background:var(--ground);color:var(--ink);font:16px/1.6 var(--sans);padding-inline:16px;padding-block:0 64px}
+.wrap{max-width:880px;margin:0 auto}
+a{color:var(--harbor)}
+a:focus-visible,button:focus-visible{outline:2px solid var(--harbor);outline-offset:2px}
+h1,h2,h3{font-family:var(--serif);text-wrap:balance;line-height:1.2;margin:0}
+h1{font-size:clamp(2rem,5vw,2.9rem);font-weight:700;letter-spacing:-.01em}
+h2{font-size:1.65rem;font-weight:600;margin-bottom:.6rem}
+h3{font-size:1.15rem;font-weight:600;margin-bottom:.35rem}
+p{margin:0 0 .9rem;max-width:68ch}
+.eyebrow{font:500 .75rem/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--harbor);margin-bottom:.7rem}
+.crisis{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--ink);color:var(--ground);margin-inline:-16px;padding:10px 16px;font-size:.9rem}
+.crisis .wrap{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center}
+.crisis b{font-weight:600}
+.crisis .num{font-family:var(--mono);user-select:all}
+header{padding-block:48px 28px;border-bottom:1px solid var(--line)}
+header .lede{font-size:1.15rem;color:var(--ink-soft);margin-top:1rem}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:1.2rem}
+.chip{font:500 .75rem/1 var(--mono);padding:6px 9px;border:1px solid var(--line);border-radius:4px;color:var(--ink-soft);background:var(--paper)}
+section{padding-block:40px 8px}
+.call{background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--harbor);padding:22px 24px;margin-top:8px}
+.call p:last-child{margin-bottom:0}
+.call strong{color:var(--harbor)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-top:12px}
+.panel{background:var(--paper);border:1px solid var(--line);padding:18px 20px}
+.panel p:last-child,.panel ul:last-child{margin-bottom:0}
+.panel.plum{background:var(--plum-tint);border-color:transparent}
+.panel.plum h3{color:var(--plum)}
+.flag{background:var(--warn-tint);border-left:3px solid var(--warn);padding:14px 18px;margin:14px 0}
+.flag p:last-child{margin-bottom:0}
+.flag b{color:var(--warn)}
+ul{margin:0 0 .9rem;padding-left:1.2rem}
+li{margin-bottom:.35rem;max-width:66ch}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);background:var(--paper);margin-top:12px}
+table{border-collapse:collapse;width:100%;min-width:620px;font-size:.92rem}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:500 .72rem/1.2 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);background:var(--harbor-tint)}
+tr:last-child td{border-bottom:0}
+td.num{font-family:var(--mono);white-space:nowrap;user-select:all}
+.area{font:500 .72rem/1 var(--mono);letter-spacing:.06em;color:var(--harbor);text-transform:uppercase}
+.pillars{display:grid;gap:16px;margin-top:12px}
+.pillar{background:var(--paper);border:1px solid var(--line);padding:20px 22px;display:grid;grid-template-columns:140px 1fr;gap:6px 22px}
+.pillar .label{font-family:var(--serif);font-size:1.25rem;font-weight:600;color:var(--harbor)}
+.pillar dl{margin:0;display:grid;gap:10px}
+.pillar dt{font:500 .72rem/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft)}
+.pillar dd{margin:4px 0 0}
+@media (max-width:620px){.pillar{grid-template-columns:1fr}}
+.phases{display:grid;gap:0;margin-top:12px;border-left:2px solid var(--harbor);padding-left:22px}
+.phase{padding-bottom:22px;position:relative}
+.phase::before{content:"";position:absolute;left:-29px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--ground);border:2px solid var(--harbor)}
+.phase .when{font:500 .75rem/1 var(--mono);color:var(--harbor);letter-spacing:.06em;margin-bottom:6px}
+.council{display:grid;gap:12px;margin-top:12px}
+.voice{display:grid;grid-template-columns:150px 1fr;gap:4px 18px;padding:14px 0;border-bottom:1px solid var(--line)}
+.voice .who{font-family:var(--serif);font-weight:600}
+.voice .who span{display:block;font:500 .7rem/1.3 var(--mono);color:var(--ink-soft);letter-spacing:.05em;text-transform:uppercase;margin-top:2px}
+.voice p{margin:0}
+@media (max-width:620px){.voice{grid-template-columns:1fr}}
+.chair{background:var(--harbor);color:var(--ground);padding:22px 24px;margin-top:14px}
+.chair h3{color:var(--ground)}
+.chair p:last-child{margin-bottom:0}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .chair{color:#0E1A1B}:root:not([data-theme="light"]) .chair h3{color:#0E1A1B}}
+:root[data-theme="dark"] .chair,:root[data-theme="dark"] .chair h3{color:#0E1A1B}
+ol.steps{padding-left:1.3rem;margin:12px 0 0}
+ol.steps li{margin-bottom:.7rem}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:12px}
+.metric{background:var(--paper);border:1px solid var(--line);padding:14px 16px}
+.metric b{display:block;font-family:var(--serif);font-size:1.05rem;margin-bottom:4px}
+.metric span{color:var(--ink-soft);font-size:.9rem}
+footer{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);color:var(--ink-soft);font-size:.85rem}
+footer p{max-width:none}
+</style>
+
+<div class="crisis" role="region" aria-label="Crisis numbers">
+  <div class="wrap">
+    <span><b>In danger now:</b> call <span class="num">911</span></span>
+    <span><b>Virginia 24/7 hotline:</b> <span class="num">1-800-838-8238</span> · text <span class="num">804-793-9999</span></span>
+    <span><b>National:</b> <span class="num">1-800-799-7233</span></span>
+  </div>
+</div>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">Launch blueprint · Hampton Roads first</div>
+  <h1>Harbor Line: a survivor navigation network for the 757</h1>
+  <p class="lede">How to get people leaving abusive relationships, women and men, to housing, money, counseling, and legal help fast, and keep them from getting pulled back in. Built to start in Hampton Roads and copy region by region.</p>
+  <div class="meta">
+    <span class="chip">Working name: Harbor Line</span>
+    <span class="chip">Prepared Sept 2026</span>
+    <span class="chip">For: founders, partners, funders</span>
+  </div>
+</header>
+
+<section id="call">
+  <div class="eyebrow">Bottom line</div>
+  <h2>Don't build another hotline. Build the part that happens after the hotline.</h2>
+  <div class="call">
+    <p>Hampton Roads already has a solid crisis front door. Southside's four big shelters (YWCA, H.E.R., Samaritan House, Genieve) run one shared 24/7 line, and the Peninsula has Transitions, Avalon, and The Center. A new hotline would compete with them for the same callers and the same grant dollars.</p>
+    <p>The real gap is <strong>day 30 to day 365</strong>. Shelter stays are short, housing is expensive, money is gone or controlled, counseling has waitlists, and court moves slowly. That's the window when people go back. <strong>Harbor Line should be the navigator and continuity layer</strong> that sits on top of the existing system: one person who stays with a survivor for a year, flexible cash to remove the practical reasons for returning, and a recovery-style support structure for the bond itself.</p>
+    <p>Two course corrections before you pitch this to anyone, both covered below: guardians ad litem are the wrong entry point, and the "addiction" idea is powerful but has to be framed carefully.</p>
+  </div>
+</section>
+
+<section id="gal">
+  <div class="eyebrow">Reality check 1</div>
+  <h2>Guardians ad litem don't serve the survivor</h2>
+  <p>In Virginia a guardian ad litem is a lawyer the <em>court appoints</em> to represent a <em>child</em> (or an incapacitated adult) under Va. Code § 16.1-266. They investigate and recommend what's in the child's best interest. They don't represent the abused spouse, can't be hired by them, and don't hand out housing, money, or counseling. If the network is built around "reaching GALs," survivors will hit a wall.</p>
+  <div class="grid2">
+    <div class="panel">
+      <h3>Who survivors actually need</h3>
+      <ul>
+        <li><b>DV advocate</b> at a local program (safety plan, shelter, court accompaniment)</li>
+        <li><b>Protective order help</b> at the Juvenile &amp; Domestic Relations court</li>
+        <li><b>Victim/witness program</b> in each city's Commonwealth's Attorney office if charges are filed</li>
+        <li><b>Legal aid or a DV-savvy family lawyer</b> for divorce, custody, support</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>Where GALs do matter</h3>
+      <p>When kids are in a custody fight with an abuser, the GAL's recommendation carries a lot of weight. Abusers are often calm and credible in that setting; survivors often look "unstable" because they're traumatized.</p>
+      <p><b>The play:</b> treat GALs as a <em>partner audience</em>, not a service. Offer the local GAL bar free DV and coercive-control training, and a one-page referral sheet so they can point parents to Harbor Line.</p>
+    </div>
+  </div>
+</section>
+
+<section id="bond">
+  <div class="eyebrow">Reality check 2</div>
+  <h2>The pull back is real. Call it a trauma bond, and treat it like recovery.</h2>
+  <p>Your instinct is right, and there's science behind it. Abuse runs on intermittent reinforcement: cruelty, then relief, then affection. That's the same reward schedule that makes slot machines hard to walk away from. Brain imaging of people who've been rejected by a partner shows activity in the same reward and craving regions tied to drug dependence. The clinical term is <b>trauma bonding</b>.</p>
+  <div class="grid2">
+    <div class="panel plum">
+      <h3>Use the addiction frame for</h3>
+      <ul>
+        <li>Taking the shame out of it: "You're not weak. Your brain was trained."</li>
+        <li>Borrowing what works in recovery: sponsors, meetings, a plan for cravings, no-shame restarts</li>
+        <li>Messaging to family and churches, so they stop saying "why don't you just leave"</li>
+      </ul>
+    </div>
+    <div class="panel plum">
+      <h3>Don't let it imply</h3>
+      <ul>
+        <li>That returning is only a willpower problem. Many people go back because of money, housing, kids, immigration status, or because leaving is the most dangerous time.</li>
+        <li>That the survivor is the one who's sick. The abuser caused this.</li>
+        <li>That "relapse" means failure. Plan for it and keep the door open.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="flag"><p><b>Watch your numbers.</b> The "it takes 7 tries to leave" stat gets quoted everywhere and is thinly sourced. Don't put it in a grant application. And never track "returned to abuser" as a failure metric. It shames people and they stop telling you the truth.</p></div>
+  <h3 style="margin-top:18px">What the recovery model looks like in practice</h3>
+  <ul>
+    <li><b>Peer mentor</b>: a survivor who's 2+ years out, trained and paid, matched for the first year. Like a sponsor.</li>
+    <li><b>"Urge line"</b>: a text or call option specifically for "I want to reach out to him/her." A plan made in advance for those moments.</li>
+    <li><b>Weekly group</b> in person and online, open to people who have gone back. No one gets kicked out for returning.</li>
+    <li><b>Hoovering prep</b>: teach people what the love-bombing and promises will look like before they show up.</li>
+    <li><b>Music and faith as support, not treatment</b>: The Healing Library catalog and faith communities help. They sit next to licensed trauma therapy, they don't replace it.</li>
+  </ul>
+</section>
+
+<section id="map">
+  <div class="eyebrow">What already exists</div>
+  <h2>Hampton Roads resource map</h2>
+  <p>Numbers checked against public listings in September 2026. Call-test every one before anything goes live, and re-check quarterly. A wrong number on a crisis card is worse than no card.</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Organization</th><th>Covers</th><th>24/7 line</th><th>Role in network</th></tr></thead>
+      <tbody>
+        <tr><td><b>Coordinated Crisis Response</b><br><span class="area">YWCA · H.E.R. · Samaritan House · Genieve</span></td><td>Southside: Norfolk, Virginia Beach, Portsmouth, Chesapeake, Suffolk</td><td class="num">757-251-0144</td><td>Primary front door, Southside</td></tr>
+        <tr><td><b>Transitions Family Violence Services</b></td><td>Hampton, Newport News, Poquoson, York</td><td class="num">757-723-7774</td><td>Primary front door, Peninsula</td></tr>
+        <tr><td><b>Avalon Center</b></td><td>Williamsburg, James City County</td><td class="num">757-258-5051</td><td>Front door, Historic Triangle</td></tr>
+        <tr><td><b>The Center for Sexual Assault Survivors</b></td><td>Peninsula</td><td class="num">757-236-5260</td><td>Sexual assault counseling and advocacy</td></tr>
+        <tr><td><b>Virginia Family &amp; Intimate Partner Violence Hotline</b></td><td>Statewide</td><td class="num">1-800-838-8238</td><td>Backup line; text 804-793-9999; chat online</td></tr>
+        <tr><td><b>Legal Aid Society of Eastern Virginia</b></td><td>Low-income residents across Hampton Roads</td><td class="num">757-827-5078</td><td>Protective orders, divorce, custody (business hours)</td></tr>
+        <tr><td><b>Address Confidentiality Program</b><br><span class="area">Office of the Attorney General</span></td><td>Statewide</td><td class="num">Apply via a DV program</td><td>Substitute mailing address after relocation</td></tr>
+        <tr><td><b>Military Family Advocacy Programs</b></td><td>Naval Station Norfolk, JEB Little Creek-Fort Story, Oceana, Langley-Eustis, others</td><td class="num">Per installation</td><td>Military families; restricted vs. unrestricted reporting</td></tr>
+        <tr><td><b>211 Virginia</b></td><td>Statewide</td><td class="num">211</td><td>General housing, utilities, food referrals</td></tr>
+        <tr><td><b>988 Suicide &amp; Crisis Lifeline</b></td><td>National</td><td class="num">988</td><td>Mental health crisis</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="margin-top:12px;color:var(--ink-soft);font-size:.92rem">Still to add in Phase 0: each city's Community Services Board (low-cost counseling), each Commonwealth's Attorney victim/witness office, local housing authorities, and the region's HUD Continuum of Care coordinated entry.</p>
+</section>
+
+<section id="pillars">
+  <div class="eyebrow">The four needs</div>
+  <h2>Housing, money, counseling, legal</h2>
+  <div class="pillars">
+    <div class="pillar">
+      <div class="label">Housing</div>
+      <dl>
+        <div><dt>Exists</dt><dd>Emergency shelter (days to weeks), some transitional units, rapid rehousing through the Continuum of Care. Federal VAWA protections for people in subsidized housing, including emergency transfers. Virginia lets tenants with a protective order end a lease early.</dd></div>
+        <div><dt>Gap</dt><dd>Nothing affordable to move into after shelter. This is the number one reason people return.</dd></div>
+        <div><dt>Harbor Line does</dt><dd>Lines up a pool of landlords willing to rent to survivors with thin credit, backed by a guarantee fund. <b>Canterbury's own affordable portfolio is the anchor</b>: a small set-aside of units with a DV partner handling referrals and wraparound support. Check the current Virginia Housing QAP for scoring on special-needs or supportive set-asides before committing unit counts.</dd></div>
+      </dl>
+    </div>
+    <div class="pillar">
+      <div class="label">Money</div>
+      <dl>
+        <div><dt>Exists</dt><dd>Virginia Victims Fund (crime victims' compensation) for counseling, medical, and lost wages when a crime was reported. Public benefits through DSS.</dd></div>
+        <div><dt>Gap</dt><dd>Fast, small money. A $700 car repair or a security deposit is often what decides stay or go.</dd></div>
+        <div><dt>Harbor Line does</dt><dd><b>Flexible funding</b>: quick grants, typically a few hundred to a couple thousand dollars, paid straight to the landlord, mechanic, or utility. This is one of the best-evidenced tools in the DV field. Add financial-abuse repair: credit reports, coerced debt disputes, and for married survivors, <b>IRS innocent spouse relief (Form 8857)</b> for joint returns the abuser controlled. That's a natural fit for Sterling Tax Management to run pro bono.</dd></div>
+      </dl>
+    </div>
+    <div class="pillar">
+      <div class="label">Counseling</div>
+      <dl>
+        <div><dt>Exists</dt><dd>Free counseling at DV programs and The Center; Community Services Boards; private therapists with long waits.</dd></div>
+        <div><dt>Gap</dt><dd>Trauma-trained therapists who take Medicaid or sliding scale, available in weeks, not months. Very little for men.</dd></div>
+        <div><dt>Harbor Line does</dt><dd>Builds a vetted therapist bench trained in trauma therapies (CPT, EMDR, prolonged exposure) and funds sessions directly. Peer mentor and weekly group run alongside. <b>Hard rule: no couples counseling</b> while abuse is present. It's standard guidance in the field and it puts people in danger.</dd></div>
+      </dl>
+    </div>
+    <div class="pillar">
+      <div class="label">Legal</div>
+      <dl>
+        <div><dt>Exists</dt><dd>Protective orders at J&amp;DR court (emergency, preliminary, then up to two years), Legal Aid, victim/witness programs, the Address Confidentiality Program.</dd></div>
+        <div><dt>Gap</dt><dd>Anyone just over the Legal Aid income line has no lawyer. Custody is where abusers keep control after the breakup.</dd></div>
+        <div><dt>Harbor Line does</dt><dd>Recruits a pro bono or low-bono panel of family lawyers from the Norfolk-Portsmouth and Hampton bar associations. Runs the GAL training above. Court accompaniment through partner advocates so no one faces the abuser alone.</dd></div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<section id="who">
+  <div class="eyebrow">Who gets missed</div>
+  <h2>Design for men, military families, and LGBTQ survivors from day one</h2>
+  <div class="grid2">
+    <div class="panel"><h3>Men</h3><p>Most shelter beds are built for women and kids. Men usually get a hotel voucher, if anything, and many don't call because they don't think it applies to them. Name men explicitly in every piece of outreach. For male survivors of sexual abuse, 1in6.org is the national specialist.</p></div>
+    <div class="panel"><h3>Military</h3><p>Hampton Roads has one of the biggest military populations in the country. Service members and spouses worry a report ends a career or cuts off the paycheck. Each installation's Family Advocacy Program offers restricted reporting. Harbor Line should have a direct line to each FAP and know the rules cold.</p></div>
+    <div class="panel"><h3>LGBTQ</h3><p>Abuse in same-sex relationships gets missed by intake questions written for husband/wife. Train navigators and use neutral language on every form.</p></div>
+  </div>
+</section>
+
+<section id="tech">
+  <div class="eyebrow">For Muhammad Ali</div>
+  <h2>Build safety into the tech, or don't build it</h2>
+  <p>The abuser often has the phone, the passwords, the shared iCloud, the car's GPS. Every tech choice here is a safety choice.</p>
+  <div class="flag"><p><b>The legal wall:</b> programs funded by VAWA or FVPSA are barred from sharing a survivor's personal information without informed, written, time-limited consent. So a shared database of survivors that every partner can see is off the table. Design for warm handoffs and survivor-held records instead.</p></div>
+  <ul>
+    <li><b>Quick exit</b> button on every page, no survivor data in browser history, and a disguised app icon if you build an app.</li>
+    <li><b>Never text first.</b> Ask for a safe number and safe times. A reminder text on a monitored phone can get someone hurt.</li>
+    <li><b>No personal info in n8n logs</b>, analytics, or third-party tools. Minimum data, encrypted, with a delete-on-request policy.</li>
+    <li><b>No AI chatbot at the crisis front door.</b> Humans answer. AI earns its keep in the back office: keeping the resource directory current, drafting protective order prep sheets, flagging expiring benefits.</li>
+    <li>Partner with a DV program's staff for a <b>stalkerware and device check</b> service at intake.</li>
+  </ul>
+</section>
+
+<section id="plan">
+  <div class="eyebrow">Rollout</div>
+  <h2>Hampton Roads, then everywhere</h2>
+  <div class="phases">
+    <div class="phase"><div class="when">PHASE 0 · MONTHS 0–3</div><h3>Coalition before code</h3><p>Sit down with the CCR partners, Transitions, Avalon, The Center, Legal Aid, the local CSBs, and the base FAPs. Ask where people fall through and what they'd want from a navigator program. Sign MOUs. Confirm the lead DV partner. Form or partner with a 501(c)(3); grant money needs one.</p></div>
+    <div class="phase"><div class="when">PHASE 1 · MONTHS 4–12</div><h3>Pilot: one Southside city, one Peninsula city</h3><p>Two navigators, one peer mentor coordinator, a flexible fund, 15–25 landlord partners, a starter therapist bench. Serve 60–100 survivors in year one. Track everything.</p></div>
+    <div class="phase"><div class="when">PHASE 2 · YEAR 2</div><h3>All of Hampton Roads</h3><p>Expand to every city. Add the lawyer panel and the GAL training series. Publish outcomes.</p></div>
+    <div class="phase"><div class="when">PHASE 3 · YEAR 3+</div><h3>The playbook, copied</h3><p>Package the model: navigator job descriptions, landlord agreement, flexible fund policy, data rules. Offer it to other regions through the Virginia Sexual &amp; Domestic Violence Action Alliance's member agencies, then other states. Grow by licensing the model to local programs, not by opening your own offices everywhere.</p></div>
+  </div>
+  <h3 style="margin-top:12px">Where the money comes from</h3>
+  <ul>
+    <li><b>Virginia DCJS</b> administers the federal VOCA victim-services and STOP VAWA grants.</li>
+    <li><b>HUD Continuum of Care</b> domestic violence bonus funding for housing.</li>
+    <li><b>Local United Ways</b>, hospital systems, and big regional employers with military and shipyard workforces.</li>
+    <li><b>Corporate sponsors</b> for the flexible fund. Donors like it because the money goes directly to a need.</li>
+  </ul>
+</section>
+
+<section id="council">
+  <div class="eyebrow">LLM Council</div>
+  <h2>Decision: launch a new platform, or become the navigator layer?</h2>
+  <div class="council">
+    <div class="voice"><div class="who">Contrarian<span>What fails</span></div><p>A new outsider org shows up, asks shelters for referrals, and chases the same grants. The shelters get territorial and stop referring. Also: one data breach or one text to the wrong phone and the project is over.</p></div>
+    <div class="voice"><div class="who">First principles<span>What's true</span></div><p>People return because of four things: nowhere to live, no money, the bond, and fear. Shelters already handle the fear in the moment. Nobody owns the other three past day 30. Build for those.</p></div>
+    <div class="voice"><div class="who">Expansionist<span>The upside</span></div><p>A developer with affordable units, a tax firm, and a music catalog is a combination no shelter has. If the pilot shows people staying housed at 12 months, this model gets funded statewide.</p></div>
+    <div class="voice"><div class="who">Outsider<span>No industry lens</span></div><p>If I were leaving, I wouldn't want a new app. I'd want one person who picks up the phone and who's still there in six months.</p></div>
+    <div class="voice"><div class="who">Executor<span>Monday morning</span></div><p>Call the YWCA South Hampton Roads and Transitions directors this week. Ask one question: "Where do your clients fall through after they leave shelter?" Build what they say.</p></div>
+  </div>
+  <div class="chair">
+    <h3>Chairman's call</h3>
+    <p>Be the navigator layer, not a new front door. Lead with housing and flexible money, since that's where Canterbury has an edge nobody else in the field has. Let the DV programs own crisis and confidentiality; Harbor Line owns the year after. Build the tech last and keep it minimal.</p>
+  </div>
+</section>
+
+<section id="next">
+  <div class="eyebrow">Next 30 days</div>
+  <h2>What to do now</h2>
+  <ol class="steps">
+    <li>Book meetings with the directors of YWCA South Hampton Roads and Transitions. Listen first; bring no pitch deck.</li>
+    <li>Pull Canterbury's affordable portfolio and flag units that could work as a survivor set-aside. Get the property managers' honest read on it.</li>
+    <li>Ask Sterling Tax Management to scope a pro bono innocent-spouse and financial-abuse clinic.</li>
+    <li>Talk to a nonprofit attorney about entity structure and VAWA confidentiality before anyone collects a single name.</li>
+    <li>Recruit one advisor who is a survivor and one who has run a DV program. Nothing ships without their sign-off.</li>
+    <li>Call-test every number on this page.</li>
+  </ol>
+</section>
+
+<section id="metrics">
+  <div class="eyebrow">Measure what matters</div>
+  <h2>Success metrics</h2>
+  <div class="metrics">
+    <div class="metric"><b>Housed at 6 and 12 months</b><span>The headline number for funders</span></div>
+    <div class="metric"><b>Connected within 72 hours</b><span>From first contact to a navigator</span></div>
+    <div class="metric"><b>Still in touch at 12 months</b><span>Even if they went back. Especially if they went back.</span></div>
+    <div class="metric"><b>Income or benefits secured</b><span>Job, support order, benefits, tax relief</span></div>
+    <div class="metric"><b>Survivor-rated safety</b><span>Self-reported, every 90 days</span></div>
+  </div>
+</section>
+
+<footer>
+  <p>Resource details were checked against public sources in September 2026 and should be confirmed directly before publishing. This is a planning document, not legal advice; run the legal points past Virginia counsel. "Harbor Line" is a working name; check trademark and domain availability before using it publicly.</p>
+</footer>
+</div>
