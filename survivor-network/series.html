@@ -1,0 +1,247 @@
+<title>What He Told Everyone</title>
+<meta name="description" content="Production plan for a short-form survivor-led video series on coercive control, narrative control, and the pull back into abusive relationships.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+:root{
+  --ground:#F4F3F6;--paper:#FFFFFF;--ink:#1D1A24;--ink-soft:#585266;--line:#DAD6E0;
+  --plum:#5E4466;--plum-tint:#EEE7F0;--harbor:#1F5F5B;--harbor-tint:#E1ECEA;--warn:#8A4B0F;--warn-tint:#FBEFE0;
+  --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --sans:"IBM Plex Sans",-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){color-scheme:dark;
+    --ground:#14111A;--paper:#1D1926;--ink:#ECE8F1;--ink-soft:#ABA3B8;--line:#332D3F;
+    --plum:#C9A9D4;--plum-tint:#2B2235;--harbor:#6FB8B1;--harbor-tint:#1A3432;--warn:#E8A865;--warn-tint:#33261A}
+}
+:root[data-theme="dark"]{color-scheme:dark;
+  --ground:#14111A;--paper:#1D1926;--ink:#ECE8F1;--ink-soft:#ABA3B8;--line:#332D3F;
+  --plum:#C9A9D4;--plum-tint:#2B2235;--harbor:#6FB8B1;--harbor-tint:#1A3432;--warn:#E8A865;--warn-tint:#33261A}
+*{box-sizing:border-box}
+body{background:var(--ground);color:var(--ink);font:16px/1.6 var(--sans);padding-inline:16px;padding-block:0 64px}
+.wrap{max-width:880px;margin:0 auto}
+a{color:var(--plum)}
+a:focus-visible{outline:2px solid var(--plum);outline-offset:2px}
+h1,h2,h3{font-family:var(--serif);text-wrap:balance;line-height:1.2;margin:0}
+h1{font-size:clamp(2rem,5vw,3rem);font-weight:700;letter-spacing:-.01em}
+h2{font-size:1.65rem;font-weight:600;margin-bottom:.6rem}
+h3{font-size:1.12rem;font-weight:600;margin-bottom:.35rem}
+p{margin:0 0 .9rem;max-width:68ch}
+ul,ol{margin:0 0 .9rem;padding-left:1.2rem}
+li{margin-bottom:.35rem;max-width:66ch}
+.eyebrow{font:500 .75rem/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--plum);margin-bottom:.7rem}
+header{padding-block:52px 28px;border-bottom:1px solid var(--line)}
+header .lede{font-size:1.15rem;color:var(--ink-soft);margin-top:1rem}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:1.2rem}
+.chip{font:500 .75rem/1 var(--mono);padding:6px 9px;border:1px solid var(--line);border-radius:4px;color:var(--ink-soft);background:var(--paper)}
+section{padding-block:40px 8px}
+.call{background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--plum);padding:22px 24px}
+.call p:last-child{margin-bottom:0}
+.flag{background:var(--warn-tint);border-left:3px solid var(--warn);padding:14px 18px;margin:14px 0}
+.flag p:last-child,.flag ul:last-child{margin-bottom:0}
+.flag b{color:var(--warn)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-top:12px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin-top:12px}
+.panel{background:var(--paper);border:1px solid var(--line);padding:18px 20px}
+.panel p:last-child,.panel ul:last-child{margin-bottom:0}
+.track{background:var(--paper);border:1px solid var(--line);padding:18px 20px;border-top:4px solid var(--plum)}
+.track .len{font:500 .72rem/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px}
+.track.b{border-top-color:var(--harbor)}
+.track.c{border-top-color:var(--warn)}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);background:var(--paper);margin-top:12px}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:.92rem}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:500 .72rem/1.2 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);background:var(--plum-tint)}
+tr:last-child td{border-bottom:0}
+td.n{font-family:var(--mono);color:var(--ink-soft);white-space:nowrap}
+.tag{display:inline-block;font:500 .68rem/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;padding:4px 7px;border-radius:3px;background:var(--plum-tint);color:var(--plum)}
+.tag.b{background:var(--harbor-tint);color:var(--harbor)}
+.tag.c{background:var(--warn-tint);color:var(--warn)}
+.script{background:var(--paper);border:1px solid var(--line);padding:20px 22px;font-family:var(--serif);font-size:1.05rem;line-height:1.7;max-width:68ch}
+.script .cue{font:500 .7rem/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);display:block;margin:14px 0 4px}
+.script .cue:first-child{margin-top:0}
+.script p{margin:0 0 .5rem;max-width:none}
+.checks{list-style:none;padding:0}
+.checks li{padding-left:1.7rem;position:relative}
+.checks li::before{content:"";position:absolute;left:0;top:.35rem;width:14px;height:14px;border:1.5px solid var(--plum);border-radius:3px}
+footer{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);color:var(--ink-soft);font-size:.85rem}
+footer p{max-width:none}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">Series production plan · Harbor Line media</div>
+  <h1>What He Told Everyone</h1>
+  <p class="lede">A survivor-led short video series about coercive control, the story the abuser tells, and the pull that drags people back. Built for Erin to lead, on her terms. Three to twelve minutes an episode, made to be shared by the people who need it and the people who don't yet know they need it.</p>
+  <div class="meta">
+    <span class="chip">Working title (alternates: "No Bruises" · "The Calm One")</span>
+    <span class="chip">Prepared Sept 2026</span>
+    <span class="chip">Host and creative lead: Erin</span>
+  </div>
+</header>
+
+<section id="rule">
+  <div class="eyebrow">First principle</div>
+  <h2>This is Erin's story and Erin's show</h2>
+  <div class="call">
+    <p>Everything below is a starting structure, not a script for her life. She decides what gets told, how much, when, and whether her face and name are on it. Nothing gets recorded, posted, or pitched without her yes, and her yes can be withdrawn at any point, including after something is live. Put that in writing between the two of you before the first shoot. Survivors who go public and later feel they lost control of their story get hurt twice.</p>
+    <p>The most useful thing you bring is what you're good at: structure, partners, production, money, and staying out of the frame.</p>
+  </div>
+</section>
+
+<section id="why">
+  <div class="eyebrow">Why this series</div>
+  <h2>The story he told is the thing nobody has answered</h2>
+  <p>Shelters teach safety planning. Therapists treat trauma. Nobody is systematically talking to the audience that decides whether a survivor gets believed: her friends, her family, the men in his circle, the officer at the door, the pastor, the judge. This series goes after that audience, in a format short enough to actually get watched and forwarded.</p>
+  <div class="grid3">
+    <div class="panel"><h3>For the woman still inside it</h3><p>Recognition. "That's my house." The single most common thing survivors say when they finally hear coercive control described is that they didn't know it had a name.</p></div>
+    <div class="panel"><h3>For the men around her</h3><p>Most of his friends aren't villains. They heard one side, for years, from a guy who seemed fine. Give them a way to see it without being accused.</p></div>
+    <div class="panel"><h3>For the professionals</h3><p>Police, GALs, clergy, HR. Three minutes on DARVO or on why the calm party isn't automatically the safe one changes how a call gets handled.</p></div>
+  </div>
+</section>
+
+<section id="tracks">
+  <div class="eyebrow">Format</div>
+  <h2>Three tracks, one voice</h2>
+  <div class="grid3">
+    <div class="track">
+      <div class="len">Track A · 3–5 min · Erin to camera</div>
+      <h3>The talk</h3>
+      <p>One idea per episode, delivered straight, TED-style but without the stage. Opens with a specific moment, names the pattern, ends with one thing to do. This is the shareable unit.</p>
+    </div>
+    <div class="track b">
+      <div class="len">Track B · 8–12 min · Erin + counselor</div>
+      <h3>The conversation</h3>
+      <p>Erin and a licensed trauma therapist or DV advocate work through one theme. She brings the lived experience, they bring the clinical frame. This is where the trauma-bond and "addiction" material lives, handled by someone qualified.</p>
+    </div>
+    <div class="track c">
+      <div class="len">Track C · 3–5 min · for men</div>
+      <h3>What you didn't see</h3>
+      <p>Addressed to the friend, the brother, the coworker. Sometimes Erin, sometimes a male voice (you, a counselor, a survivor's brother, a former officer). No lecturing. "Here's what was happening while he was telling you she was crazy."</p>
+    </div>
+  </div>
+</section>
+
+<section id="episodes">
+  <div class="eyebrow">Season one</div>
+  <h2>Twelve episodes</h2>
+  <p>Ordered so the first three can go out together as a launch and stand on their own. Titles are drafts. Each episode's personal content is Erin's call; the theme list is the fixed part.</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>#</th><th>Track</th><th>Working title</th><th>The one idea</th></tr></thead>
+      <tbody>
+        <tr><td class="n">1</td><td><span class="tag">A</span></td><td>No Bruises</td><td>Abuse without hitting is still abuse. What coercive control looks like day to day.</td></tr>
+        <tr><td class="n">2</td><td><span class="tag">A</span></td><td>What He Told Everyone</td><td>How isolation works: he gets to your people first, so you never get to tell it.</td></tr>
+        <tr><td class="n">3</td><td><span class="tag c">C</span></td><td>The Calm One</td><td>For men: why the calm guy at the door isn't automatically the safe one. DARVO in plain language.</td></tr>
+        <tr><td class="n">4</td><td><span class="tag b">B</span></td><td>Why I Went Back</td><td>Trauma bonding with a therapist: intermittent reinforcement, why it feels like withdrawal, why shame keeps you stuck.</td></tr>
+        <tr><td class="n">5</td><td><span class="tag">A</span></td><td>Angry Is Not Crazy</td><td>Gaslighting, and why survivors show up flat or furious by the time anyone's listening.</td></tr>
+        <tr><td class="n">6</td><td><span class="tag">A</span></td><td>The Night the Police Came</td><td>What officers see, what they miss, and what to say and document when you call.</td></tr>
+        <tr><td class="n">7</td><td><span class="tag b">B</span></td><td>The Bottle in the Room</td><td>Alcohol and drugs as accelerant: not the cause, but the thing that turns control into danger.</td></tr>
+        <tr><td class="n">8</td><td><span class="tag c">C</span></td><td>He Seemed Fine to Me</td><td>For men: the white-collar version. Money, reputation, and the image he protects. How to check on her without confronting him.</td></tr>
+        <tr><td class="n">9</td><td><span class="tag">A</span></td><td>Two Weeks After the Ruling</td><td>Separation and court orders are the most dangerous window. The Cerina Fairfax case, from the public record, and what a safety plan for that window looks like.</td></tr>
+        <tr><td class="n">10</td><td><span class="tag b">B</span></td><td>The Urge</td><td>What to do the night you want to text him. A plan made in advance, recovery-style.</td></tr>
+        <tr><td class="n">11</td><td><span class="tag">A</span></td><td>Your Kids Were Watching</td><td>What children absorb, and how to talk to them once you're out. Handled with a family therapist.</td></tr>
+        <tr><td class="n">12</td><td><span class="tag">A</span></td><td>Where to Call</td><td>The Hampton Roads map: who picks up, what they do, and the one number to start with.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="script">
+  <div class="eyebrow">Sample</div>
+  <h2>Episode 1 skeleton: "No Bruises"</h2>
+  <p>A shape, not her words. Roughly 3 minutes 30 at a natural pace. Erin rewrites every line in her own voice or throws it out.</p>
+  <div class="script">
+    <span class="cue">Cold open · 0:00–0:25 · one specific, ordinary moment</span>
+    <p>"Nobody ever hit me. I want to start there, because for a long time that's the sentence I used to tell myself it wasn't that bad."</p>
+    <span class="cue">Name it · 0:25–1:15</span>
+    <p>Coercive control, defined in one breath. Then three concrete things, delivered fast: who she was allowed to see, what happened to the money, how every argument ended with her apologizing for something she didn't do.</p>
+    <span class="cue">The turn · 1:15–2:15 · how she found out it had a name</span>
+    <p>The moment someone described it back to her. What it felt like to hear it. Why the name mattered more than sympathy.</p>
+    <span class="cue">To the viewer · 2:15–3:00</span>
+    <p>"If you've been keeping a list in your head of things that don't count because they didn't leave a mark, they count."</p>
+    <span class="cue">One action · 3:00–3:30</span>
+    <p>One number, one sentence. "You don't have to leave tonight. You just have to tell one person who isn't him." Number on screen. End.</p>
+  </div>
+</section>
+
+<section id="safety">
+  <div class="eyebrow">Before she records anything</div>
+  <h2>The safety and legal checklist</h2>
+  <p>Going public is a risk decision, not a marketing decision. Work through this with Erin and with a lawyer before the first episode. Some of it is uncomfortable. All of it protects her.</p>
+  <div class="grid2">
+    <div class="panel">
+      <h3>Legal</h3>
+      <ul class="checks">
+        <li>Never name him, show his face, or include details that identify him to strangers. Truth is a defense to defamation, but a lawsuit still costs years and money, and it's a favorite tool of exactly this kind of man.</li>
+        <li>If any custody, support, or court matter involving him is open or could reopen, get a family lawyer's read before publishing. Public statements get used in court.</li>
+        <li>If her sons' father is in any way connected to this, their privacy and their relationship with him come first. Nothing about the boys without their say, at their age.</li>
+        <li>Write a one-page agreement between Erin and the production entity: she owns her story and likeness, can pull any episode at any time, and gets paid if this ever earns money.</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>Safety and wellbeing</h3>
+      <ul class="checks">
+        <li>Threat check first. Does he know where she lives? Has he ever stalked, threatened, or owned a gun? Run the Danger Assessment with an advocate before deciding how visible to be.</li>
+        <li>Decide the visibility level: full name and face, first name only, or voice and silhouette. All three work for this format.</li>
+        <li>Erin has her own therapist through the whole production, not just a guest counselor. Telling it on camera reopens it.</li>
+        <li>Comments are moderated by someone who isn't Erin. Abusers and their defenders show up in comments. She should never have to read them.</li>
+        <li>Lock down accounts: new emails, two-factor, no location metadata in uploads, no filming at home in ways that show the house.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="flag"><p><b>Trauma-informed production standard.</b> One story per session. She can stop mid-take. Nobody asks "what's the worst thing that happened." The counselor guest is briefed that they are there to frame, not to treat on camera. The crew is small and she picks them.</p></div>
+</section>
+
+<section id="production">
+  <div class="eyebrow">Production</div>
+  <h2>Make it clean, quiet, and cheap to repeat</h2>
+  <div class="grid2">
+    <div class="panel">
+      <h3>Look and sound</h3>
+      <ul>
+        <li>One fixed camera, one lav mic, soft natural light, a neutral room. No slick studio. Calm should be the whole aesthetic, because the subject is people who never got to be calm.</li>
+        <li>Vertical cutdowns (45–60 seconds) of every episode for short-form platforms, always ending on the number.</li>
+        <li>Captions on everything. Many people will watch with the sound off because he's in the next room.</li>
+        <li>Original score from The Healing Library catalog, cleared for use. Instrumental only under speech.</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>Who does what</h3>
+      <ul>
+        <li><b>Erin:</b> host, final say on every cut.</li>
+        <li><b>You:</b> executive producer, partners, funding, staying off camera unless Track C calls for it.</li>
+        <li><b>Amplifi Digital:</b> editing, cutdowns, captions, distribution calendar.</li>
+        <li><b>Clinical partner:</b> a licensed trauma therapist or advocate from Transitions, YWCA, or The Center as recurring Track B guest and script reviewer.</li>
+        <li><b>Legal:</b> one review of each episode before release, ten minutes each once the rules are set.</li>
+      </ul>
+    </div>
+  </div>
+  <h3 style="margin-top:20px">Distribution</h3>
+  <ul>
+    <li>Own the home: a simple site with a quick-exit button, every episode, and the resource map. Harbor Line's site, or its own.</li>
+    <li>YouTube for the full episodes, Instagram and TikTok for the cutdowns, a podcast feed for Track B audio.</li>
+    <li><b>The distribution that matters most is offline.</b> QR cards in DV program lobbies, courthouse self-help centers, OB-GYN and pediatric waiting rooms, salons, churches, base family centers. Ask each partner to play Episode 1 at a staff meeting.</li>
+    <li>Pitch Track C to men's groups, fraternities, athletic departments, and the region's big employers as a 5-minute training piece.</li>
+  </ul>
+</section>
+
+<section id="launch">
+  <div class="eyebrow">Next 60 days</div>
+  <h2>How to start</h2>
+  <ol>
+    <li><b>Week 1:</b> Erin reads this and marks it up. She decides visibility level, which episodes she wants to tell, and which she doesn't. That list is the season.</li>
+    <li><b>Week 2:</b> Lawyer consult on the legal checklist. Danger Assessment with an advocate. Therapist lined up for the production run.</li>
+    <li><b>Weeks 3–4:</b> Recruit the clinical partner. Transitions or YWCA South Hampton Roads will know who's good on camera. Offer to credit the organization in every episode.</li>
+    <li><b>Weeks 5–6:</b> Record Episodes 1, 2, and 3 in one weekend. Edit. Legal review.</li>
+    <li><b>Weeks 7–8:</b> Soft launch to the partner organizations first, not the public. Ask what they'd change. Then release all three together with the resource map.</li>
+  </ol>
+  <div class="flag"><p><b>Don't measure this by views.</b> Measure it by partners who show it to staff, cards picked up in lobbies, and messages that say "I didn't know it had a name." The first survivor who calls a hotline because she saw Erin say it out loud is the whole point.</p></div>
+</section>
+
+<footer>
+  <p>Companion to the Harbor Line blueprint. Facts about the Fairfax case are drawn from April 2026 news reports of court records; verify against primary sources before including them in an episode. This is a planning document, not legal advice.</p>
+</footer>
+</div>
