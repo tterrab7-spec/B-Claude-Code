@@ -12,6 +12,7 @@
     "still:endcard": "remotion still DirtBid-Square out/endcard-thumbnail-1x1.png --frame 1790 && remotion still DirtBid-Wide out/endcard-thumbnail-16x9.png --frame 1790 && remotion still DirtBid-Vertical out/endcard-thumbnail-9x16.png --frame 1790",
     "stills": "node scripts/stills.mjs",
     "typecheck": "tsc --noEmit",
+    "audio": "node tools/audio/sfx.mjs && node tools/audio/music.mjs",
     "render:collage:wide": "remotion render Collage-Wide out/dirtbid-collage-16x9.mp4 --codec h264 --crf 18 --concurrency 4",
     "render:collage:vertical": "remotion render Collage-Vertical out/dirtbid-collage-9x16.mp4 --codec h264 --crf 18 --concurrency 4",
     "render:collage:square": "remotion render Collage-Square out/dirtbid-collage-1x1.mp4 --codec h264 --crf 18 --concurrency 4",

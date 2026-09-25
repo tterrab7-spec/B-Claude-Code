@@ -7,7 +7,7 @@ import * as D from './dsp.mjs';
 
 const OUT = path.join(D.ROOT, 'public/audio/sfx');
 fs.mkdirSync(OUT, {recursive: true});
-const {secs, makeBuffer, whiteNoise, sine, adsr, applyEnvelope, mixInto, highpass, lowpass, peakEq, sweepFilter, filter, reverb, playSample, Instrument, noteToMidi, saturate, normalizePeak, fadeIn, fadeOut, resize, writeWav, ffprobeDuration, peak, toDb, rng} = D;
+const {secs, makeBuffer, whiteNoise, sine, adsr, applyEnvelope, mixInto, highpass, lowpass, peakEq, sweepFilter, reverb, playSample, Instrument, noteToMidi, saturate, normalizePeak, fadeIn, fadeOut, resize, writeWav, ffprobeDuration, peak, toDb, rng} = D;
 
 const glock = new Instrument('glockenspiel');
 const celesta = new Instrument('celesta');
@@ -47,7 +47,6 @@ function thump(seconds, f0, f1, {sweep = 0.05, tau = 0.08, attack = 0.001} = {})
   applyEnvelope(s, e);
   return s;
 }
-function stereoOf(mono) { return D.toStereo(mono); }
 function withReverb(buf, sendDb, opts) {
   const wet = reverb(buf, opts);
   const out = makeBuffer(D.duration(wet), 2);
@@ -69,7 +68,7 @@ function pop(name, pitchMul, seed) {
   mixInto(b, body, {gain: 0.9});
   // second partial for roundness
   const p2 = sine(len, 760 * pitchMul, {f1: 1350 * pitchMul, sweep: 0.03});
-  applyEnvelope(p2, env.map((v) => v * Math.exp(-0.0) * 0.35));
+  applyEnvelope(p2, env.map((v) => v * 0.35));
   lowpass(p2, 3000 * pitchMul);
   mixInto(b, p2, {gain: 0.6});
   // tiny lip transient

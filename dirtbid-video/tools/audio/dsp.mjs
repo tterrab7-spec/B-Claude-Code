@@ -361,12 +361,12 @@ export function adsr(n, {attack = 0.005, decay = 0.05, sustain = 1, release = 0.
   const a = Math.max(1, secs(attack)), d = Math.max(1, secs(decay)), r = Math.max(1, secs(release));
   const gate = hold == null ? n - r : Math.min(n, secs(hold));
   const env = new Float32Array(n);
-  let v = 0;
+  let v = 0, atGate = sustain;
   for (let i = 0; i < n; i++) {
     if (i < a) v = i / a;
     else if (i < a + d) { const u = (i - a) / d; v = 1 + (sustain - 1) * (1 - Math.pow(1 - u, 2)); }
     else if (i < gate) v = sustain;
-    else { const u = (i - gate) / r; v = (i < gate ? sustain : env[Math.max(0, gate - 1)] ?? sustain) * Math.exp(-6.9 * u); }
+    else { if (i === gate) atGate = i > 0 ? env[i - 1] : 0; v = atGate * Math.exp(-6.9 * (i - gate) / r); }
     env[i] = v;
   }
   return env;

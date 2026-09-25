@@ -11,7 +11,6 @@ import path from 'node:path';
 import * as D from './dsp.mjs';
 
 const OUT = path.join(D.ROOT, 'public/audio/music.wav');
-const TMP = path.join(D.CACHE_DIR, 'music-premaster.wav');
 const timeline = JSON.parse(fs.readFileSync(path.join(D.ROOT, 'tools/audio/timeline.json'), 'utf8'));
 
 // ------------------------------------------------------------------ grid / tuning
@@ -41,17 +40,17 @@ const rnd = D.rng(2024);
 const inst = {};
 const I = (name) => (inst[name] ??= new D.Instrument(name));
 const BUSES = {
-  guitar:   {inst: 'acoustic_guitar_nylon', gainDb: -5.5, room: 0.16, hall: 0.10, jitter: 0.006},
-  bass:     {inst: 'acoustic_bass',         gainDb: -6.5, room: 0.00, hall: 0.00, jitter: 0.004},
+  guitar:   {inst: 'acoustic_guitar_nylon', gainDb: -6.0, room: 0.16, hall: 0.10, jitter: 0.006},
+  bass:     {inst: 'acoustic_bass',         gainDb: -5.0, room: 0.00, hall: 0.00, jitter: 0.004},
   marimba:  {inst: 'marimba',               gainDb: -8.0, room: 0.18, hall: 0.30, jitter: 0.007},
-  kalimba:  {inst: 'kalimba',               gainDb: -10.5, room: 0.15, hall: 0.30, jitter: 0.007},
-  glock:    {inst: 'glockenspiel',          gainDb: -14.5, room: 0.10, hall: 0.50, jitter: 0.006},
-  musicbox: {inst: 'music_box',             gainDb: -12.0, room: 0.12, hall: 0.45, jitter: 0.006},
-  vibes:    {inst: 'vibraphone',            gainDb: -12.5, room: 0.10, hall: 0.55, jitter: 0.008},
-  pizz:     {inst: 'pizzicato_strings',     gainDb: -10.0, room: 0.18, hall: 0.22, jitter: 0.006},
-  woodblock:{inst: 'woodblock',             gainDb: -13.5, room: 0.20, hall: 0.08, jitter: 0.003},
-  shaker:   {inst: null,                    gainDb: -17.0, room: 0.12, hall: 0.04, jitter: 0.003},
-  kick:     {inst: null,                    gainDb: -8.0,  room: 0.04, hall: 0.00, jitter: 0.002},
+  kalimba:  {inst: 'kalimba',               gainDb: -9.0, room: 0.15, hall: 0.30, jitter: 0.007},
+  glock:    {inst: 'glockenspiel',          gainDb: -11.5, room: 0.10, hall: 0.50, jitter: 0.006},
+  musicbox: {inst: 'music_box',             gainDb: -8.0, room: 0.12, hall: 0.45, jitter: 0.006},
+  vibes:    {inst: 'vibraphone',            gainDb: -11.5, room: 0.10, hall: 0.55, jitter: 0.008},
+  pizz:     {inst: 'pizzicato_strings',     gainDb: -9.0, room: 0.18, hall: 0.22, jitter: 0.006},
+  woodblock:{inst: 'woodblock',             gainDb: -12.5, room: 0.20, hall: 0.08, jitter: 0.003},
+  shaker:   {inst: null,                    gainDb: -10.5, room: 0.12, hall: 0.04, jitter: 0.003},
+  kick:     {inst: null,                    gainDb: -6.5,  room: 0.04, hall: 0.00, jitter: 0.002},
 };
 for (const b of Object.values(BUSES)) { b.buf = D.makeBuffer(TOTAL, 2); b.events = []; }
 
@@ -155,7 +154,7 @@ function shakerBar(bar, {vel = 0.45, div = 2, fillFrom = null, fillVel = 0.5} = 
   for (let b = 0; b < 4; b += 1 / div) {
     if (fillFrom != null && b >= fillFrom) break;
     const on = Math.abs(b - Math.round(b)) < 1e-6;
-    shaker(T(bar, b), on ? vel : vel * 0.78, {open: on && (b === 0 || b === 2) && div === 2 ? false : false});
+    shaker(T(bar, b), on ? vel : vel * 0.78);
   }
   if (fillFrom != null) for (let b = fillFrom; b < 4; b += 0.25) shaker(T(bar, b), fillVel * (0.8 + 0.2 * (b - fillFrom) / (4 - fillFrom)) * (Math.abs(b - Math.round(b)) < 1e-6 ? 1 : 0.82));
 }
@@ -165,7 +164,7 @@ const arrangement = []; // [bar, section, text] for the summary
 const mark = (bar, section, text) => arrangement.push({bar, section, text});
 
 // ---------------- HOOK (bars 0-1, C major): curious and light
-sectionVel = 0.85;
+sectionVel = 0.9;
 mark(0, 'hook', 'music box question motif (E5 G5 C6 .. B5 D6?), guitar pinch, soft bass C2');
 mel('musicbox', 0, [[0, 'E5', 0.5, 0.6], [0.5, 'G5', 0.5, 0.6], [1, 'C6', 1.5, 0.75], [2.5, 'B5', 0.5, 0.5], [3, 'D6', 1, 0.7]], {pan: 0.2, ring: true});
 mel('glock', 0, [[1, 'C6', 1.5, 0.32], [3, 'D6', 1, 0.38]], {ring: true});
@@ -179,7 +178,7 @@ bassNote('F2', T(1, 0), 1.9, 0.5); bassNote('G2', T(1, 2), 1.8, 0.5);
 wb(T(1, 3.5), 0.3, false);
 
 // ---------------- PROBLEM (bars 2-5, A minor): a little unsettled, sparse, held tension
-sectionVel = 0.8;
+sectionVel = 0.85;
 mark(2, 'problem', 'Am: sparse fingerpicking, bass A2 whole note, marimba E4 C4 sigh');
 pick(2, 'Am', [[0, [0], 0.55, 3], [1, [2], 0.4, 1], [1.5, [3], 0.42, 1], [2.5, [4], 0.45, 1.5], [3, [1], 0.38, 1]]);
 bassNote('A2', T(2, 0), 3.6, 0.55);
@@ -452,9 +451,9 @@ for (const [name, b] of Object.entries(BUSES)) {
 console.log(`rendered ${noteCount} sampled notes + ${BUSES.kick.events.length} kicks + ${BUSES.shaker.events.length} shaker hits in ${Date.now() - t0} ms`);
 
 // per-bus processing (EQ, colour, dynamics)
-D.highpass(BUSES.guitar.buf, 85, {passes: 2}); D.peakEq(BUSES.guitar.buf, 230, -2.5, 1.1); D.highshelf(BUSES.guitar.buf, 5500, 1.0); D.saturate(BUSES.guitar.buf, {drive: 1.35, mix: 0.5});
-D.highpass(BUSES.bass.buf, 34, {passes: 2}); D.lowpass(BUSES.bass.buf, 4200); D.peakEq(BUSES.bass.buf, 95, 1.5, 1.0); D.saturate(BUSES.bass.buf, {drive: 1.8, mix: 0.45}); D.compress(BUSES.bass.buf, {threshold: -14, ratio: 3, knee: 6, attack: 0.012, release: 0.15, detector: 'rms'});
-D.highpass(BUSES.marimba.buf, 130); D.peakEq(BUSES.marimba.buf, 420, -1.5, 1.2);
+D.highpass(BUSES.guitar.buf, 95, {passes: 2}); D.peakEq(BUSES.guitar.buf, 210, -3, 1.1); D.highshelf(BUSES.guitar.buf, 5500, 1.0); D.saturate(BUSES.guitar.buf, {drive: 1.35, mix: 0.5}); D.compress(BUSES.guitar.buf, {threshold: -13, ratio: 2.5, knee: 6, attack: 0.008, release: 0.12});
+D.highpass(BUSES.bass.buf, 34, {passes: 2}); D.lowpass(BUSES.bass.buf, 4200); D.peakEq(BUSES.bass.buf, 95, 0.5, 1.0); D.saturate(BUSES.bass.buf, {drive: 1.8, mix: 0.45}); D.compress(BUSES.bass.buf, {threshold: -14, ratio: 3, knee: 6, attack: 0.012, release: 0.15, detector: 'rms'});
+D.highpass(BUSES.marimba.buf, 130); D.peakEq(BUSES.marimba.buf, 420, -1.5, 1.2); D.compress(BUSES.marimba.buf, {threshold: -12, ratio: 2, knee: 6, attack: 0.005, release: 0.1});
 D.highpass(BUSES.kalimba.buf, 200);
 D.highpass(BUSES.glock.buf, 700); D.peakEq(BUSES.glock.buf, 5200, -2.5, 1.4); D.highshelf(BUSES.glock.buf, 10000, -2);
 D.highpass(BUSES.musicbox.buf, 400); D.peakEq(BUSES.musicbox.buf, 4000, -2, 1.4);
@@ -478,9 +477,9 @@ if (process.env.DEBUG) {
 }
 const room = D.reverb(roomSend, {roomSize: 0.62, damping: 0.55, preDelay: 0.008, size: 0.7, width: 1, lowCut: 200, highCut: 7000, tail: 0});
 const hall = D.reverb(hallSend, {roomSize: 0.88, damping: 0.38, preDelay: 0.028, size: 1.35, width: 1, lowCut: 250, highCut: 8500, tail: 0});
-D.mixInto(master, room, {gain: 0.9});
-D.mixInto(master, hall, {gain: 0.85});
-if (process.env.DEBUG) console.log(`reverb levels: dry ${D.toDb(D.rms(master)).toFixed(1)} dB, room ${D.toDb(D.rms(room) * 0.9).toFixed(1)} dB, hall ${D.toDb(D.rms(hall) * 0.85).toFixed(1)} dB`);
+D.mixInto(master, room, {gain: 1.7});
+D.mixInto(master, hall, {gain: 2.1});
+if (process.env.DEBUG) console.log(`reverb levels: dry ${D.toDb(D.rms(master)).toFixed(1)} dB, room ${D.toDb(D.rms(room) * 1.7).toFixed(1)} dB, hall ${D.toDb(D.rms(hall) * 2.1).toFixed(1)} dB`);
 
 // the drop-out: hard gate (including reverb) at the scene transition, reopened just before the glock pickup
 D.applyCurve(master, (t) => {
@@ -492,7 +491,7 @@ D.applyCurve(master, (t) => {
 });
 // master chain: high-pass 40 Hz, gentle bus compression, fade to silence by 60.5
 D.highpass(master, 40, {passes: 2});
-const busComp = D.compress(master, {threshold: -16, ratio: 1.8, knee: 8, attack: 0.03, release: 0.25, detector: 'rms', rmsWindow: 0.02});
+const busComp = D.compress(master, {threshold: -14, ratio: 1.6, knee: 8, attack: 0.03, release: 0.25, detector: 'rms', rmsWindow: 0.02});
 D.applyCurve(master, (t) => (t < 59.3 ? 1 : t < 60.4 ? Math.pow(1 - (t - 59.3) / 1.1, 1.6) : 0));
 
 // loudness calibration: measure with ffmpeg loudnorm, adjust gain, limit, repeat until within 0.3 LU of target
