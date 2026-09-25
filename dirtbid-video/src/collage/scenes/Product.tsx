@@ -7,7 +7,7 @@ import {HandText} from '../ui/HandText';
 import {Stamp} from '../ui/Stamp';
 import {Strike} from '../ui/Marker';
 import {Sparkle, Burst} from '../ui/Doodles';
-import {MapSheet, Receipt, Chip, Clock, AddressBar, Accuracy} from '../ui/Product';
+import {MapSheet, Receipt, Chip, Clock, AddressBar, SafeSide} from '../ui/Product';
 import {useStage} from '../stage';
 import {C, F} from '../theme';
 import {cue, scene, f} from '../timeline';
@@ -32,7 +32,7 @@ export const Product: React.FC = () => {
   const typeAt = L08 - 4;
   const pinAt = L08 + 36;
   // L09 word hits: "pulls the official USDA soil survey" 0.4–2.6 | "adds local and regional cost data" 2.7–4.6 |
-  // "and prices the site work line by line" 4.7–7.0 | "within five percent" 7.1–8.9
+  // "and prices the site work line by line" 4.7–7.0 | "On the safe side, so your offer is too." 7.2–9.3
   const cellsAt = [0, 1, 2, 3, 4, 5].map((i) => L09 + 18 + i * 8);
   const stampAt = L09 + 74;
   const chipAt = [L09 + 100, L09 + 200];
@@ -92,9 +92,9 @@ export const Product: React.FC = () => {
             <Chip text={b} bg={i === 0 ? C.blue : C.green} size={S.aspect === 'wide' ? 36 : 32} />
           </Item>
         ))}
-        {/* ±5% badge slams onto the total */}
+        {/* safe-side badge slams next to the total */}
         <Item x={pctP.x} y={pctP.y} scale={slap(frame, pctAt).scale * pctP.s} opacity={slap(frame, pctAt).opacity} rotate={12 + wobble(frame, 63, 2)} z={9} sticker shadow={1}>
-          <Accuracy size={150} />
+          <SafeSide size={170} />
         </Item>
         {frame >= pctAt + 4 && frame < pctAt + 30 && <Item x={pctP.x} y={pctP.y} z={9}><Burst at={pctAt + 4} r={110} n={12} color={C.green} /></Item>}
 

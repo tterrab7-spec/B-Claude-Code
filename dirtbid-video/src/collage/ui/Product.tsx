@@ -142,14 +142,15 @@ export const AddressBar: React.FC<{typeAt: number; w?: number}> = ({typeAt, w = 
   );
 };
 
-/** ±5% accuracy badge (circular stamp). */
-export const Accuracy: React.FC<{size?: number}> = ({size = 150}) => (
+/** "Priced on the safe side" badge: a round green sticker with a shield-like inner ring. */
+export const SafeSide: React.FC<{size?: number}> = ({size = 170}) => (
   <div style={{position: 'relative', width: size, height: size}}>
-    <svg width={size} height={size} viewBox="0 0 150 150" style={{display: 'block', overflow: 'visible'}}>
-      <REllipse cx={75} cy={75} w={140} h={140} seed={195} opts={{fill: C.green, fillStyle: 'solid', stroke: C.ink, strokeWidth: 3.5, roughness: 1.3}} />
-      <REllipse cx={75} cy={75} w={118} h={118} seed={196} opts={{fill: 'none', stroke: C.white, strokeWidth: 2.5, roughness: 1.2}} />
-      <text x={75} y={82} textAnchor="middle" fontFamily={F.round} fontWeight={700} fontSize={46} fill={C.white}>{copy.product.accuracy}</text>
-      <text x={75} y={110} textAnchor="middle" fontFamily={F.print} fontSize={19} fill={C.white} letterSpacing={2}>{copy.product.accuracySub.toUpperCase()}</text>
+    <svg width={size} height={size} viewBox="0 0 170 170" style={{display: 'block', overflow: 'visible'}}>
+      <REllipse cx={85} cy={85} w={160} h={160} seed={195} opts={{fill: C.green, fillStyle: 'solid', stroke: C.ink, strokeWidth: 3.5, roughness: 1.3}} />
+      <REllipse cx={85} cy={85} w={136} h={136} seed={196} opts={{fill: 'none', stroke: C.white, strokeWidth: 2.5, roughness: 1.2}} />
+      <text x={85} y={70} textAnchor="middle" fontFamily={F.print} fontSize={20} fill={C.white} letterSpacing={1.5}>{copy.product.safeSide}</text>
+      <text x={85} y={104} textAnchor="middle" fontFamily={F.round} fontWeight={700} fontSize={31} fill={C.white} letterSpacing={0.5}>{copy.product.safeSideBig}</text>
+      <path d="M55 122 L78 140 L118 118" fill="none" stroke={C.white} strokeWidth={5} strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   </div>
 );

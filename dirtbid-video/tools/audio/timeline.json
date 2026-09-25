@@ -1,5 +1,5 @@
 {
-  "total": 60.003,
+  "total": 60,
   "scenes": [
     {
       "id": "hook",
@@ -24,17 +24,17 @@
     {
       "id": "product",
       "start": 27.461,
-      "end": 42.451
+      "end": 42.688
     },
     {
       "id": "partners",
-      "start": 42.451,
-      "end": 51.396
+      "start": 42.688,
+      "end": 51.433
     },
     {
       "id": "cta",
-      "start": 51.396,
-      "end": 60.003
+      "start": 51.433,
+      "end": 60
     }
   ],
   "cues": [
@@ -89,31 +89,31 @@
     {
       "id": "L09",
       "start": 29.572,
-      "end": 38.847,
-      "text": "DirtBid pulls the official U S D A soil survey, adds local and regional cost data, and prices the site work line by line, within five percent."
+      "end": 39.384,
+      "text": "DirtBid pulls the official U S D A soil survey and local cost data, then prices the site work line by line. On the safe side, so your offer is too."
     },
     {
       "id": "L10",
-      "start": 39.247,
-      "end": 41.951,
+      "start": 39.634,
+      "end": 42.338,
       "text": "Three weeks of due diligence, in under thirty minutes."
     },
     {
       "id": "L11",
-      "start": 43.151,
-      "end": 50.596,
+      "start": 43.388,
+      "end": 50.833,
       "text": "Then it hands you a vetted team for every step: survey, civil, geo-tech, title, financing, and the crew that moves the dirt."
     },
     {
       "id": "L12",
-      "start": 52.096,
-      "end": 55.317,
+      "start": 52.133,
+      "end": 55.354,
       "text": "Screen your first parcel free, at dirt bid A I dot com."
     },
     {
       "id": "L13",
-      "start": 55.717,
-      "end": 59.053,
+      "start": 55.754,
+      "end": 59.09,
       "text": "No credit card. Just the number, before you make the offer."
     }
   ]
