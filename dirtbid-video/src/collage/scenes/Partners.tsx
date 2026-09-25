@@ -16,7 +16,7 @@ import {slap, pop, wobble, prog} from '../motion';
 import {copy} from '../content';
 
 /** Word timing inside L11 (seconds after the line starts), estimated from the read. */
-const STAGE_T = [2.85, 3.35, 3.9, 4.45, 4.95, 6.4];
+export const STAGE_T = [2.6, 3.05, 3.55, 4.15, 4.7, 6.0];
 
 /**
  * SCENE 6 — THE PARTNER NETWORK. A road draws across the page; a vetted partner
@@ -31,8 +31,8 @@ export const Partners: React.FC = () => {
   const titleAt = L11 + 6;
   const roadAt = L11 + 24;
   const stageAt = STAGE_T.map((t) => L11 + f(t));
-  const parcelAt = L11 + f(5.9);
-  const housesAt = L11 + f(6.7);
+  const parcelAt = L11 + f(5.5);
+  const housesAt = L11 + f(6.2);
 
   // stop coordinates per aspect
   const stops: [number, number][] = S.aspect === 'wide'

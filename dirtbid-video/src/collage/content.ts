@@ -1,11 +1,12 @@
 /** On-screen copy for the collage cut. The narration lives in tools/vo/script.json. */
 export const copy = {
   hook: {name: 'Sam', acres: '40 acres', sign: 'FOR SALE'},
-  problem: {docs: ['survey', 'appraisal', 'offer letter'], question: 'what does the dirt cost?'},
-  stakes: {risks: ['marine clay', 'shallow rock', 'high water table'], proforma: 'PRO FORMA', tag: '$250,000', tagSub: 'change order', profit: 'profit'},
+  problem: {missing: ['survey', 'soil report'], address: '1240 Mill Creek Rd', addressSub: 'the only thing Sam has', asking: '$1.2M', askingSub: 'asking', question: 'what will the site work cost?'},
+  stakes: {risks: ['marine clay', 'shallow rock', 'high water table'], sold: 'SOLD', soldSub: 'to someone else', proforma: 'PRO FORMA', tag: '$250,000', tagSub: 'change order', profit: 'profit'},
   turn: {tagline: 'Price the dirt before you price the deal.'},
   product: {
-    pin: 'drop a pin',
+    address: '1240 Mill Creek Rd',
+    addressPlaceholder: 'enter an address',
     stamp: 'USDA-NRCS soil survey',
     lines: [
       ['31 23 00', 'Earthwork', '$412,000'],
@@ -15,7 +16,9 @@ export const copy = {
       ['32 11 00', 'Roads + paving', '$388,000'],
     ],
     total: ['site work estimate', '$2,322,902'],
-    badges: ['CSI-organized', 'regionally priced'],
+    badges: ['local + regional data', 'CSI-organized'],
+    accuracy: '±5%',
+    accuracySub: 'accuracy',
     before: '3 weeks',
     after: '30 min',
   },
@@ -34,7 +37,7 @@ export const copy = {
   cta: {
     headline: 'Screen your first parcel free.',
     domain: 'dirtbidai.com',
-    sub: 'No credit card. Just answers.',
+    sub: 'No credit card. Just the number.',
     states: 'Virginia · Maryland · North Carolina · Texas',
     free: 'FREE',
   },

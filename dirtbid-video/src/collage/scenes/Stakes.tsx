@@ -8,6 +8,7 @@ import {RiskSticker} from '../ui/Risks';
 import {ProForma, PriceTag} from '../ui/ProForma';
 import {HandText} from '../ui/HandText';
 import {Underline} from '../ui/Marker';
+import {Stamp} from '../ui/Stamp';
 import {QuestionMark} from './Problem';
 import {useStage} from '../stage';
 import {C} from '../theme';
@@ -30,17 +31,19 @@ export const Stakes: React.FC = () => {
 
   const riskAt = [L05 + 4, L05 + 32, L05 + 62];
   const fearAt = L05 + 70;
-  const pfAt = L06 + 2;
-  const tagAt = L06 + 32;
-  const walkAt = L06 + 76;
-  const hitAt = L06 + 92;
+  // L06: "Guess high, she loses the deal." 0–1.9 s | "Guess low, and a quarter million walks out of the pro forma." 2.0–4.9 s
+  const soldAt = L06 + 22;
+  const pfAt = L06 + 62;
+  const tagAt = L06 + 84;
+  const walkAt = L06 + 112;
+  const hitAt = L06 + 128;
 
   const riskPos = [
     {x: -95, y: -100, r: -8}, {x: 100, y: -50, r: 6}, {x: -5, y: 115, r: -4},
   ];
   const pf = S.at({wide: {x: S.cx + 60, y: S.cy + 210, s: 0.9}, vertical: {x: S.cx, y: S.cy - 50, s: 0.98}, square: {x: S.cx + 90, y: S.cy + 210, s: 0.75}});
-  const caption = S.at({wide: {x: parcel.x - 20, y: parcel.y + 330}, vertical: {x: S.cx, y: parcel.y + 340}, square: {x: S.cx + 150, y: parcel.y + 250}});
-  const capSize = S.aspect === 'wide' ? 78 : S.aspect === 'vertical' ? 66 : 56;
+  const caption = S.at({wide: {x: parcel.x + 40, y: parcel.y + 385}, vertical: {x: S.cx, y: parcel.y + 350}, square: {x: S.cx + 150, y: parcel.y + 260}});
+  const capSize = S.aspect === 'wide' ? 74 : S.aspect === 'vertical' ? 62 : 54;
 
   const pfIn = prog(frame, pfAt, 18);
   const pfY = interpolate(pfIn, [0, 1], [S.H * 0.6, 0]);
@@ -50,7 +53,7 @@ export const Stakes: React.FC = () => {
   const walkX = walkFrame > 0 ? Math.floor(walkFrame / 4) * 46 : 0;
   const walkHop = walkFrame > 0 ? (Math.floor(walkFrame / 4) % 2 === 0 ? -10 : 0) : 0;
   const walkRot = walkFrame > 0 ? (Math.floor(walkFrame / 4) % 2 === 0 ? 4 : -4) : 0;
-  const capOpacity = 1 - prog(frame, pfAt, 8);
+  const capOpacity = 1 - prog(frame, soldAt, 8);
   const face = frame >= fearAt ? 'sam-fear' : 'sam-concerned';
 
   return (
@@ -78,11 +81,16 @@ export const Stakes: React.FC = () => {
           }
         />
 
+        {/* "guess high": someone else buys the land */}
+        <Item x={parcel.x + 20 * parcel.s} y={parcel.y - 40 * parcel.s} scale={parcel.s * 1.1} rotate={0} z={9}>
+          <Stamp text={copy.stakes.sold} sub={copy.stakes.soldSub} at={soldAt} color={C.red} size={54} rotate={-14} />
+        </Item>
+
         {/* leftover question caption fades as the pro forma arrives */}
         <Item x={caption.x} y={caption.y} scale={caption.s} rotate={-2} z={4} opacity={capOpacity}>
           <div style={{position: 'relative', whiteSpace: 'nowrap'}}>
-            <HandText size={capSize} mode="none" accent={['dirt', 'cost?']}>{copy.problem.question}</HandText>
-            <Underline w={capSize * 8.2} at={0} color={C.clay} dur={1} />
+            <HandText size={capSize} mode="none" accent={['site', 'work']}>{copy.problem.question}</HandText>
+            <Underline w={capSize * 9.6} at={0} color={C.clay} dur={1} />
           </div>
         </Item>
 

@@ -120,6 +120,40 @@ export const Receipt: React.FC<{w?: number; unrollAt: number; linesAt: number[];
   );
 };
 
+/** Address search bar that types itself, then shows a search button. */
+export const AddressBar: React.FC<{typeAt: number; w?: number}> = ({typeAt, w = 620}) => {
+  const frame = useCurrentFrame();
+  const text = copy.product.address;
+  const n = Math.max(0, Math.min(text.length, Math.floor((frame - typeAt) / 2)));
+  const done = n >= text.length;
+  const caret = !done && Math.floor(frame / 8) % 2 === 0;
+  return (
+    <div style={{position: 'relative', width: w, height: 84}}>
+      <svg width={w} height={84} viewBox={`0 0 ${w} 84`} style={{display: 'block', overflow: 'visible'}}>
+        <RRect x={4} y={4} w={w - 8} h={76} seed={190} opts={{fill: C.white, fillStyle: 'solid', stroke: C.ink, strokeWidth: 3.5, roughness: 1.2}} />
+        <RRect x={w - 96} y={12} w={82} h={60} seed={191} opts={{fill: done ? C.clay : '#D9CFBF', fillStyle: 'solid', stroke: C.ink, strokeWidth: 3, roughness: 1.1}} />
+        <circle cx={w - 60} cy={38} r={11} fill="none" stroke={C.white} strokeWidth={4} />
+        <line x1={w - 52} y1={46} x2={w - 42} y2={56} stroke={C.white} strokeWidth={4} strokeLinecap="round" />
+        <RPath d="M40 60 C 40 60, 24 40, 24 30 A 16 16 0 0 1 56 30 C 56 40, 40 60, 40 60 Z" seed={192} opts={{fill: C.clay, fillStyle: 'solid', stroke: C.ink, strokeWidth: 2.5, roughness: 1}} />
+        <circle cx={40} cy={30} r={5} fill={C.white} />
+        <text x={78} y={54} fontFamily={F.print} fontSize={36} fill={n === 0 ? '#B8AE9F' : C.ink}>{n === 0 ? copy.product.addressPlaceholder : text.slice(0, n)}{caret ? '|' : ''}</text>
+      </svg>
+    </div>
+  );
+};
+
+/** ±5% accuracy badge (circular stamp). */
+export const Accuracy: React.FC<{size?: number}> = ({size = 150}) => (
+  <div style={{position: 'relative', width: size, height: size}}>
+    <svg width={size} height={size} viewBox="0 0 150 150" style={{display: 'block', overflow: 'visible'}}>
+      <REllipse cx={75} cy={75} w={140} h={140} seed={195} opts={{fill: C.green, fillStyle: 'solid', stroke: C.ink, strokeWidth: 3.5, roughness: 1.3}} />
+      <REllipse cx={75} cy={75} w={118} h={118} seed={196} opts={{fill: 'none', stroke: C.white, strokeWidth: 2.5, roughness: 1.2}} />
+      <text x={75} y={82} textAnchor="middle" fontFamily={F.round} fontWeight={700} fontSize={46} fill={C.white}>{copy.product.accuracy}</text>
+      <text x={75} y={110} textAnchor="middle" fontFamily={F.print} fontSize={19} fill={C.white} letterSpacing={2}>{copy.product.accuracySub.toUpperCase()}</text>
+    </svg>
+  </div>
+);
+
 /** Sticker chip with hand-printed text. */
 export const Chip: React.FC<{text: string; color?: string; bg?: string; size?: number}> = ({text, color = C.white, bg = C.green, size = 34}) => (
   <div style={{fontFamily: F.print, fontSize: size, color, background: bg, padding: `${size * 0.15}px ${size * 0.6}px`, borderRadius: size * 0.35, border: `3px solid ${C.ink}`, whiteSpace: 'nowrap', lineHeight: 1.15}}>{text}</div>

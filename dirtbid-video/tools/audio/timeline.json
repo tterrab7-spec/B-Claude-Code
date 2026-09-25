@@ -1,40 +1,40 @@
 {
-  "total": 58.825,
+  "total": 60.003,
   "scenes": [
     {
       "id": "hook",
       "start": 0,
-      "end": 4.357
+      "end": 4.24
     },
     {
       "id": "problem",
-      "start": 4.357,
-      "end": 12.61
+      "start": 4.24,
+      "end": 14.018
     },
     {
       "id": "stakes",
-      "start": 12.61,
-      "end": 21.492
+      "start": 14.018,
+      "end": 23.847
     },
     {
       "id": "turn",
-      "start": 21.492,
-      "end": 25.331
+      "start": 23.847,
+      "end": 27.461
     },
     {
       "id": "product",
-      "start": 25.331,
-      "end": 40.247
+      "start": 27.461,
+      "end": 42.451
     },
     {
       "id": "partners",
-      "start": 40.247,
-      "end": 50.024
+      "start": 42.451,
+      "end": 51.396
     },
     {
       "id": "cta",
-      "start": 50.024,
-      "end": 58.825
+      "start": 51.396,
+      "end": 60.003
     }
   ],
   "cues": [
@@ -47,74 +47,74 @@
     {
       "id": "L02",
       "start": 1.822,
-      "end": 3.757,
-      "text": "Sam is about to buy forty acres."
+      "end": 3.74,
+      "text": "Sam found forty acres she might buy."
     },
     {
       "id": "L03",
-      "start": 5.057,
-      "end": 8.118,
-      "text": "Sam has the survey. The appraisal. The offer letter."
+      "start": 4.94,
+      "end": 9.1,
+      "text": "No survey. No soil report. Just an address and an asking price."
     },
     {
       "id": "L04",
-      "start": 8.518,
-      "end": 11.91,
-      "text": "But not the one number that decides the deal: what the dirt costs."
+      "start": 9.45,
+      "end": 13.418,
+      "text": "Before she makes an offer, she needs one number: what the site work will cost."
     },
     {
       "id": "L05",
-      "start": 13.31,
-      "end": 16.327,
+      "start": 14.718,
+      "end": 17.701,
       "text": "Marine clay. Shallow rock. A high water table."
     },
     {
       "id": "L06",
-      "start": 16.777,
-      "end": 20.592,
-      "text": "One surprise, and a quarter million dollars walks out of the pro forma."
+      "start": 18.101,
+      "end": 23.047,
+      "text": "Guess high, she loses the deal. Guess low, and a quarter million walks out of the pro forma."
     },
     {
       "id": "L07",
-      "start": 22.492,
-      "end": 24.031,
+      "start": 24.847,
+      "end": 26.361,
       "text": "That's why we built DirtBid."
     },
     {
       "id": "L08",
-      "start": 26.031,
-      "end": 27.495,
-      "text": "Drop a pin on any parcel."
+      "start": 28.161,
+      "end": 29.222,
+      "text": "Type in the address."
     },
     {
       "id": "L09",
-      "start": 27.895,
-      "end": 36.471,
-      "text": "DirtBid pulls the official U S D A soil survey, and prices the site work line by line. C S I organized. Regionally priced."
+      "start": 29.572,
+      "end": 38.847,
+      "text": "DirtBid pulls the official U S D A soil survey, adds local and regional cost data, and prices the site work line by line, within five percent."
     },
     {
       "id": "L10",
-      "start": 36.921,
-      "end": 39.647,
+      "start": 39.247,
+      "end": 41.951,
       "text": "Three weeks of due diligence, in under thirty minutes."
     },
     {
       "id": "L11",
-      "start": 40.947,
-      "end": 49.224,
-      "text": "Then it hands you a vetted team for every step. Survey, civil, geo-tech, title, financing, all the way to the crew that moves the dirt."
+      "start": 43.151,
+      "end": 50.596,
+      "text": "Then it hands you a vetted team for every step: survey, civil, geo-tech, title, financing, and the crew that moves the dirt."
     },
     {
       "id": "L12",
-      "start": 50.724,
-      "end": 53.945,
+      "start": 52.096,
+      "end": 55.317,
       "text": "Screen your first parcel free, at dirt bid A I dot com."
     },
     {
       "id": "L13",
-      "start": 54.345,
-      "end": 57.225,
-      "text": "No credit card. Just answers, before you sign."
+      "start": 55.717,
+      "end": 59.053,
+      "text": "No credit card. Just the number, before you make the offer."
     }
   ]
 }

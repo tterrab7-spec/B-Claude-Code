@@ -9,72 +9,72 @@
   {
     "id": "L02",
     "scene": "hook",
-    "text": "Sam is about to buy forty acres.",
+    "text": "Sam found forty acres she might buy.",
     "file": "audio/vo/L02.wav",
-    "seconds": 1.935
+    "seconds": 1.918
   },
   {
     "id": "L03",
     "scene": "problem",
-    "text": "Sam has the survey. The appraisal. The offer letter.",
+    "text": "No survey. No soil report. Just an address and an asking price.",
     "file": "audio/vo/L03.wav",
-    "seconds": 3.061
+    "seconds": 4.16
   },
   {
     "id": "L04",
     "scene": "problem",
-    "text": "But not the one number that decides the deal: what the dirt costs.",
+    "text": "Before she makes an offer, she needs one number: what the site work will cost.",
     "file": "audio/vo/L04.wav",
-    "seconds": 3.392
+    "seconds": 3.968
   },
   {
     "id": "L05",
     "scene": "stakes",
     "text": "Marine clay. Shallow rock. A high water table.",
     "file": "audio/vo/L05.wav",
-    "seconds": 3.017
+    "seconds": 2.983
   },
   {
     "id": "L06",
     "scene": "stakes",
-    "text": "One surprise, and a quarter million dollars walks out of the pro forma.",
+    "text": "Guess high, she loses the deal. Guess low, and a quarter million walks out of the pro forma.",
     "file": "audio/vo/L06.wav",
-    "seconds": 3.815
+    "seconds": 4.946
   },
   {
     "id": "L07",
     "scene": "turn",
     "text": "That's why we built DirtBid.",
     "file": "audio/vo/L07.wav",
-    "seconds": 1.539
+    "seconds": 1.514
   },
   {
     "id": "L08",
     "scene": "product",
-    "text": "Drop a pin on any parcel.",
+    "text": "Type in the address.",
     "file": "audio/vo/L08.wav",
-    "seconds": 1.464
+    "seconds": 1.061
   },
   {
     "id": "L09",
     "scene": "product",
-    "text": "DirtBid pulls the official U S D A soil survey, and prices the site work line by line. C S I organized. Regionally priced.",
+    "text": "DirtBid pulls the official U S D A soil survey, adds local and regional cost data, and prices the site work line by line, within five percent.",
     "file": "audio/vo/L09.wav",
-    "seconds": 8.576
+    "seconds": 9.275
   },
   {
     "id": "L10",
     "scene": "product",
     "text": "Three weeks of due diligence, in under thirty minutes.",
     "file": "audio/vo/L10.wav",
-    "seconds": 2.726
+    "seconds": 2.704
   },
   {
     "id": "L11",
     "scene": "partners",
-    "text": "Then it hands you a vetted team for every step. Survey, civil, geo-tech, title, financing, all the way to the crew that moves the dirt.",
+    "text": "Then it hands you a vetted team for every step: survey, civil, geo-tech, title, financing, and the crew that moves the dirt.",
     "file": "audio/vo/L11.wav",
-    "seconds": 8.277
+    "seconds": 7.445
   },
   {
     "id": "L12",
@@ -86,8 +86,8 @@
   {
     "id": "L13",
     "scene": "cta",
-    "text": "No credit card. Just answers, before you sign.",
+    "text": "No credit card. Just the number, before you make the offer.",
     "file": "audio/vo/L13.wav",
-    "seconds": 2.88
+    "seconds": 3.336
   }
 ]
