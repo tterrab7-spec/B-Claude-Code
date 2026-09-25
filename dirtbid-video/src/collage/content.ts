@@ -1,0 +1,42 @@
+/** On-screen copy for the collage cut. The narration lives in tools/vo/script.json. */
+export const copy = {
+  hook: {name: 'Sam', acres: '40 acres', sign: 'FOR SALE'},
+  problem: {docs: ['survey', 'appraisal', 'offer letter'], question: 'what does the dirt cost?'},
+  stakes: {risks: ['marine clay', 'shallow rock', 'high water table'], proforma: 'PRO FORMA', tag: '$250,000', tagSub: 'change order', profit: 'profit'},
+  turn: {tagline: 'Price the dirt before you price the deal.'},
+  product: {
+    pin: 'drop a pin',
+    stamp: 'USDA-NRCS soil survey',
+    lines: [
+      ['31 23 00', 'Earthwork', '$412,000'],
+      ['31 25 00', 'Erosion control', '$86,500'],
+      ['33 41 00', 'Storm drainage', '$318,000'],
+      ['33 11 00', 'Water + sanitary', '$520,000'],
+      ['32 11 00', 'Roads + paving', '$388,000'],
+    ],
+    total: ['site work estimate', '$2,322,902'],
+    badges: ['CSI-organized', 'regionally priced'],
+    before: '3 weeks',
+    after: '30 min',
+  },
+  partners: {
+    title: 'a vetted team for every step',
+    stages: [
+      {key: 'survey', label: 'survey', peep: 'p-surveyor'},
+      {key: 'civil', label: 'civil', peep: 'p-civil'},
+      {key: 'geotech', label: 'geotech', peep: 'p-geotech'},
+      {key: 'title', label: 'title', peep: 'p-title'},
+      {key: 'finance', label: 'financing', peep: 'p-finance'},
+      {key: 'crew', label: 'site work', peep: 'p-crew'},
+    ],
+    verified: 'verified',
+  },
+  cta: {
+    headline: 'Screen your first parcel free.',
+    domain: 'dirtbidai.com',
+    sub: 'No credit card. Just answers.',
+    states: 'Virginia · Maryland · North Carolina · Texas',
+    free: 'FREE',
+  },
+  brand: {a: 'Dirt', b: 'Bid'},
+} as const;

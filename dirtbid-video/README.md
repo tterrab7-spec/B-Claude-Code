@@ -1,121 +1,136 @@
-# DirtBid promo video (Remotion)
+# DirtBid promo videos (Remotion)
 
-A 60-second, silent-first animated promo for DirtBid, built entirely in code
-with [Remotion](https://www.remotion.dev). No stock footage, no licensed
-assets. Three deliverable formats render from one composition with a
-per-aspect re-layout (not a letterbox).
+Two cuts of an animated promo for DirtBid, both built entirely in code with
+[Remotion](https://www.remotion.dev). No stock footage, no licensed assets.
 
-| Composition        | Size        | Use                                   | Output                    |
-| ------------------ | ----------- | ------------------------------------- | ------------------------- |
-| `DirtBid-Vertical` | 1080 × 1920 | Reels, TikTok, LinkedIn vertical      | `out/dirtbid-9x16.mp4`    |
-| `DirtBid-Square`   | 1080 × 1080 | Feed posts                            | `out/dirtbid-1x1.mp4`     |
-| `DirtBid-Wide`     | 1920 × 1080 | YouTube, website hero, email          | `out/dirtbid-16x9.mp4`    |
+| Cut | Look | Audio | Length |
+| --- | --- | --- | --- |
+| **Collage** (`src/collage/`) | Whimsical hand-drawn paper collage: stickers, washi tape, rough linework, hand lettering, a cast of hand-drawn characters | Narration (Kokoro TTS), original score, sound design | 58.8 s |
+| **Kinetic** (`src/scenes/`, v1) | Dark topographic, kinetic type, engineered motion | Silent-first, no audio track | 60.0 s |
 
-All three: 30 fps, 1800 frames, 60.0 s, H.264 MP4 (CRF 18), no audio track.
-End-card thumbnails: `out/endcard-thumbnail-1x1.png`, `-16x9.png`, `-9x16.png`.
+Each cut renders in three formats from one composition with a per-aspect
+re-layout (not a letterbox): 1920×1080, 1080×1920, 1080×1080, 30 fps, H.264
+(CRF 18).
+
+## Outputs
+
+```
+out/dirtbid-collage-16x9.mp4   website hero, YouTube, email
+out/dirtbid-collage-9x16.mp4   Reels, TikTok, LinkedIn vertical
+out/dirtbid-collage-1x1.mp4    feed posts
+out/collage-endcard-*.png      end-card thumbnails
+out/dirtbid-16x9.mp4 …         the v1 kinetic cut (silent)
+```
 
 ## Re-render
 
 ```bash
 cd dirtbid-video
-npm install                 # once
-node scripts/fetch-fonts.mjs   # once; downloads the Google Fonts files into public/fonts
-npm run render:all          # all three MP4s into out/
-npm run still:endcard       # the three end-card PNGs
-npm run dev                 # Remotion Studio for live preview and scrubbing
-npm run stills              # review JPGs at key frames for every format -> out/stills/
+npm install                     # once
+node scripts/fetch-fonts.mjs    # once: Google Fonts files into public/fonts
+npm run render:collage          # all three collage MP4s
+npm run still:collage           # end-card PNGs
+npm run render:all              # the v1 kinetic cut
+npm run dev                     # Remotion Studio: scrub every frame live
+npm run stills                  # review JPGs at key frames (COMPS=Collage-Wide to pick)
 ```
-
-Single format: `npm run render:vertical`, `render:square`, `render:wide`.
 
 A render needs Chrome. `remotion.config.ts` points at a local Chromium if one
-exists at the Playwright paths; on a normal machine delete that block and
-Remotion downloads its own headless shell.
+exists at the Playwright paths; elsewhere delete that block and Remotion
+downloads its own headless shell.
 
-## Edit the script
+## How the collage cut is put together
 
-Every word on screen is in **`src/content.ts`**. Change a string there and
-re-render; nothing in the animation code references literal copy. Partner firm
-names in `content.partners.stages` are invented placeholders. Swap them for
-real partners there.
+Everything is driven by the narration. The flow is:
 
-## Retime a scene
+1. **Script** in `tools/vo/script.json` (13 lines, voice `af_heart`, speed 1.04).
+2. **Voiceover** by `npm run vo`: runs Kokoro-82M locally through
+   `kokoro-onnx` (model weights in `tools/tts/`, fetched from the
+   kokoro-onnx GitHub release; `pip install kokoro-onnx soundfile`),
+   trims silence, normalizes, writes `public/audio/vo/*.wav` and a
+   `manifest.json` with every line's duration.
+3. **Timeline** in `src/collage/timeline.ts`: scene boundaries and cue times
+   are computed from the manifest plus the gaps in
+   `src/collage/timing-config.json`. Change a gap or re-record a line and
+   every scene, sound effect and music cue re-flows.
+4. **Scenes** in `src/collage/scenes/`, one file each, reading their cue
+   frames from the timeline (`cue('L05').start`), so animation beats sit on
+   the words.
+5. **Sound design** in `src/collage/sfx.ts` (cue sheet, times relative to
+   narration cues) and `src/collage/SoundDesign.tsx` (VO, music with
+   automatic ducking under speech, SFX placement). Remotion mixes it all at
+   render time.
+6. **Music and SFX** are synthesized offline by `npm run audio`
+   (`tools/audio/`): the score is sequenced in Node from FluidR3 General MIDI
+   instrument samples (nylon guitar, marimba, glockenspiel, pizzicato,
+   bass, woodblock) with reverb, bus compression and a limiter, and every
+   sound effect is synthesized or built from those samples. See
+   `tools/audio/README.md`.
 
-Scene lengths live in **`src/timing.ts`** as frames at 30 fps:
+### Edit the on-screen copy
 
-```ts
-export const SCENES = [
-  {id: 'hook', frames: 150},
-  {id: 'problem', frames: 330},
-  ...
-```
+`src/collage/content.ts` holds every word that appears on screen. The spoken
+script is `tools/vo/script.json`; after editing it run `npm run vo`.
 
-Change a number and every later scene shifts automatically. Keep the total at
-1800 for a 60 s master (the compositions read `TOTAL_FRAMES`). Transitions
-into each scene (`cut`, `wipe`, `iris`) and their overlap are in the same
-file under `TRANSITIONS`.
+### Retime
 
-Beats inside a scene are timed at the top of that scene's file
-(`src/scenes/*.tsx`, look for a `T = {...}` constant or `STAGE_START`).
+- Gaps between lines and the hold at the end of each scene:
+  `src/collage/timing-config.json`.
+- Beats inside a scene: the `*At` constants at the top of each scene file
+  (frames after the scene start or after a cue).
+- Word-level hits in the partner scene: `STAGE_T` in
+  `src/collage/scenes/Partners.tsx`.
 
-## Swap a scene
+### Swap or restyle
 
-`src/Video.tsx` maps each scene id to a component. Replace a component there
-or point an id at a new file in `src/scenes/`. Scenes are independent: each
-one renders its own `<AbsoluteFill>` background and uses `useCurrentFrame()`
-relative to its own start.
+- Palette and fonts: `src/collage/theme.ts` (Caveat for hand lettering,
+  Patrick Hand for labels, Fredoka for the brand and CTA).
+- Cast: `scripts/peeps.mjs` generates the characters (Open Peeps by Pablo
+  Stanley, CC0, rendered through DiceBear) into `public/peeps/`. Change a
+  head, face or clothing color there and run `npm run peeps`.
+- Collage vocabulary lives in `src/collage/ui/`: `Paper` (grain, grid,
+  handheld drift), `Item` (placement + die-cut sticker outline + shadow),
+  `Tape`, `Rough` (rough.js shapes), `HandText`, `Marker`, `Doodles`,
+  `Stamp`, `Transitions` (torn-paper wipe).
+- Motion vocabulary in `src/collage/motion.ts`: `slap`, `pop`, `slide`,
+  `wobble`, `bob` (8 fps stop-motion breathing), `writeOn`.
 
-## Colors and fonts
+### Change the voice
 
-**`src/theme.ts`**. The palette is the fallback set from the brief because the
-build machine could not reach dirtbidai.com. Edit the hex values there to
-rebrand every scene at once.
+Kokoro voices: `af_heart`, `af_bella`, `am_michael`, `bm_george`, and more
+(`python3 -c "from kokoro_onnx import Kokoro; ..."` lists them). Set
+`voice` in `tools/vo/script.json`, or per line, then `npm run vo`.
 
-Fonts are Archivo Black (headlines), Archivo (body) and IBM Plex Mono
-(figures, bearings, CSI codes). The family names come from
-`@remotion/google-fonts`; the font files themselves are the exact Google
-Fonts files that package resolves, downloaded once by
-`scripts/fetch-fonts.mjs` into `public/fonts` and self-hosted, so renders are
-deterministic and never depend on the network.
+### Replace the music with a licensed track
 
-## Safe area
+Drop the file in `public/audio/` and point the `<Audio>` in
+`src/collage/SoundDesign.tsx` at it. Ducking under narration is automatic
+(`MUSIC_BASE` / `MUSIC_UNDER_VO` set the levels).
 
-`src/layout.ts` defines a centered 920 px safe square in every format. All
-critical type and figures sit inside it; graphics and backgrounds extend
-past it. The hook returns per-aspect `graphic` and `text` boxes so scenes
-lay out side by side in 16:9, stacked in 9:16, and compact in 1:1.
+## Licenses of bundled assets
 
-## Adding a music track
-
-The audio track is intentionally empty. When you license a track:
-
-1. Put the file in `public/` (for example `public/music.mp3`).
-2. In `src/Video.tsx`, inside the root `<AbsoluteFill>`, add:
-
-```tsx
-import {Audio, staticFile} from 'remotion';
-// ...
-<Audio src={staticFile('music.mp3')} volume={0.8} />
-```
-
-Remotion muxes it into all three renders. Use `startFrom` / `endAt` on
-`<Audio>` to trim, and `volume={(f) => ...}` for a fade under the end card.
+- Fonts: Google Fonts (SIL OFL), self-hosted in `public/fonts`.
+- Characters: Open Peeps, CC0.
+- Instrument samples: FluidR3_GM via gleitz/midi-js-soundfonts, MIT.
+- Voice: Kokoro-82M, Apache-2.0.
+- Everything else is drawn in code in this repository.
 
 ## Layout of the code
 
 ```
 src/
-  index.ts          registerRoot
-  Root.tsx          the three <Composition>s
-  Video.tsx         scene order + transitions
-  content.ts        every on-screen string
-  theme.ts          colors, fonts, type scale
-  timing.ts         scene durations, transitions
-  layout.ts         safe square + per-aspect boxes
-  components/       Topo (contours), Parcel (survey polygon), Logo, KineticText,
-                    Transitions (survey-line wipe, iris), Icons
-  scenes/           Hook, Problem, Stakes, Turn, Product, Partners, CTA
+  Root.tsx                 registers both cuts' compositions
+  collage/                 the hand-drawn collage cut
+    timeline.ts, timing-config.json, content.ts, theme.ts, motion.ts, stage.ts
+    sfx.ts, SoundDesign.tsx, Video.tsx, Root.tsx
+    ui/                    collage components
+    scenes/                Hook, Problem, Stakes, Turn, Product, Partners, CTA
+  scenes/, components/     the v1 kinetic cut
+tools/
+  vo/                      script + Kokoro generator
+  tts/                     Kokoro model files
+  audio/                   score + SFX synthesis
+  samples/                 instrument samples
 scripts/
-  fetch-fonts.mjs   downloads the font files once
-  stills.mjs        review stills for every format
+  fetch-fonts.mjs, peeps.mjs, stills.mjs
 ```

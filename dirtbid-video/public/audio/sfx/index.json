@@ -1,0 +1,126 @@
+{
+  "sampleRate": 44100,
+  "normalizedPeakDb": -3,
+  "files": [
+    {
+      "file": "sfx/pop.wav",
+      "seconds": 0.15,
+      "channels": 1,
+      "peakDb": -3
+    },
+    {
+      "file": "sfx/pop-low.wav",
+      "seconds": 0.15,
+      "channels": 1,
+      "peakDb": -3
+    },
+    {
+      "file": "sfx/pop-high.wav",
+      "seconds": 0.15,
+      "channels": 1,
+      "peakDb": -3
+    },
+    {
+      "file": "sfx/slap.wav",
+      "seconds": 0.25,
+      "channels": 1,
+      "peakDb": -3
+    },
+    {
+      "file": "sfx/whoosh.wav",
+      "seconds": 0.35,
+      "channels": 2,
+      "peakDb": -3
+    },
+    {
+      "file": "sfx/whoosh-down.wav",
+      "seconds": 0.35,
+      "channels": 2,
+      "peakDb": -3
+    },
+    {
+      "file": "sfx/tear.wav",
+      "seconds": 0.5,
+      "channels": 1,
+      "peakDb": -3
+    },
+    {
+      "file": "sfx/slide.wav",
+      "seconds": 0.3,
+      "channels": 1,
+      "peakDb": -3
+    },
+    {
+      "file": "sfx/ding.wav",
+      "seconds": 0.8,
+      "channels": 2,
+      "peakDb": -3
+    },
+    {
+      "file": "sfx/ding-2.wav",
+      "seconds": 0.8,
+      "channels": 2,
+      "peakDb": -3
+    },
+    {
+      "file": "sfx/ding-3.wav",
+      "seconds": 0.8,
+      "channels": 2,
+      "peakDb": -3
+    },
+    {
+      "file": "sfx/stamp.wav",
+      "seconds": 0.3,
+      "channels": 1,
+      "peakDb": -3
+    },
+    {
+      "file": "sfx/coin.wav",
+      "seconds": 0.4,
+      "channels": 2,
+      "peakDb": -3
+    },
+    {
+      "file": "sfx/tick.wav",
+      "seconds": 0.08,
+      "channels": 1,
+      "peakDb": -3
+    },
+    {
+      "file": "sfx/clock-sweep.wav",
+      "seconds": 1.2,
+      "channels": 2,
+      "peakDb": -3
+    },
+    {
+      "file": "sfx/riffle.wav",
+      "seconds": 0.5,
+      "channels": 1,
+      "peakDb": -3
+    },
+    {
+      "file": "sfx/sparkle.wav",
+      "seconds": 0.9,
+      "channels": 2,
+      "peakDb": -3
+    },
+    {
+      "file": "sfx/thud.wav",
+      "seconds": 0.35,
+      "channels": 1,
+      "peakDb": -3
+    },
+    {
+      "file": "sfx/sad-slide.wav",
+      "seconds": 0.6,
+      "channels": 2,
+      "peakDb": -3
+    },
+    {
+      "file": "sfx/success.wav",
+      "seconds": 1,
+      "channels": 2,
+      "peakDb": -3
+    }
+  ]
+}

@@ -5,11 +5,19 @@ import fs from 'node:fs';
 import {getInfo as archivoBlack} from '@remotion/google-fonts/ArchivoBlack';
 import {getInfo as archivo} from '@remotion/google-fonts/Archivo';
 import {getInfo as plexMono} from '@remotion/google-fonts/IBMPlexMono';
+import {getInfo as caveat} from '@remotion/google-fonts/Caveat';
+import {getInfo as patrick} from '@remotion/google-fonts/PatrickHand';
+import {getInfo as fredoka} from '@remotion/google-fonts/Fredoka';
+import {getInfo as nunito} from '@remotion/google-fonts/Nunito';
 
 const wanted = [
   {info: archivoBlack(), weights: ['400'], file: 'ArchivoBlack'},
   {info: archivo(), weights: ['500', '600', '700'], file: 'Archivo'},
   {info: plexMono(), weights: ['500', '600'], file: 'IBMPlexMono'},
+  {info: caveat(), weights: ['700'], file: 'Caveat'},
+  {info: patrick(), weights: ['400'], file: 'PatrickHand'},
+  {info: fredoka(), weights: ['700'], file: 'Fredoka'},
+  {info: nunito(), weights: ['800'], file: 'Nunito'},
 ];
 fs.mkdirSync('public/fonts', {recursive: true});
 const manifest = [];

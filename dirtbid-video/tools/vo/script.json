@@ -1,0 +1,19 @@
+{
+  "voice": "af_heart",
+  "speed": 1.04,
+  "lines": [
+    {"id": "L01", "scene": "hook",     "text": "Meet Sam."},
+    {"id": "L02", "scene": "hook",     "text": "Sam is about to buy forty acres."},
+    {"id": "L03", "scene": "problem",  "text": "Sam has the survey. The appraisal. The offer letter."},
+    {"id": "L04", "scene": "problem",  "text": "But not the one number that decides the deal: what the dirt costs."},
+    {"id": "L05", "scene": "stakes",   "text": "Marine clay. Shallow rock. A high water table."},
+    {"id": "L06", "scene": "stakes",   "text": "One surprise, and a quarter million dollars walks out of the pro forma."},
+    {"id": "L07", "scene": "turn",     "text": "That's why we built DirtBid."},
+    {"id": "L08", "scene": "product",  "text": "Drop a pin on any parcel."},
+    {"id": "L09", "scene": "product",  "text": "DirtBid pulls the official U S D A soil survey, and prices the site work line by line. C S I organized. Regionally priced."},
+    {"id": "L10", "scene": "product",  "text": "Three weeks of due diligence, in under thirty minutes."},
+    {"id": "L11", "scene": "partners", "text": "Then it hands you a vetted team for every step. Survey, civil, geo-tech, title, financing, all the way to the crew that moves the dirt."},
+    {"id": "L12", "scene": "cta",      "text": "Screen your first parcel free, at dirt bid A I dot com."},
+    {"id": "L13", "scene": "cta",      "text": "No credit card. Just answers, before you sign."}
+  ]
+}

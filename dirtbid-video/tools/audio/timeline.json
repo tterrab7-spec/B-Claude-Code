@@ -1,0 +1,120 @@
+{
+  "total": 58.825,
+  "scenes": [
+    {
+      "id": "hook",
+      "start": 0,
+      "end": 4.357
+    },
+    {
+      "id": "problem",
+      "start": 4.357,
+      "end": 12.61
+    },
+    {
+      "id": "stakes",
+      "start": 12.61,
+      "end": 21.492
+    },
+    {
+      "id": "turn",
+      "start": 21.492,
+      "end": 25.331
+    },
+    {
+      "id": "product",
+      "start": 25.331,
+      "end": 40.247
+    },
+    {
+      "id": "partners",
+      "start": 40.247,
+      "end": 50.024
+    },
+    {
+      "id": "cta",
+      "start": 50.024,
+      "end": 58.825
+    }
+  ],
+  "cues": [
+    {
+      "id": "L01",
+      "start": 0.7,
+      "end": 1.472,
+      "text": "Meet Sam."
+    },
+    {
+      "id": "L02",
+      "start": 1.822,
+      "end": 3.757,
+      "text": "Sam is about to buy forty acres."
+    },
+    {
+      "id": "L03",
+      "start": 5.057,
+      "end": 8.118,
+      "text": "Sam has the survey. The appraisal. The offer letter."
+    },
+    {
+      "id": "L04",
+      "start": 8.518,
+      "end": 11.91,
+      "text": "But not the one number that decides the deal: what the dirt costs."
+    },
+    {
+      "id": "L05",
+      "start": 13.31,
+      "end": 16.327,
+      "text": "Marine clay. Shallow rock. A high water table."
+    },
+    {
+      "id": "L06",
+      "start": 16.777,
+      "end": 20.592,
+      "text": "One surprise, and a quarter million dollars walks out of the pro forma."
+    },
+    {
+      "id": "L07",
+      "start": 22.492,
+      "end": 24.031,
+      "text": "That's why we built DirtBid."
+    },
+    {
+      "id": "L08",
+      "start": 26.031,
+      "end": 27.495,
+      "text": "Drop a pin on any parcel."
+    },
+    {
+      "id": "L09",
+      "start": 27.895,
+      "end": 36.471,
+      "text": "DirtBid pulls the official U S D A soil survey, and prices the site work line by line. C S I organized. Regionally priced."
+    },
+    {
+      "id": "L10",
+      "start": 36.921,
+      "end": 39.647,
+      "text": "Three weeks of due diligence, in under thirty minutes."
+    },
+    {
+      "id": "L11",
+      "start": 40.947,
+      "end": 49.224,
+      "text": "Then it hands you a vetted team for every step. Survey, civil, geo-tech, title, financing, all the way to the crew that moves the dirt."
+    },
+    {
+      "id": "L12",
+      "start": 50.724,
+      "end": 53.945,
+      "text": "Screen your first parcel free, at dirt bid A I dot com."
+    },
+    {
+      "id": "L13",
+      "start": 54.345,
+      "end": 57.225,
+      "text": "No credit card. Just answers, before you sign."
+    }
+  ]
+}

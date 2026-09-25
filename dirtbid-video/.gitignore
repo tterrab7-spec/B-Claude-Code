@@ -1,3 +1,6 @@
 node_modules
 .remotion
 out/stills
+tools/tts/*.onnx
+tools/tts/*.bin
+tools/audio/.cache

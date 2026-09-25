@@ -1,0 +1,93 @@
+[
+  {
+    "id": "L01",
+    "scene": "hook",
+    "text": "Meet Sam.",
+    "file": "audio/vo/L01.wav",
+    "seconds": 0.772
+  },
+  {
+    "id": "L02",
+    "scene": "hook",
+    "text": "Sam is about to buy forty acres.",
+    "file": "audio/vo/L02.wav",
+    "seconds": 1.935
+  },
+  {
+    "id": "L03",
+    "scene": "problem",
+    "text": "Sam has the survey. The appraisal. The offer letter.",
+    "file": "audio/vo/L03.wav",
+    "seconds": 3.061
+  },
+  {
+    "id": "L04",
+    "scene": "problem",
+    "text": "But not the one number that decides the deal: what the dirt costs.",
+    "file": "audio/vo/L04.wav",
+    "seconds": 3.392
+  },
+  {
+    "id": "L05",
+    "scene": "stakes",
+    "text": "Marine clay. Shallow rock. A high water table.",
+    "file": "audio/vo/L05.wav",
+    "seconds": 3.017
+  },
+  {
+    "id": "L06",
+    "scene": "stakes",
+    "text": "One surprise, and a quarter million dollars walks out of the pro forma.",
+    "file": "audio/vo/L06.wav",
+    "seconds": 3.815
+  },
+  {
+    "id": "L07",
+    "scene": "turn",
+    "text": "That's why we built DirtBid.",
+    "file": "audio/vo/L07.wav",
+    "seconds": 1.539
+  },
+  {
+    "id": "L08",
+    "scene": "product",
+    "text": "Drop a pin on any parcel.",
+    "file": "audio/vo/L08.wav",
+    "seconds": 1.464
+  },
+  {
+    "id": "L09",
+    "scene": "product",
+    "text": "DirtBid pulls the official U S D A soil survey, and prices the site work line by line. C S I organized. Regionally priced.",
+    "file": "audio/vo/L09.wav",
+    "seconds": 8.576
+  },
+  {
+    "id": "L10",
+    "scene": "product",
+    "text": "Three weeks of due diligence, in under thirty minutes.",
+    "file": "audio/vo/L10.wav",
+    "seconds": 2.726
+  },
+  {
+    "id": "L11",
+    "scene": "partners",
+    "text": "Then it hands you a vetted team for every step. Survey, civil, geo-tech, title, financing, all the way to the crew that moves the dirt.",
+    "file": "audio/vo/L11.wav",
+    "seconds": 8.277
+  },
+  {
+    "id": "L12",
+    "scene": "cta",
+    "text": "Screen your first parcel free, at dirt bid A I dot com.",
+    "file": "audio/vo/L12.wav",
+    "seconds": 3.221
+  },
+  {
+    "id": "L13",
+    "scene": "cta",
+    "text": "No credit card. Just answers, before you sign.",
+    "file": "audio/vo/L13.wav",
+    "seconds": 2.88
+  }
+]
