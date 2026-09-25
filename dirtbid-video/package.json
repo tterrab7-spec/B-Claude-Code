@@ -1,0 +1,29 @@
+{
+  "name": "dirtbid-video",
+  "version": "1.0.0",
+  "private": true,
+  "description": "DirtBid animated promo video built with Remotion",
+  "scripts": {
+    "dev": "remotion studio",
+    "render:vertical": "remotion render DirtBid-Vertical out/dirtbid-9x16.mp4 --codec h264 --crf 18 --concurrency 4",
+    "render:square": "remotion render DirtBid-Square out/dirtbid-1x1.mp4 --codec h264 --crf 18 --concurrency 4",
+    "render:wide": "remotion render DirtBid-Wide out/dirtbid-16x9.mp4 --codec h264 --crf 18 --concurrency 4",
+    "render:all": "npm run render:vertical && npm run render:square && npm run render:wide",
+    "still:endcard": "remotion still DirtBid-Square out/endcard-thumbnail-1x1.png --frame 1790 && remotion still DirtBid-Wide out/endcard-thumbnail-16x9.png --frame 1790 && remotion still DirtBid-Vertical out/endcard-thumbnail-9x16.png --frame 1790",
+    "stills": "node scripts/stills.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.529",
+    "@remotion/fonts": "^4.0.529",
+    "@remotion/google-fonts": "4.0.529",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "remotion": "4.0.529"
+  },
+  "devDependencies": {
+    "@types/react": "19.0.0",
+    "@types/react-dom": "19.0.0",
+    "typescript": "5.8.2"
+  }
+}

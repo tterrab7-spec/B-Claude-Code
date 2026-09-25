@@ -1,0 +1,38 @@
+[
+  {
+    "family": "Archivo Black",
+    "weight": "400",
+    "file": "fonts/ArchivoBlack-400.woff2",
+    "source": "https://fonts.gstatic.com/s/archivoblack/v23/HTxqL289NzCGg4MzN6KJ7eW6CYyF_g.woff2"
+  },
+  {
+    "family": "Archivo",
+    "weight": "500",
+    "file": "fonts/Archivo-500.woff2",
+    "source": "https://fonts.gstatic.com/s/archivo/v25/k3kPo8UDI-1M0wlSV9XAw6lQkqWY8Q82sLydOxI.woff2"
+  },
+  {
+    "family": "Archivo",
+    "weight": "600",
+    "file": "fonts/Archivo-600.woff2",
+    "source": "https://fonts.gstatic.com/s/archivo/v25/k3kPo8UDI-1M0wlSV9XAw6lQkqWY8Q82sLydOxI.woff2"
+  },
+  {
+    "family": "Archivo",
+    "weight": "700",
+    "file": "fonts/Archivo-700.woff2",
+    "source": "https://fonts.gstatic.com/s/archivo/v25/k3kPo8UDI-1M0wlSV9XAw6lQkqWY8Q82sLydOxI.woff2"
+  },
+  {
+    "family": "IBM Plex Mono",
+    "weight": "500",
+    "file": "fonts/IBMPlexMono-500.woff2",
+    "source": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F6qfjptAgt5VM-kVkqdyU8n3twJwlBFgg.woff2"
+  },
+  {
+    "family": "IBM Plex Mono",
+    "weight": "600",
+    "file": "fonts/IBMPlexMono-600.woff2",
+    "source": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F6qfjptAgt5VM-kVkqdyU8n3vAOwlBFgg.woff2"
+  }
+]
