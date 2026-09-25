@@ -4,3 +4,4 @@ out/stills
 tools/tts/*.onnx
 tools/tts/*.bin
 tools/audio/.cache
+out/render*.log
