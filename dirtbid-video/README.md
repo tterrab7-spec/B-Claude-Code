@@ -87,7 +87,9 @@ script is `tools/vo/script.json`; after editing it run `npm run vo`.
   Patrick Hand for labels, Fredoka for the brand and CTA).
 - Cast: `scripts/peeps.mjs` generates the characters (Open Peeps by Pablo
   Stanley, CC0, rendered through DiceBear) into `public/peeps/`. Change a
-  head, face or clothing color there and run `npm run peeps`.
+  head, face or clothing color there and run `npm run peeps`. Sam's variants
+  get a blazer and collared shirt drawn over the torso (`addBlazer`). Render
+  the `Cast-Sheet` composition to review the whole cast at once.
 - Collage vocabulary lives in `src/collage/ui/`: `Paper` (grain, grid,
   handheld drift), `Item` (placement + die-cut sticker outline + shadow),
   `Tape`, `Rough` (rough.js shapes), `HandText`, `Marker`, `Doodles`,

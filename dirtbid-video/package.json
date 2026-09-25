@@ -13,9 +13,9 @@
     "stills": "node scripts/stills.mjs",
     "typecheck": "tsc --noEmit",
     "audio": "node tools/audio/sfx.mjs && node tools/audio/music.mjs",
-    "render:collage:wide": "remotion render Collage-Wide out/dirtbid-collage-16x9.mp4 --codec h264 --crf 18 --concurrency 4",
-    "render:collage:vertical": "remotion render Collage-Vertical out/dirtbid-collage-9x16.mp4 --codec h264 --crf 18 --concurrency 4",
-    "render:collage:square": "remotion render Collage-Square out/dirtbid-collage-1x1.mp4 --codec h264 --crf 18 --concurrency 4",
+    "render:collage:wide": "remotion render Collage-Wide out/dirtbid-collage-16x9.mp4 --codec h264 --crf 18 --concurrency 4 --color-space bt709",
+    "render:collage:vertical": "remotion render Collage-Vertical out/dirtbid-collage-9x16.mp4 --codec h264 --crf 18 --concurrency 4 --color-space bt709",
+    "render:collage:square": "remotion render Collage-Square out/dirtbid-collage-1x1.mp4 --codec h264 --crf 18 --concurrency 4 --color-space bt709",
     "render:collage": "npm run render:collage:wide && npm run render:collage:vertical && npm run render:collage:square",
     "still:collage": "remotion still Collage-Wide out/collage-endcard-16x9.png --frame 1740 && remotion still Collage-Square out/collage-endcard-1x1.png --frame 1740 && remotion still Collage-Vertical out/collage-endcard-9x16.png --frame 1740",
     "vo": "python3 tools/vo/generate.py && node tools/audio/print-timeline.mjs",
@@ -31,7 +31,8 @@
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "remotion": "4.0.529",
-    "roughjs": "^4.6.6"
+    "roughjs": "^4.6.6",
+    "svg-path-bbox": "^2.1.0"
   },
   "devDependencies": {
     "@types/react": "19.0.0",
