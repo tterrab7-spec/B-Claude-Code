@@ -4,7 +4,7 @@ import {execFileSync} from 'node:child_process';
 import fs from 'node:fs';
 const FF = 'node_modules/@remotion/compositor-linux-x64-gnu/ffmpeg';
 const [input, gainArg] = process.argv.slice(2);
-const gain = Number(gainArg ?? 2.5);
+const gain = Number(gainArg ?? 1.7);
 if (!input) throw new Error('usage: node tools/audio/master.mjs out/file.mp4 [gainDb]');
 const tmp = input.replace(/\.mp4$/, '.master.mp4');
 execFileSync(FF, ['-y', '-loglevel', 'error', '-i', input, '-c:v', 'copy', '-af', `volume=${gain}dB`, '-c:a', 'aac', '-b:a', '320k', '-movflags', '+faststart', tmp]);
