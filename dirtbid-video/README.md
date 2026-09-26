@@ -5,7 +5,7 @@ Two cuts of an animated promo for DirtBid, both built entirely in code with
 
 | Cut | Look | Audio | Length |
 | --- | --- | --- | --- |
-| **Collage** (`src/collage/`) | Whimsical hand-drawn paper collage: stickers, washi tape, rough linework, hand lettering, a cast of hand-drawn characters | Narration (Kokoro TTS), original score, sound design | 58.8 s |
+| **Collage** (`src/collage/`) | Whimsical hand-drawn paper collage: stickers, washi tape, rough linework, hand lettering, a cast of hand-drawn characters | Narration (Kokoro TTS), original score, sound design | 60.0 s |
 | **Kinetic** (`src/scenes/`, v1) | Dark topographic, kinetic type, engineered motion | Silent-first, no audio track | 60.0 s |
 
 Each cut renders in three formats from one composition with a per-aspect
@@ -84,7 +84,15 @@ script is `tools/vo/script.json`; after editing it run `npm run vo`.
 ### Swap or restyle
 
 - Palette and fonts: `src/collage/theme.ts` (Caveat for hand lettering,
-  Patrick Hand for labels, Fredoka for the brand and CTA).
+  Patrick Hand for labels, Fredoka for the CTA, Manrope for the DirtBid
+  wordmark).
+- Brand: `src/collage/ui/Brand.tsx` draws the DirtBid mark in code (teal V,
+  gold inner V, geometry in `STROKES`), the wordmark, the tagline and the
+  full lockup. `Bug` is the persistent corner logo shown on every scene
+  except the turn and the end card, where the full lockup takes over.
+  `FlyingMark` is the turn's fly-in: the four strokes come in as paper
+  strips, snap into the V, then settle into one die-cut mark. Brand colors
+  are the `brand*` entries in the theme.
 - Cast: `scripts/peeps.mjs` generates the characters (Open Peeps by Pablo
   Stanley, CC0, rendered through DiceBear) into `public/peeps/`. Change a
   head, face or clothing color there and run `npm run peeps`. Sam's variants
