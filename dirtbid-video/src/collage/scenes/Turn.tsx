@@ -7,7 +7,7 @@ import {Peep} from '../ui/Peep';
 import {Tape} from '../ui/Tape';
 import {HandText} from '../ui/HandText';
 import {Burst, Sparkle} from '../ui/Doodles';
-import {FlyingMark, Wordmark} from '../ui/Brand';
+import {FlyingMark, Wordmark, BrandTagline} from '../ui/Brand';
 import {useStage} from '../stage';
 import {C} from '../theme';
 import {cue, scene, f} from '../timeline';
@@ -27,17 +27,17 @@ export const Turn: React.FC = () => {
   const wordAt = L07 - 2;
   const tagAt = L07 + 40;
 
-  const markSize = S.aspect === 'wide' ? 250 : 240;
+  const markSize = S.aspect === 'wide' ? 300 : 280;
   const lock = S.at({wide: {x: S.cx, y: S.cy - 120}, vertical: {x: S.cx, y: S.cy - 260}, square: {x: S.cx, y: S.cy - 160}});
-  const wordSize = S.aspect === 'wide' ? 190 : S.aspect === 'vertical' ? 170 : 150;
+  const wordSize = S.aspect === 'wide' ? 180 : S.aspect === 'vertical' ? 160 : 140;
   // lockup geometry: mark left, wordmark right (wide/square); stacked on vertical
   const stacked = S.aspect === 'vertical';
-  const wordW = wordSize * 3.6;
-  const totalW = stacked ? Math.max(markSize, wordW) : markSize + 60 + wordW;
-  const markC = stacked ? {x: lock.x, y: lock.y - 150} : {x: lock.x - totalW / 2 + markSize / 2, y: lock.y};
-  const wordC = stacked ? {x: lock.x, y: lock.y + 110} : {x: lock.x + totalW / 2 - wordW / 2, y: lock.y};
+  const wordW = wordSize * 3.45;
+  const totalW = stacked ? Math.max(markSize, wordW) : markSize + 40 + wordW;
+  const markC = stacked ? {x: lock.x, y: lock.y - 170} : {x: lock.x - totalW / 2 + markSize / 2, y: lock.y};
+  const wordC = stacked ? {x: lock.x, y: lock.y + 120} : {x: lock.x + totalW / 2 - wordW / 2, y: lock.y};
   const ws = slap(frame, wordAt);
-  const tagline = S.at({wide: {x: S.cx, y: S.cy + 150}, vertical: {x: S.cx, y: S.cy + 120}, square: {x: S.cx, y: S.cy + 120}});
+  const tagline = S.at({wide: {x: S.cx, y: S.cy + 180}, vertical: {x: S.cx, y: S.cy + 160}, square: {x: S.cx, y: S.cy + 150}});
   const samP = S.at({wide: {x: 250, y: S.H - 120, s: 0.9}, vertical: {x: 220, y: S.H - 160, s: 0.9}, square: {x: 180, y: S.H - 110, s: 0.75}});
   const samRise = prog(frame, L07 + 24, 14);
 
@@ -51,8 +51,9 @@ export const Turn: React.FC = () => {
         )}
         {/* wordmark on a sticker plate */}
         <Item x={wordC.x} y={wordC.y} scale={ws.scale} opacity={ws.opacity} rotate={-2 + wobble(frame, 50, 0.8)} z={6} sticker shadow={ws.shadow}>
-          <div style={{position: 'relative', padding: `${wordSize * 0.12}px ${wordSize * 0.22}px`, background: C.white}}>
+          <div style={{position: 'relative', padding: `${wordSize * 0.12}px ${wordSize * 0.22}px ${wordSize * 0.1}px`, background: C.white, display: 'flex', flexDirection: 'column', gap: wordSize * 0.1}}>
             <Wordmark size={wordSize} />
+            <BrandTagline size={wordSize * 0.2} />
             <Tape x={wordSize * 0.3} y={0} w={wordSize * 0.9} h={wordSize * 0.2} color={C.tapePeach} rotate={-14} />
           </div>
         </Item>

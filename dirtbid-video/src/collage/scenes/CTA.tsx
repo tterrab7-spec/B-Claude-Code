@@ -57,7 +57,7 @@ export const CTA: React.FC = () => {
   const domainSize = wide ? 150 : S.aspect === 'vertical' ? 124 : 116;
   const headSize = wide ? 84 : S.aspect === 'vertical' ? 62 : 56;
   const ds = slap(frame, domainAt);
-  const lockSize = wide ? 110 : 96;
+  const lockSize = wide ? 104 : 90;
   const gap = wide ? 132 : S.aspect === 'vertical' ? 150 : 112;
   const castRise = prog(frame, castAt, 16);
   const cast = [
@@ -71,7 +71,7 @@ export const CTA: React.FC = () => {
       <Defs />
       <Paper variant="sky" grid={false}>
         <Item x={col.x} y={col.y - gap * 2.3} z={4} sticker shadow={1}>
-          <Lockup size={lockSize} at={lockAt} />
+          <Lockup size={lockSize} at={lockAt} tagline />
         </Item>
         <Item x={col.x} y={col.y - gap * 0.9} z={5}>
           <HandText size={headSize} at={headAt} mode="pop" jitter={2} align="center" style={{whiteSpace: 'nowrap'}}>{copy.cta.headline}</HandText>

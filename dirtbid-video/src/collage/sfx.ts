@@ -19,6 +19,8 @@ export const SFX_CUES: SfxCue[] = [
   {t: s('hook') + 6 * F, file: 'slap', vol: 0.7},
   {t: s('hook') + 2 * F, file: 'pop-low', vol: 0.3},
   {t: s('hook') + 8 * F, file: 'pop-high', vol: 0.3},
+  {t: s('hook') + 9 * F, file: 'pop', vol: 0.35},
+  {t: s('product') + 20 * F, file: 'pop', vol: 0.3},
   {t: L01 - 2 * F, file: 'slap', vol: 0.75},
   {t: L01 + 1 * F, file: 'sparkle', vol: 0.35},
   {t: L01 + 6 * F, file: 'pop', vol: 0.5},

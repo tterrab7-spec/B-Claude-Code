@@ -5,6 +5,7 @@ import {fontFamily as PATRICK} from '@remotion/google-fonts/PatrickHand';
 import {fontFamily as FREDOKA} from '@remotion/google-fonts/Fredoka';
 import {fontFamily as NUNITO} from '@remotion/google-fonts/Nunito';
 import {fontFamily as PLEX} from '@remotion/google-fonts/IBMPlexMono';
+import {fontFamily as MANROPE} from '@remotion/google-fonts/Manrope';
 
 export const fontsReady = Promise.all([
   loadFont({family: CAVEAT, url: staticFile('fonts/Caveat-700.woff2'), weight: '700'}),
@@ -12,6 +13,7 @@ export const fontsReady = Promise.all([
   loadFont({family: FREDOKA, url: staticFile('fonts/Fredoka-700.woff2'), weight: '700'}),
   loadFont({family: NUNITO, url: staticFile('fonts/Nunito-800.woff2'), weight: '800'}),
   loadFont({family: PLEX, url: staticFile('fonts/IBMPlexMono-600.woff2'), weight: '600'}),
+  loadFont({family: MANROPE, url: staticFile('fonts/Manrope-800.woff2'), weight: '500 800'}),
 ]);
 
 /** Collage palette: warm paper, ink, and the DirtBid clay/amber/green. */
@@ -40,6 +42,14 @@ export const C = {
   soil: ['#9C8A63', '#B29A5E', '#7A8B6E', '#8E7F6A', '#7C8FA3', '#B8844E'],
   khaki: '#D9CDA8',
   grass: '#B9CF9A',
+  // DirtBid brand (from the supplied logo)
+  brandNavy: '#0F172A',
+  brandTeal: '#3A8F7F',
+  brandTealLight: '#5FD3C4',
+  brandTealDeep: '#1F9A88',
+  brandGold: '#F6C75A',
+  brandGoldDeep: '#D99B32',
+  brandGray: '#4B5563',
 } as const;
 
 export const F = {
@@ -48,4 +58,6 @@ export const F = {
   round: FREDOKA, // rounded sans, brand + CTA
   body: NUNITO,
   mono: PLEX,
+  /** Brand wordmark typeface */
+  brand: MANROPE,
 } as const;

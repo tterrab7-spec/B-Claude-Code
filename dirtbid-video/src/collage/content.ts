@@ -41,5 +41,5 @@ export const copy = {
     states: 'Virginia · Maryland · North Carolina · Texas',
     free: 'FREE',
   },
-  brand: {a: 'Dirt', b: 'Bid'},
+  brand: {a: 'Dirt', b: 'Bid', tagline: 'ESTIMATING PLATFORM'},
 } as const;

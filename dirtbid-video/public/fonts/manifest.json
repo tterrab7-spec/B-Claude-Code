@@ -58,5 +58,17 @@
     "weight": "800",
     "file": "fonts/Nunito-800.woff2",
     "source": "https://fonts.gstatic.com/s/nunito/v32/XRXV3I6Li01BKofINeaB.woff2"
+  },
+  {
+    "family": "Manrope",
+    "weight": "800",
+    "file": "fonts/Manrope-800.woff2",
+    "source": "https://fonts.gstatic.com/s/manrope/v20/xn7gYHE41ni1AdIRggexSg.woff2"
+  },
+  {
+    "family": "Manrope",
+    "weight": "500",
+    "file": "fonts/Manrope-500.woff2",
+    "source": "https://fonts.gstatic.com/s/manrope/v20/xn7gYHE41ni1AdIRggexSg.woff2"
   }
 ]

@@ -3,6 +3,8 @@ import {AbsoluteFill, Sequence} from 'remotion';
 import {TIMELINE, f} from './timeline';
 import {TornWipe} from './ui/Transitions';
 import {SoundDesign} from './SoundDesign';
+import {Bug} from './ui/Brand';
+import {Defs} from './ui/Defs';
 import {C} from './theme';
 import {Hook} from './scenes/Hook';
 import {Problem} from './scenes/Problem';
@@ -36,6 +38,8 @@ export const CollageVideo: React.FC = () => (
         </Sequence>
       );
     })}
+    <Defs />
+    <Bug />
     <SoundDesign />
   </AbsoluteFill>
 );

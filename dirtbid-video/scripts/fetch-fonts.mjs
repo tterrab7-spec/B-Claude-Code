@@ -9,6 +9,7 @@ import {getInfo as caveat} from '@remotion/google-fonts/Caveat';
 import {getInfo as patrick} from '@remotion/google-fonts/PatrickHand';
 import {getInfo as fredoka} from '@remotion/google-fonts/Fredoka';
 import {getInfo as nunito} from '@remotion/google-fonts/Nunito';
+import {getInfo as manrope} from '@remotion/google-fonts/Manrope';
 
 const wanted = [
   {info: archivoBlack(), weights: ['400'], file: 'ArchivoBlack'},
@@ -18,6 +19,7 @@ const wanted = [
   {info: patrick(), weights: ['400'], file: 'PatrickHand'},
   {info: fredoka(), weights: ['700'], file: 'Fredoka'},
   {info: nunito(), weights: ['800'], file: 'Nunito'},
+  {info: manrope(), weights: ['800', '500'], file: 'Manrope'},
 ];
 fs.mkdirSync('public/fonts', {recursive: true});
 const manifest = [];
