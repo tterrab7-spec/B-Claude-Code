@@ -2,7 +2,7 @@
 export const copy = {
   hook: {name: 'Sam', acres: '40 acres', sign: 'FOR SALE'},
   problem: {missing: ['survey', 'soil report'], address: '1240 Mill Creek Rd', addressSub: 'the only thing Sam has', asking: '$1.2M', askingSub: 'asking', question: 'what will the site work cost?'},
-  stakes: {risks: ['marine clay', 'shallow rock', 'high water table'], sold: 'SOLD', soldSub: 'to someone else', proforma: 'PRO FORMA', tag: '$250,000', tagSub: 'change order', profit: 'profit'},
+  stakes: {risks: ['marine clay', 'shallow rock', 'high water table'], sold: 'SOLD', soldSub: 'to someone else', proforma: 'PRO FORMA', tagFrom: 250000, tagTo: 1000000, tagOver: '$1,000,000+', tagSub: 'site work unknowns', profit: 'profit'},
   turn: {tagline: 'Price the dirt before you price the deal.'},
   product: {
     address: '1240 Mill Creek Rd',

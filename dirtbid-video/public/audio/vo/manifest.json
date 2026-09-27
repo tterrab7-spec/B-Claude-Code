@@ -37,9 +37,10 @@
   {
     "id": "L06",
     "scene": "stakes",
-    "text": "Guess high, she loses the deal. Guess low, and a quarter million walks out of the pro forma.",
+    "text": "Guess high, she loses the deal. Guess low, and bad dirt can cost hundreds of thousands, or over a million.",
+    "speed": 1.1,
     "file": "audio/vo/L06.wav",
-    "seconds": 4.946
+    "seconds": 6.08
   },
   {
     "id": "L07",

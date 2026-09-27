@@ -1,5 +1,5 @@
 {
-  "total": 60,
+  "total": 60.024,
   "scenes": [
     {
       "id": "hook",
@@ -9,32 +9,32 @@
     {
       "id": "problem",
       "start": 4.24,
-      "end": 14.018
+      "end": 13.918
     },
     {
       "id": "stakes",
-      "start": 14.018,
-      "end": 23.847
+      "start": 13.918,
+      "end": 24.531
     },
     {
       "id": "turn",
-      "start": 23.847,
-      "end": 27.461
+      "start": 24.531,
+      "end": 27.845
     },
     {
       "id": "product",
-      "start": 27.461,
-      "end": 42.688
+      "start": 27.845,
+      "end": 43.072
     },
     {
       "id": "partners",
-      "start": 42.688,
-      "end": 51.433
+      "start": 43.072,
+      "end": 51.617
     },
     {
       "id": "cta",
-      "start": 51.433,
-      "end": 60
+      "start": 51.617,
+      "end": 60.024
     }
   ],
   "cues": [
@@ -64,56 +64,56 @@
     },
     {
       "id": "L05",
-      "start": 14.718,
-      "end": 17.701,
+      "start": 14.468,
+      "end": 17.451,
       "text": "Marine clay. Shallow rock. A high water table."
     },
     {
       "id": "L06",
-      "start": 18.101,
-      "end": 23.047,
-      "text": "Guess high, she loses the deal. Guess low, and a quarter million walks out of the pro forma."
+      "start": 17.851,
+      "end": 23.931,
+      "text": "Guess high, she loses the deal. Guess low, and bad dirt can cost hundreds of thousands, or over a million."
     },
     {
       "id": "L07",
-      "start": 24.847,
-      "end": 26.361,
+      "start": 25.381,
+      "end": 26.895,
       "text": "That's why we built DirtBid."
     },
     {
       "id": "L08",
-      "start": 28.161,
-      "end": 29.222,
+      "start": 28.545,
+      "end": 29.606,
       "text": "Type in the address."
     },
     {
       "id": "L09",
-      "start": 29.572,
-      "end": 39.384,
+      "start": 29.956,
+      "end": 39.768,
       "text": "DirtBid pulls the official U S D A soil survey and local cost data, then prices the site work line by line. On the safe side, so your offer is too."
     },
     {
       "id": "L10",
-      "start": 39.634,
-      "end": 42.338,
+      "start": 40.018,
+      "end": 42.722,
       "text": "Three weeks of due diligence, in under thirty minutes."
     },
     {
       "id": "L11",
-      "start": 43.388,
-      "end": 50.833,
+      "start": 43.672,
+      "end": 51.117,
       "text": "Then it hands you a vetted team for every step: survey, civil, geo-tech, title, financing, and the crew that moves the dirt."
     },
     {
       "id": "L12",
-      "start": 52.133,
-      "end": 55.354,
+      "start": 52.217,
+      "end": 55.438,
       "text": "Screen your first parcel free, at dirt bid A I dot com."
     },
     {
       "id": "L13",
-      "start": 55.754,
-      "end": 59.09,
+      "start": 55.838,
+      "end": 59.174,
       "text": "No credit card. Just the number, before you make the offer."
     }
   ]

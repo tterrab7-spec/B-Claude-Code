@@ -5,7 +5,7 @@ import {Defs} from '../ui/Defs';
 import {Item} from '../ui/Item';
 import {StandingSet} from '../ui/Set';
 import {RiskSticker} from '../ui/Risks';
-import {ProForma, PriceTag} from '../ui/ProForma';
+import {ProForma, PriceTag, TAG_W, TAG_H} from '../ui/ProForma';
 import {HandText} from '../ui/HandText';
 import {Underline} from '../ui/Marker';
 import {Stamp} from '../ui/Stamp';
@@ -19,7 +19,8 @@ import {setLayout} from '../layouts';
 
 /**
  * SCENE 3 — THE STAKES. Three risk stickers slap onto the parcel, Sam panics,
- * the pro forma slides in and a $250,000 change order literally walks out of it.
+ * the pro forma slides in, a price tag runs up from $250,000 past a million and
+ * literally walks out of it.
  */
 export const Stakes: React.FC = () => {
   const frame = useCurrentFrame();
@@ -31,12 +32,15 @@ export const Stakes: React.FC = () => {
 
   const riskAt = [L05 + 4, L05 + 32, L05 + 62];
   const fearAt = L05 + 70;
-  // L06: "Guess high, she loses the deal." 0–1.9 s | "Guess low, and a quarter million walks out of the pro forma." 2.0–4.9 s
+  // L06: "Guess high, she loses the deal." 0-1.45 s | "Guess low," 2.0-2.6 s |
+  //      "and bad dirt can cost hundreds of thousands," 2.8-5.0 s | "or over a million." 5.05-6.08 s
   const soldAt = L06 + 22;
-  const pfAt = L06 + 62;
-  const tagAt = L06 + 84;
-  const walkAt = L06 + 112;
-  const hitAt = L06 + 128;
+  const pfAt = L06 + 58;
+  const tagAt = L06 + 92;
+  const countAt = L06 + 118;
+  const overAt = L06 + 152;
+  const walkAt = L06 + 160;
+  const hitAt = L06 + 170;
 
   const riskPos = [
     {x: -95, y: -100, r: -8}, {x: 100, y: -50, r: 6}, {x: -5, y: 115, r: -4},
@@ -54,6 +58,14 @@ export const Stakes: React.FC = () => {
   const walkHop = walkFrame > 0 ? (Math.floor(walkFrame / 4) % 2 === 0 ? -10 : 0) : 0;
   const walkRot = walkFrame > 0 ? (Math.floor(walkFrame / 4) % 2 === 0 ? 4 : -4) : 0;
   const capOpacity = 1 - prog(frame, soldAt, 8);
+  // the number on the tag runs up in steps, then tips over a million and bumps
+  const countP = Math.floor(prog(frame, countAt, 32, easeIn) * 8) / 8;
+  const over = frame >= overAt;
+  const raw = copy.stakes.tagFrom + (copy.stakes.tagTo - copy.stakes.tagFrom) * countP;
+  const tagValue = over ? copy.stakes.tagOver : '$' + (Math.round(raw / 5000) * 5000).toLocaleString('en-US');
+  const grow = 1 + 0.26 * prog(frame, countAt, 36);
+  const bump = over ? 1 + 0.16 * Math.sin(Math.min(1, (frame - overAt) / 9) * Math.PI) : 1;
+  const tagS = pf.s * 0.92 * grow * bump;
   const face = frame >= fearAt ? 'sam-fear' : 'sam-concerned';
 
   return (
@@ -110,17 +122,23 @@ export const Stakes: React.FC = () => {
             <ProForma hitAt={hitAt} />
           </Item>
         )}
-        {/* price tag slaps on, then walks off */}
+        {/* price tag slaps on, runs up past a million, then walks off */}
         {frame >= tagAt && (
-          <Item x={pf.x + (walkFrame > 0 ? 40 : 40) * pf.s + walkX} y={pf.y + pfY - 40 * pf.s + walkHop} scale={tag.scale * pf.s * 0.95} opacity={tag.opacity} rotate={-6 + walkRot + wobble(frame, 31, 1)} z={12} sticker shadow={tag.shadow}>
-            <PriceTag walkFrame={walkFrame} />
+          <Item x={pf.x + 40 * pf.s + walkX} y={pf.y + pfY - 40 * pf.s + walkHop} scale={tag.scale * tagS} opacity={tag.opacity} rotate={-6 + walkRot + wobble(frame, 31, 1)} z={12} sticker shadow={tag.shadow}>
+            <PriceTag walkFrame={walkFrame} value={tagValue} sub={copy.stakes.tagSub} />
           </Item>
         )}
+        {/* who knows how high: question marks pop beside the tag once it tips over a million */}
+        {[0, 1].map((i) => (
+          <Item key={i} x={pf.x + (190 + i * 60) * tagS + walkX} y={pf.y + pfY - (150 + i * 40) * tagS + walkHop} scale={pop(frame, overAt + 4 + i * 6, 0.8) * tagS * (0.5 - i * 0.12)} rotate={10 + i * 14 + wobble(frame, 35 + i, 3)} z={13}>
+            <QuestionMark draw={1} size={100} seed={9 + i} />
+          </Item>
+        ))}
         {/* torn hole left behind */}
         {walkFrame > 2 && (
-          <Item x={pf.x + 40 * pf.s} y={pf.y + pfY - 40 * pf.s} scale={pf.s * 0.95} rotate={-6} z={11} opacity={1}>
-            <svg width={300} height={190} viewBox="0 0 300 190" style={{display: 'block'}}>
-              <path d="M24 44 L 60 36 L 100 48 L 140 34 L 190 46 L 226 38 L 250 74 L 222 104 L 170 96 L 120 110 L 70 98 L 30 104 Z" fill={C.paperDeep} stroke="#FFFDF8" strokeWidth={5} strokeLinejoin="round" opacity={0.95} />
+          <Item x={pf.x + 40 * pf.s} y={pf.y + pfY - 40 * pf.s} scale={pf.s * 0.92 * 1.26} rotate={-6} z={11} opacity={1}>
+            <svg width={TAG_W} height={TAG_H} viewBox={`0 0 ${TAG_W} ${TAG_H}`} style={{display: 'block'}}>
+              <path d="M24 44 L 80 36 L 140 48 L 200 34 L 260 46 L 300 38 L 330 74 L 300 104 L 240 96 L 180 110 L 110 98 L 30 104 Z" fill={C.paperDeep} stroke="#FFFDF8" strokeWidth={5} strokeLinejoin="round" opacity={0.95} />
             </svg>
           </Item>
         )}

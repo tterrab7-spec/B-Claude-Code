@@ -43,24 +43,29 @@ export const ProForma: React.FC<{hitAt: number; w?: number; h?: number}> = ({hit
   );
 };
 
-/** The $250,000 price tag. Grows two little legs and walks when `walkAt` passes. */
-export const PriceTag: React.FC<{walkFrame: number}> = ({walkFrame}) => {
+/**
+ * The price tag. Shows whatever `value` is passed (the scene runs it up from
+ * $250,000 to $1,000,000+). Grows two little legs and walks when `walkFrame` passes 0.
+ */
+export const TAG_W = 380, TAG_H = 190;
+export const PriceTag: React.FC<{walkFrame: number; value: string; sub: string}> = ({walkFrame, value, sub}) => {
   const step = Math.floor(Math.max(0, walkFrame) / 4);
   const legA = walkFrame > 0 ? (step % 2 === 0 ? 14 : -14) : 0;
+  const fs = value.length > 9 ? 40 : 46;
   return (
-    <div style={{position: 'relative', width: 300, height: 190}}>
-      <svg width={300} height={190} viewBox="0 0 300 190" style={{display: 'block', overflow: 'visible'}}>
-        <RPath d="M20 40 L 210 40 L 262 74 L 210 108 L 20 108 Z" seed={61} opts={{fill: C.amber, fillStyle: 'solid', stroke: C.ink, strokeWidth: 3.5, roughness: 1.4}} />
-        <circle cx={232} cy={74} r={7} fill={C.white} stroke={C.ink} strokeWidth={3} />
-        <RPath d="M239 72 q 40 -30 34 -66" seed={62} opts={{stroke: C.ink, strokeWidth: 2.5, roughness: 1.6, fill: 'none'}} />
-        <text x={112} y={84} textAnchor="middle" fontFamily={F.round} fontWeight={700} fontSize={44} fill={C.ink}>{copy.stakes.tag}</text>
-        <text x={112} y={126} textAnchor="middle" fontFamily={F.print} fontSize={22} fill={C.inkSoft}>{copy.stakes.tagSub}</text>
+    <div style={{position: 'relative', width: TAG_W, height: TAG_H}}>
+      <svg width={TAG_W} height={TAG_H} viewBox={`0 0 ${TAG_W} ${TAG_H}`} style={{display: 'block', overflow: 'visible'}}>
+        <RPath d="M20 40 L 290 40 L 342 74 L 290 108 L 20 108 Z" seed={61} opts={{fill: C.amber, fillStyle: 'solid', stroke: C.ink, strokeWidth: 3.5, roughness: 1.4}} />
+        <circle cx={312} cy={74} r={7} fill={C.white} stroke={C.ink} strokeWidth={3} />
+        <RPath d="M319 72 q 40 -30 34 -66" seed={62} opts={{stroke: C.ink, strokeWidth: 2.5, roughness: 1.6, fill: 'none'}} />
+        <text x={152} y={86} textAnchor="middle" fontFamily={F.round} fontWeight={700} fontSize={fs} fill={C.ink}>{value}</text>
+        <text x={152} y={128} textAnchor="middle" fontFamily={F.print} fontSize={22} fill={C.inkSoft}>{sub}</text>
         {walkFrame > 0 && (
           <g>
-            <RLine x1={80} y1={108} x2={80 + legA} y2={150} seed={63} opts={{stroke: C.ink, strokeWidth: 4}} />
-            <RLine x1={150} y1={108} x2={150 - legA} y2={150} seed={64} opts={{stroke: C.ink, strokeWidth: 4}} />
-            <RLine x1={80 + legA} y1={150} x2={80 + legA + 22} y2={150} seed={65} opts={{stroke: C.ink, strokeWidth: 5}} />
-            <RLine x1={150 - legA} y1={150} x2={150 - legA + 22} y2={150} seed={66} opts={{stroke: C.ink, strokeWidth: 5}} />
+            <RLine x1={100} y1={108} x2={100 + legA} y2={150} seed={63} opts={{stroke: C.ink, strokeWidth: 4}} />
+            <RLine x1={200} y1={108} x2={200 - legA} y2={150} seed={64} opts={{stroke: C.ink, strokeWidth: 4}} />
+            <RLine x1={100 + legA} y1={150} x2={100 + legA + 22} y2={150} seed={65} opts={{stroke: C.ink, strokeWidth: 5}} />
+            <RLine x1={200 - legA} y1={150} x2={200 - legA + 22} y2={150} seed={66} opts={{stroke: C.ink, strokeWidth: 5}} />
           </g>
         )}
       </svg>

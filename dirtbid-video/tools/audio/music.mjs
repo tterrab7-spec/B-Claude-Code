@@ -4,8 +4,8 @@
 //   hook (C major, curious)  -> problem (A minor, unsettled) -> stakes (rising bass line, clock ticks, stutter + drop-out at 23.85)
 //   -> turn (lift to D major, chord hit at 24.35) -> product (bouncy groove, "ta-da" at 37.95) -> partners (warmer, pizzicato + vibraphone)
 //   -> cta (biggest) -> final D major chord at 58.35, decaying to silence by 61.4.
-// The bar grid is anchored on two musical moments (the chord hit and the final cadence), which fixes the tempo at ~105.9 BPM.
-// Three bars have a different meter so the section downbeats land on the picture cuts: bar 6 is 3/4 (the breath at the
+// The bar grid is anchored on two musical moments (the chord hit and the final cadence), which fixes the tempo at ~107 BPM.
+// Two bars have a different meter so the section downbeats land on the picture cuts: bar 6 is 4/4 (the breath at the
 // stakes cut), bars 12 and 19 are 2/4 (the fills into product and partners).
 // Everything is deterministic (seeded humanization) so re-renders are identical.
 import fs from 'node:fs';
@@ -17,17 +17,17 @@ const timeline = JSON.parse(fs.readFileSync(path.join(D.ROOT, 'tools/audio/timel
 
 // ------------------------------------------------------------------ grid / tuning
 export const KEY_SHIFT = 0;           // semitones; transposes the whole score (0 = C major hook, D major second half)
-const HIT = 24.35;                    // chord hit that opens the "turn" (bar 11, beat 1) = turn scene start + 0.5
-const FINAL = 58.35;                  // final cadence (bar 27, beat 1)
-const METER = (bar) => (bar === 6 ? 3 : bar === 12 || bar === 19 ? 2 : 4); // beats per bar
+const HIT = 25.031;                   // chord hit that opens the "turn" (bar 11, beat 1) = turn scene start + 0.5
+const FINAL = 58.534;                 // final cadence (bar 27, beat 1) = cta scene start + 6.917
+const METER = (bar) => (bar === 12 || bar === 19 ? 2 : 4); // beats per bar
 const BEATS_HIT_TO_FINAL = 60;        // bars 11-26: turn 4+2, product 6*4+2, partners 16, cta 12
-const BEATS_BEFORE_HIT = 43;          // bars 0-10: hook 8, problem 16, stakes 3+16
+const BEATS_BEFORE_HIT = 44;          // bars 0-10: hook 8, problem 16, stakes 4+16
 const BEAT = (FINAL - HIT) / BEATS_HIT_TO_FINAL; // 0.5667 s -> 105.9 BPM
 const BAR = 4 * BEAT;                 // 2.2667 s (a 4/4 bar)
 const BPM = 60 / BEAT;
-const OFFSET = HIT - BEATS_BEFORE_HIT * BEAT;    // bar 0 starts at -0.017 s (its downbeat is effectively t = 0)
+const OFFSET = HIT - BEATS_BEFORE_HIT * BEAT;    // bar 0 starts at ~0.46 s
 const TOTAL = 62;
-const GATE_AT = 23.85, GATE_OPEN = 24.05; // sudden drop-out at the scene transition, reopened for the glock pickup
+const GATE_AT = 24.531, GATE_OPEN = 24.731; // sudden drop-out at the scene transition, reopened for the glock pickup
 const LUFS_TARGET = -18, CEILING_DB = -1;
 
 const barStarts = []; { let t = OFFSET; for (let b = 0; b <= 40; b++) { barStarts.push(t); t += METER(b) * BEAT; } }
@@ -215,14 +215,14 @@ for (let i = 0; i < 8; i++) note('marimba', 'E3', T(5, 2 + i * 0.25), {dur: 0.12
 note('pizz', 'E3', T(5, 1.5), {dur: 0.5, vel: 0.4, pan: -0.25});
 
 // ---------------- STAKES (bars 6-10, A minor -> A7): tension builds, rising bass line, clock accelerates, stutter and drop-out
-// bar 6 is a 3/4 "breath" bar under the cut (13.58-15.28): the E7 resolves to a low Am pedal, clock keeps ticking
+// bar 6 is a "breath" bar under the cut (starts ~0.06 s before it): the E7 resolves to a low Am pedal, clock keeps ticking
 sectionVel = 0.8;
-mark(6, 'stakes', '3/4 breath bar under the cut: low Am pinch, bass A2, pizz A2, kick, clock ticks quarters, marimba A3 B3 pickup into the rising line');
-pick(6, 'Am', [[0, [0, 1], 0.5, 2.5], [1.5, [2], 0.4, 1], [2, [3], 0.4, 1]]);
-bassNote('A2', T(6, 0), 2.7, 0.58);
+mark(6, 'stakes', 'breath bar under the cut: low Am pinch, bass A2, pizz A2, kick, clock ticks quarters, marimba A3 B3 pickup into the rising line');
+pick(6, 'Am', [[0, [0, 1], 0.5, 3.4], [2, [2], 0.4, 1], [2.5, [3], 0.4, 1]]);
+bassNote('A2', T(6, 0), 3.6, 0.58);
 note('pizz', 'A2', T(6, 0), {dur: 0.4, vel: 0.48, pan: -0.25});
 kick(T(6, 0), 0.46);
-mel('marimba', 6, [[1.5, 'A3', 1, 0.42], [2.5, 'B3', 0.5, 0.45]]);
+mel('marimba', 6, [[2.5, 'A3', 1, 0.42], [3.5, 'B3', 0.5, 0.45]]);
 const stakes = [ // [bar, beat, chord, bassNote, marimbaArp, pizz]
   [7, 0, 'Am', 'A2', ['A4', 'C5', 'E5']], [7, 2, 'G/B', 'B2', ['B4', 'D5', 'G5']],
   [8, 0, 'C', 'C3', ['C5', 'E5', 'G5']], [8, 2, 'Dm', 'D3', ['D5', 'F5', 'A5']],
@@ -557,7 +557,7 @@ console.log(`gate: before ${win(final, GATE_AT - 0.25, GATE_AT).toFixed(1)} dB, 
   `final ${FINAL}-${(FINAL + 0.25).toFixed(2)} s ${win(final, FINAL, FINAL + 0.25).toFixed(1)} dB, tail 60-61 s ${win(final, 60, 61).toFixed(1)} dB`);
 
 // ================================================================== ARRANGEMENT SUMMARY
-console.log(`\nTempo ${BPM.toFixed(1)} BPM, beat ${BEAT.toFixed(4)} s, 4/4 bar = ${BAR.toFixed(4)} s (bar 6 is 3/4, bars 12 and 19 are 2/4), bar 0 at ${OFFSET.toFixed(3)} s. Key C major / A minor, lifting to D major at ${HIT} s (bar 11). Final chord at ${FINAL} s (bar 27).`);
+console.log(`\nTempo ${BPM.toFixed(1)} BPM, beat ${BEAT.toFixed(4)} s, 4/4 bar = ${BAR.toFixed(4)} s (bars 12 and 19 are 2/4), bar 0 at ${OFFSET.toFixed(3)} s. Key C major / A minor, lifting to D major at ${HIT} s (bar 11). Final chord at ${FINAL} s (bar 27).`);
 console.log('Scenes: ' + timeline.scenes.map((s) => `${s.id} ${s.start.toFixed(2)}-${s.end.toFixed(2)}`).join(' | '));
 console.log('\nbar  meter time(s)      section   instruments (note counts)       what happens');
 const busNames = Object.keys(BUSES);
