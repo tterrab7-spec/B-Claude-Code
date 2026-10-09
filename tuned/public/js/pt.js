@@ -3,7 +3,7 @@ import { api, health } from './api.js';
 import { get as getState } from './store.js';
 import { exName, SPRINTS } from './data.js';
 import { RTM_CODES, rtmStatus } from './rtm.js';
-import { toast, ICON } from './app.js';
+import { toast, ICON, route, go } from './app.js';
 
 const h = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const KEY = 'tuned.ptkey';
@@ -19,7 +19,7 @@ export async function viewPT(shell) {
       ${getState().profile ? `<p class="muted">Preview with this device's patient below.</p>${localPreview()}` : ''}</section>`, { nav: false, wide: true });
   }
   if (!key()) return login(shell);
-  const [, , id] = location.hash.split('/');
+  const [, , id] = route().split('/');
   try { id ? await detail(shell, id) : await caseload(shell); }
   catch (e) { if (/key/i.test(e.message)) { try { sessionStorage.removeItem(KEY); } catch (er) {} return login(shell, e.message); } shell(`<section class="narrow"><p>${h(e.message)}</p></section>`, { nav: false }); }
 }
@@ -61,7 +61,7 @@ async function caseload(shell) {
       <td>${p.alerts.map(a => `<span class="alert ${a.level}">${h(a.text)}</span>`).join('') || '<span class="sub">–</span>'}</td></tr>`).join('')}
     </tbody></table></div>` : `<div class="card"><p>No patients yet. Patients appear here as soon as they finish intake on a device connected to this server.</p></div>`}
   </section>`, { nav: false, wide: true });
-  document.querySelectorAll('tr[data-id]').forEach(tr => tr.onclick = () => { location.hash = '#/pt/' + tr.dataset.id; });
+  document.querySelectorAll('tr[data-id]').forEach(tr => tr.onclick = () => { go('#/pt/' + tr.dataset.id); });
   document.getElementById('out').onclick = () => { try { sessionStorage.removeItem(KEY); } catch (e) {} viewPT(shell); };
 }
 

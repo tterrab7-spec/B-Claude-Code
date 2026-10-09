@@ -119,8 +119,13 @@ export function runScreen(root, { onCancel } = {}) {
 
     try {
       hud('Loading', 'Starting the movement engine on your phone');
-      await initPose();
-      stream = await startCamera(video);
+      const quitP = new Promise(r => { const t = setInterval(() => { if (quit) { clearInterval(t); r('quit'); } }, 200); });
+      const tooSlow = wait(45000).then(() => 'slow');
+      const ready = (async () => { await initPose(); const st = await startCamera(video); if (quit) stopStream(st); else stream = st; return 'ok'; })();
+      ready.catch(() => {});
+      const first = await Promise.race([ready, quitP, tooSlow]);
+      if (first === 'quit') { cleanup(); onCancel?.(); return resolve(null); }
+      if (first === 'slow') { quit = true; throw new Error('The movement engine took too long to load. Check your connection'); }
     } catch (e) {
       cleanup();
       resolve({ error: e.message || String(e) });

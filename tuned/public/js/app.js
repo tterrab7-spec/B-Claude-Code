@@ -12,7 +12,19 @@ const app = document.getElementById('app');
 const h = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const S = () => store.get();
 const brand = () => S().quiet ? 'Daily' : CONFIG.brand;
-const go = r => { location.hash = r; };
+// Hash routing, with an in-memory fallback for sandboxed previews (about:srcdoc)
+// where the frame's URL cannot change and '#' links would navigate away.
+const hashOK = location.protocol !== 'about:';
+let memRoute = '#/';
+export const route = () => (hashOK ? location.hash : memRoute) || '#/';
+export const go = r => { if (hashOK) location.hash = r; else { memRoute = r; render(); } };
+if (!hashOK) document.addEventListener('click', e => {
+  const a = e.target.closest?.('a[href^="#"]');
+  if (!a || e.defaultPrevented) return;
+  e.preventDefault();
+  const href = a.getAttribute('href');
+  if (href.startsWith('#/')) go(href); else document.getElementById(href.slice(1))?.scrollIntoView({ behavior: 'smooth' });
+});
 let cleanup = null;   // per-view teardown (camera, timers)
 
 store.subscribe(() => scheduleSync());
@@ -25,8 +37,9 @@ store.subscribe(() => scheduleSync());
     store.save(s => { s.ref = s.ref || ref.toUpperCase(); });
     health().then(ok => ok && api.post('ref/hit', { code: ref.toUpperCase(), userId: S().id }).catch(() => {}));
   }
-  if (q.get('door') && !S().profile) location.hash = '#/start/' + q.get('door');
-  history.replaceState(null, '', location.pathname + location.hash);
+  if (q.get('door') && !S().profile) go('#/start/' + q.get('door'));
+  // Strip the query so ?ref= is not re-sent on refresh. Sandboxed previews refuse this; that is fine.
+  if (location.search) { try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) {} }
 })();
 
 
@@ -37,8 +50,8 @@ function render() {
   document.body.classList.toggle('quiet', !!s.quiet);
   document.title = s.quiet ? 'Daily' : 'TUNED | Performance maintenance for men';
   if (s.quiet && s.quietPin && !sessionStorageGet('unlocked')) return viewLock();
-  const [, route, arg] = (location.hash || '#/').split('/');
-  const r = route || '';
+  const [, seg, arg] = route().split('/');
+  const r = seg || '';
   if (!s.profile && !['', 'start', 'pt', 'partners', 'plans', 'score'].includes(r)) return go('#/');
   const views = { '': s.profile ? viewHome : viewLanding, home: viewHome, start: viewStart, score: viewScore, result: viewResult,
     session: viewSession, coach: viewCoach, form: viewForm, squad: viewSquad, plans: viewPlans, settings: viewSettings,
@@ -53,7 +66,7 @@ function sessionStorageSet(k, v) { try { sessionStorage.setItem('tuned.' + k, v)
 // ---------- Layout
 function shell(inner, { nav = true, wide = false } = {}) {
   const s = S();
-  const r = (location.hash.split('/')[1] || '');
+  const r = (route().split('/')[1] || '');
   const tab = (id, label, icon) => `<a href="#/${id}" class="${r === id || (id === 'home' && r === '') ? 'on' : ''}">${ICON[icon]}<span>${label}</span></a>`;
   app.innerHTML = `
     <header class="top">
@@ -119,7 +132,7 @@ const feature = (icon, t, d) => `<div class="feature">${ICON[icon]}<h3>${t}</h3>
 
 // ---------- Intake
 function viewStart(doorId) {
-  const parts = location.hash.split('/');
+  const parts = route().split('/');
   const optId = parts[3];
   if (!doorId) {
     return shell(`<section class="narrow"><p class="eyebrow">Step 1 of 3</p><h1 class="h2">What brought you in?</h1>
@@ -382,7 +395,7 @@ function bindPads() {
 // ---------- Session runner
 function viewSession() {
   const s = S(), sp = s.sprint, q = s.quiet;
-  const minimal = /min=1/.test(location.hash);
+  const minimal = /min=1/.test(route());
   const plan = E.sessionPlan(sp);
   if (!plan || sp.sessions.length >= E.TOTAL_SESSIONS) return go('#/home');
   const items = minimal ? plan.items.slice(0, 2) : plan.items;

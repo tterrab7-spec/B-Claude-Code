@@ -16,13 +16,14 @@ const CHANNELS = [
 
 export async function viewPartners(shell) {
   const online = await health();
-  const base = location.origin + location.pathname;
+  const hosted = /^https?:$/.test(location.protocol);
   shell(`<section class="partners">
     <p class="eyebrow">Partners</p><h1 class="h2">Put a free Body Score where men already are.</h1>
     <p class="muted">Every partner gets a code. Every scan, signup and paid member is attributed back to it.</p>
     <div class="grid3">${CHANNELS.map(c => `<div class="feature"><h3>${c.name}</h3><p>${c.line}</p><p class="fine">${c.ask}</p></div>`).join('')}</div>
 
     <div class="card form" id="maker"><h3>Make a QR card</h3>
+      <label>Site address the QR opens<input name="site" type="url" required value="${hosted ? h(location.origin + location.pathname) : ''}" placeholder="https://your-site.netlify.app/"></label>
       <div class="row gap wrap">
         <label>Partner code<input name="code" value="${h(Object.keys(CONFIG.partners)[0] || '')}" maxlength="16" style="text-transform:uppercase"></label>
         <label>Partner name<input name="name" value="${h(Object.values(CONFIG.partners)[0]?.name || '')}" maxlength="60"></label>
@@ -39,6 +40,7 @@ export async function viewPartners(shell) {
   const maker = document.getElementById('maker');
   const val = n => maker.querySelector(`[name=${n}]`).value.trim();
   document.getElementById('mk').onclick = async () => {
+    const base = val('site'); if (!/^https?:\/\//.test(base)) return toast('Add the web address where TUNED is hosted');
     const code = val('code').toUpperCase().replace(/[^A-Z0-9]/g, ''); if (!code) return toast('Add a partner code');
     const ch = CHANNELS.find(c => c.id === val('channel'));
     const door = val('door') || ch.door;
