@@ -1,5 +1,10 @@
 // On-device pose estimation (MediaPipe Pose Landmarker). Video never leaves the phone.
-const V = new URL('../vendor/mediapipe/', import.meta.url).href;
+// Engine file locations. The hosted app serves them from vendor/; the single-file
+// build sets window.TUNED_VENDOR to CDN URLs before this module runs.
+const VENDOR = (typeof window !== 'undefined' && window.TUNED_VENDOR) || (() => {
+  const V = new URL('../vendor/mediapipe/', import.meta.url).href;
+  return { bundle: V + 'vision_bundle.mjs', wasmJs: V + 'vision_wasm_internal.js', wasmBin: V + 'vision_wasm_internal.wasm', model: V + 'pose_landmarker_lite.task' };
+})();
 
 let landmarker = null;
 let loading = null;
@@ -10,10 +15,10 @@ export function initPose() {
   if (landmarker) return Promise.resolve(landmarker);
   if (loading) return loading;
   loading = (async () => {
-    const { PoseLandmarker } = await import(V + 'vision_bundle.mjs');
-    const fileset = { wasmLoaderPath: V + 'vision_wasm_internal.js', wasmBinaryPath: V + 'vision_wasm_internal.wasm' };
+    const { PoseLandmarker } = await import(/* @vite-ignore */ VENDOR.bundle);
+    const fileset = { wasmLoaderPath: VENDOR.wasmJs, wasmBinaryPath: VENDOR.wasmBin };
     const opts = (delegate) => ({
-      baseOptions: { modelAssetPath: V + 'pose_landmarker_lite.task', delegate },
+      baseOptions: { modelAssetPath: VENDOR.model, delegate },
       runningMode: 'VIDEO', numPoses: 1,
       minPoseDetectionConfidence: 0.5, minPosePresenceConfidence: 0.5, minTrackingConfidence: 0.5,
     });

@@ -7,10 +7,16 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "test": "node test/engine.test.js"
+    "test": "node test/engine.test.js",
+    "build:single": "node build-single.mjs"
   },
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.133.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.24.0"
   }
 }
