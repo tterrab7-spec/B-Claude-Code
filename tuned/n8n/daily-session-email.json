@@ -1,0 +1,56 @@
+{
+  "name": "TUNED: daily session email",
+  "nodes": [
+    {
+      "parameters": { "rule": { "interval": [ { "field": "cronExpression", "expression": "30 6 * * *" } ] } },
+      "id": "a1f0c2d4-0001-4c1a-9a00-000000000001",
+      "name": "Every day 6:30 AM",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "url": "https://YOUR-TUNED-SERVER/api/daily",
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [ { "name": "x-admin-key", "value": "YOUR_ADMIN_KEY" } ] },
+        "options": {}
+      },
+      "id": "a1f0c2d4-0002-4c1a-9a00-000000000002",
+      "name": "Get today's emails from TUNED",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [240, 0]
+    },
+    {
+      "parameters": { "fieldToSplitOut": "emails", "options": {} },
+      "id": "a1f0c2d4-0003-4c1a-9a00-000000000003",
+      "name": "One item per patient",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [480, 0]
+    },
+    {
+      "parameters": {
+        "fromEmail": "coach@YOUR-DOMAIN.com",
+        "toEmail": "={{ $json.to }}",
+        "subject": "={{ $json.subject }}",
+        "emailFormat": "both",
+        "text": "={{ $json.text }}",
+        "html": "={{ $json.html }}",
+        "options": {}
+      },
+      "id": "a1f0c2d4-0004-4c1a-9a00-000000000004",
+      "name": "Send the email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [720, 0]
+    }
+  ],
+  "connections": {
+    "Every day 6:30 AM": { "main": [ [ { "node": "Get today's emails from TUNED", "type": "main", "index": 0 } ] ] },
+    "Get today's emails from TUNED": { "main": [ [ { "node": "One item per patient", "type": "main", "index": 0 } ] ] },
+    "One item per patient": { "main": [ [ { "node": "Send the email", "type": "main", "index": 0 } ] ] }
+  },
+  "settings": { "executionOrder": "v1" }
+}

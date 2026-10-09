@@ -1,11 +1,11 @@
 import * as store from './store.js';
-import { DOORS, SPRINTS, EXERCISES, RED_FLAGS, US_STATES, exName, doseText } from './data.js';
+import { DOORS, SPRINTS, EXERCISES, RED_FLAGS, US_STATES, exName, doseText, registerLibrary } from './data.js';
 import { CONFIG } from './config.js';
 import * as E from './engine.js';
 import { TESTS, runScreen, composite } from './screen.js';
 import { ask } from './coach.js';
 import { speak, listen, canListen, parseCheckin, setMuted, isMuted } from './voice.js';
-import { health, scheduleSync, api, inbox } from './api.js';
+import { health, scheduleSync, api, inbox, sendToPT } from './api.js';
 import { initPose, startCamera, stopStream, track, formModel, visible } from './pose.js';
 
 const app = document.getElementById('app');
@@ -28,6 +28,7 @@ if (!hashOK) document.addEventListener('click', e => {
 let cleanup = null;   // per-view teardown (camera, timers)
 
 store.subscribe(() => scheduleSync());
+registerLibrary(store.get().custom);
 
 // ---------- Boot: referral attribution, partner co-brand, Quiet Mode lock
 (function boot() {
@@ -162,6 +163,8 @@ function viewStart(doorId) {
         <div class="slider"><input name="pain" type="range" min="0" max="10" value="4"><output>4</output></div></label>
       ${quiet ? `<label>Pads per day right now<input name="pads" type="number" min="0" max="20" value="0" inputmode="numeric"></label>` : ''}
       <label>What do you want to get back to?<input name="goal" maxlength="120" placeholder="${quiet ? 'Golf without worrying, a full night of sleep' : 'Pick up my son, play 18, deadlift 315'}"></label>
+      <label>Email (optional)<input name="email" type="email" autocomplete="email" maxlength="120" placeholder="you@example.com"></label>
+      <label class="check"><input type="checkbox" name="dailyEmail" checked><span>Email me each day's session</span></label>
       <fieldset class="flags"><legend>Safety check. Any of these true right now?</legend>
         ${flags.map(f => `<label class="check"><input type="checkbox" name="flag" value="${f.id}"><span>${h(f.q)}</span></label>`).join('')}
       </fieldset>
@@ -180,7 +183,7 @@ function viewStart(doorId) {
     if (urgent) return viewStop(flagged);
     store.save(s => {
       s.profile = { name: fd.get('name').trim(), age: +fd.get('age'), state: fd.get('state'), door: doorId, sprintId: optId,
-        painBaseline: +fd.get('pain'), goal: (fd.get('goal') || '').trim(), flags: flagged, needsReview: flagged.length > 0,
+        painBaseline: +fd.get('pain'), goal: (fd.get('goal') || '').trim(), email: (fd.get('email') || '').trim(), dailyEmail: !!fd.get('email') && !!fd.get('dailyEmail'), flags: flagged, needsReview: flagged.length > 0,
         outOfState: !CONFIG.ptStates.includes(fd.get('state')), joined: new Date().toISOString() };
       s.sprint = E.startSprint(optId);
       if (quiet) { s.quiet = true; s.pads = [{ date: today(), count: +fd.get('pads') || 0 }]; }
@@ -346,22 +349,41 @@ async function viewHome() {
   if (v) v.onclick = () => { sessionStorageSet('voice', '1'); go('#/coach'); };
   bindPads();
   // PT inbox and squad preview load async
-  inbox().then(r => {
+  pullInbox().then(r => {
     if (!r) return;
-    const fresh = (r.overrides || []).filter(o => !(S().appliedOverrides || []).includes(o.id));
-    if (fresh.length || (r.reviewed && S().profile.needsReview)) {
-      store.save(st => {
-        fresh.forEach(o => { if (o.mod && Object.keys(o.mod).length) st.sprint.mods[o.base] = o.mod; else delete st.sprint.mods[o.base]; });
-        st.appliedOverrides = [...(st.appliedOverrides || []), ...fresh.map(o => o.id)];
-        if (r.reviewed) st.profile.needsReview = false;
-      });
-      if (fresh.length && route().split('/')[1] in { '': 1, home: 1 }) return render(); // redraw with the PT's plan changes
-    }
+    if (r.changed && route().split('/')[1] in { '': 1, home: 1 }) return render(); // redraw with the PT's changes
     const el = document.getElementById('inbox'); if (!el) return;
-    el.innerHTML = [...(r.messages || []).slice(-2).map(m => `<div class="banner pt">${ICON.pt}<div><b>${h(m.from)}:</b> ${h(m.text)}</div></div>`),
-      ...(r.visits || []).filter(v => v.status === 'scheduled').map(v => `<a class="banner hot" href="${h(v.link)}" target="_blank" rel="noopener">${ICON.cam}<div><b>Video visit ${new Date(v.when).toLocaleString([], { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}.</b> Tap to join at the time.</div>${ICON.arrow}</a>`)].join('');
+    const unseen = (r.messages || []).filter(m => m.role !== 'patient').slice(-2);
+    el.innerHTML = [...unseen.map(m => `<a class="banner pt" href="#/coach/pt">${ICON.pt}<div><b>${h(m.from)}:</b> ${h(m.text)}</div>${ICON.arrow}</a>`),
+      ...(r.visits || []).filter(v => v.status === 'scheduled' && new Date(v.when) > Date.now() - 3600000).map(v => `<a class="banner hot" href="${h(v.link)}" target="_blank" rel="noopener">${ICON.cam}<div><b>Video visit ${new Date(v.when).toLocaleString([], { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}.</b> Tap to join at the time.</div>${ICON.arrow}</a>`)].join('');
   });
   squadMini();
+}
+
+// Pull what the PT sent: program library, a newly assigned program, plan edits, review status.
+async function pullInbox() {
+  if (!S().profile) return null;
+  const r = await inbox();
+  if (!r) return null;
+  let changed = false;
+  const st0 = S();
+  if (r.library && JSON.stringify(r.library) !== JSON.stringify(st0.custom || null)) { registerLibrary(r.library); store.save(st => { st.custom = r.library; }); changed = true; }
+  const a = r.assignment;
+  if (a && SPRINTS[a.programId] && a.at > (st0.assignedAt || '')) {
+    store.save(st => { st.sprint = E.startSprint(a.programId); st.profile.sprintId = a.programId; st.assignedAt = a.at; st.appliedOverrides = (r.overrides || []).map(o => o.id); if (SPRINTS[a.programId].quiet) st.quiet = true; });
+    toast(`${a.by || 'Your PT'} assigned you a new program`);
+    changed = true;
+  }
+  const fresh = (r.overrides || []).filter(o => !(S().appliedOverrides || []).includes(o.id));
+  if (fresh.length || (r.reviewed && S().profile.needsReview)) {
+    store.save(st => {
+      fresh.forEach(o => { if (o.mod && Object.keys(o.mod).length) st.sprint.mods[o.base] = o.mod; else delete st.sprint.mods[o.base]; });
+      st.appliedOverrides = [...(st.appliedOverrides || []), ...fresh.map(o => o.id)];
+      if (r.reviewed) st.profile.needsReview = false;
+    });
+    if (fresh.length) changed = true;
+  }
+  return { ...r, changed };
 }
 
 async function squadMini() {
@@ -410,8 +432,12 @@ function viewSession() {
       <li class="ex ${doneSet.has(i.base) ? 'done' : ''}" data-base="${i.base}">
         <div class="ex-head"><span class="num">${k + 1}</span><div><b>${h(exName(i.id, q))}</b><span class="dose">${doseText(i.ex, i.mod)}</span></div>
           <button class="tick" aria-label="Mark done">${ICON.check}</button></div>
-        <ul class="cues">${i.ex.cues.map(c => `<li>${h(c)}</li>`).join('')}</ul>
+        <ul class="cues">${(i.ex.cues || []).map(c => `<li>${h(c)}</li>`).join('')}</ul>
+        ${i.note ? `<div class="ptnote"><b>From your PT:</b> ${h(i.note)}</div>` : ''}
+        <div class="video-slot"></div>
         <div class="row gap wrap">
+          ${i.ex.video ? `<button class="btn ghost sm" data-video="${h(i.ex.video)}">${ICON.play} Watch demo</button>` : ''}
+          ${i.ex.reps && i.ex.region !== 'pelvic' ? `<label class="load"><input type="number" inputmode="decimal" min="0" max="999" step="2.5" name="load" data-base="${h(i.base)}" placeholder="Weight" value="${h((sp.sessions.at(-1)?.loads || {})[i.base] ?? '')}"><span>lbs</span></label>` : ''}
           ${i.ex.secs ? `<button class="btn ghost sm timer" data-secs="${i.ex.secs + (i.mod.secs || 0)}" data-sets="${(i.ex.sets || 1) + (i.mod.sets || 0)}">${ICON.clock} Timer</button>` : ''}
           ${i.ex.form ? `<a class="btn ghost sm" href="#/form/${i.id}">${ICON.cam} Form check</a>` : ''}
           ${i.mod.swap ? `<span class="tag">${i.mod.swap === i.ex.reg ? 'Eased' : 'Leveled up'} by coach</span>` : ''}
@@ -442,6 +468,11 @@ function viewSession() {
     };
     speak('Go.'); tick(); tmr = setInterval(tick, 1000);
   });
+  app.querySelectorAll('[data-video]').forEach(b => b.onclick = () => {
+    const slot = b.closest('.ex').querySelector('.video-slot');
+    if (slot.innerHTML) { slot.innerHTML = ''; return; }
+    slot.innerHTML = videoEmbed(b.dataset.video);
+  });
   cleanup = () => clearInterval(tmr);
   const f = document.getElementById('finish');
   const rng = f.querySelector('input[type=range]'), out = f.querySelector('output');
@@ -449,7 +480,9 @@ function viewSession() {
   f.onsubmit = e => {
     e.preventDefault();
     const fd = new FormData(f);
-    const log = { at: new Date().toISOString(), idx: plan.idx, pain: +fd.get('pain'), effort: fd.get('effort'), note: fd.get('note') || '', done: [...doneSet], minimal };
+    const loads = {};
+    app.querySelectorAll('input[name=load]').forEach(inp => { const v = parseFloat(inp.value); if (v > 0) loads[inp.dataset.base] = v; });
+    const log = { at: new Date().toISOString(), idx: plan.idx, pain: +fd.get('pain'), effort: fd.get('effort'), note: fd.get('note') || '', done: [...doneSet], minimal, loads };
     let result;
     store.save(st => { st.sprint.sessions.push(log); result = E.progress(st.sprint, log, st.profile.painBaseline); });
     try { sessionStorage.removeItem('tuned.draft'); } catch (er) {}
@@ -530,17 +563,44 @@ function viewForm(exId) {
 }
 
 // ---------- Coach chat
-function viewCoach() {
+const chatTabs = on => `<div class="seg chat-tabs"><label><input type="radio" name="ct" value="coach" ${on === 'coach' ? 'checked' : ''}><span>AI coach</span></label><label><input type="radio" name="ct" value="pt" ${on === 'pt' ? 'checked' : ''}><span>My PT</span></label></div>`;
+const bindChatTabs = () => app.querySelectorAll('input[name=ct]').forEach(r => r.onchange = () => go(r.value === 'pt' ? '#/coach/pt' : '#/coach'));
+
+async function viewPTThread() {
+  shell(`<section class="chat">${chatTabs('pt')}
+    <p class="fine center">Messages go to your licensed PT, a real person. For anything urgent call 911.</p>
+    <div class="msgs" id="msgs"><p class="muted center">Loading</p></div>
+    <form class="composer" id="composer"><input id="msg" placeholder="Message your PT" autocomplete="off" maxlength="1000"><button class="btn primary">Send</button></form></section>`);
+  bindChatTabs();
+  const msgs = document.getElementById('msgs');
+  const draw = list => {
+    msgs.innerHTML = list.length ? list.map(m => `<div class="msg ${m.role === 'patient' ? 'me' : 'coach'}"><div class="bubble">${m.role === 'patient' ? '' : `<b>${h(m.from)}</b><br>`}${h(m.text).replace(/\n/g, '<br>')}</div><span class="fine">${new Date(m.at).toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}</span></div>`).join('')
+      : '<p class="muted center">No messages yet. Ask your PT anything about your program.</p>';
+    msgs.scrollTop = msgs.scrollHeight;
+  };
+  const r = await pullInbox();
+  draw(r?.messages || []);
+  document.getElementById('composer').onsubmit = async e => {
+    e.preventDefault();
+    const input = document.getElementById('msg'); const t = input.value.trim(); if (!t) return;
+    input.value = '';
+    try { const res = await sendToPT(t); draw(res.messages || []); toast('Sent to your PT'); } catch (er) { toast(er.message); }
+  };
+}
+
+function viewCoach(arg) {
+  if (arg === 'pt') return viewPTThread();
   const s = S();
   if (!s.coach.length) store.save(st => st.coach.push({ role: 'coach', text: `I'm your ${st.quiet ? '' : 'TUNED '}coach. I see your logs, scores and plan, and your licensed PT sees everything I change. Tell me how you feel today, give me a pain number, or ask me anything about your program.`, at: new Date().toISOString() }));
-  shell(`<section class="chat">
+  shell(`<section class="chat">${chatTabs('coach')}
     <div class="msgs" id="msgs"></div>
-    <div class="chips" id="chips">${['Pain is a 6 today', "What's today's session?", 'I have 10 minutes', 'Swap an exercise', 'Talk to my PT'].map(c => `<button class="chip" data-ask="${h(c)}">${h(c)}</button>`).join('')}</div>
+    <div class="chips" id="chips">${['Pain is a 6 today', "What's today's session?", 'I have 10 minutes', 'Swap an exercise', 'Request a video visit'].map(c => `<button class="chip" data-ask="${h(c)}">${h(c)}</button>`).join('')}</div>
     <form class="composer" id="composer">
       ${canListen() ? `<button type="button" class="iconbtn mic" id="mic" aria-label="Voice check-in">${ICON.mic}</button>` : ''}
       <input id="msg" placeholder="How's the body today?" autocomplete="off" maxlength="600">
       <button class="btn primary">Send</button>
     </form></section>`);
+  bindChatTabs();
   const msgs = document.getElementById('msgs');
   const draw = () => {
     msgs.innerHTML = S().coach.map((m, i) => `<div class="msg ${m.role}"><div class="bubble">${h(m.text).replace(/\n/g, '<br>')}</div>
@@ -703,6 +763,10 @@ function viewSettings() {
       <label>Quiet Mode PIN (4 digits, optional)<input id="pin" inputmode="numeric" maxlength="4" pattern="\\d{4}" value="${h(s.quietPin)}" placeholder="None"></label>
       <label class="check toggle"><input type="checkbox" id="mute" ${isMuted() ? 'checked' : ''}><span><b>Mute voice coach</b></span></label>
     </div>
+    <div class="card form"><h3>Daily email</h3>
+      <label>Email<input id="email" type="email" maxlength="120" value="${h(s.profile?.email || '')}" placeholder="you@example.com"></label>
+      <label class="check toggle"><input type="checkbox" id="daily" ${s.profile?.dailyEmail ? 'checked' : ''}><span><b>Send me each day's session</b><br><span class="muted">One email each morning with today's exercises, your PT's notes and demo videos.</span></span></label>
+    </div>
     <div class="card form"><h3>Switch program</h3><p class="muted">Starting a new Sprint resets your session count. Scores are kept.</p>
       <select id="sprint">${Object.entries(SPRINTS).map(([id, d]) => `<option value="${id}" ${s.sprint?.id === id ? 'selected' : ''}>${h(d.title)}</option>`).join('')}</select>
       <button class="btn ghost" id="switch">Start this Sprint</button></div>
@@ -713,6 +777,8 @@ function viewSettings() {
   document.getElementById('quiet').onchange = e => { store.save(st => st.quiet = e.target.checked); sessionStorageSet('unlocked', '1'); render(); };
   document.getElementById('pin').onchange = e => { const v = e.target.value.trim(); if (v && !/^\d{4}$/.test(v)) return toast('PIN must be 4 digits'); store.save(st => st.quietPin = v); sessionStorageSet('unlocked', '1'); toast(v ? 'PIN set' : 'PIN removed'); };
   document.getElementById('mute').onchange = e => setMuted(e.target.checked);
+  const saveEmail = () => { const em = document.getElementById('email').value.trim(); if (em && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) return toast('That email does not look right'); store.save(st => { st.profile.email = em; st.profile.dailyEmail = !!em && document.getElementById('daily').checked; }); toast(document.getElementById('daily').checked && em ? 'Daily email on' : 'Saved'); };
+  document.getElementById('email').onchange = saveEmail; document.getElementById('daily').onchange = saveEmail;
   document.getElementById('switch').onclick = () => { const id = document.getElementById('sprint').value; if (!confirm('Start ' + SPRINTS[id].title + '?')) return; store.save(st => { st.sprint = E.startSprint(id); st.profile.sprintId = id; if (SPRINTS[id].quiet) st.quiet = true; }); go('#/program'); };
   document.getElementById('export').onclick = () => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([store.exportData()], { type: 'application/json' })); a.download = 'tuned-data.json'; a.click(); };
   document.getElementById('import').onchange = async e => { try { store.importData(await e.target.files[0].text()); toast('Restored'); go('#/home'); } catch (er) { toast(er.message); } };
@@ -758,6 +824,14 @@ export function toast(msg) {
   setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 300); }, 2800);
 }
 
+// YouTube and Vimeo links play inline; anything else plays as a direct video file.
+export function videoEmbed(url) {
+  let m;
+  if ((m = url.match(/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([\w-]{11})/))) return `<iframe src="https://www.youtube-nocookie.com/embed/${m[1]}?rel=0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen title="Exercise demo"></iframe>`;
+  if ((m = url.match(/vimeo\.com\/(?:video\/)?(\d+)/))) return `<iframe src="https://player.vimeo.com/video/${m[1]}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="Exercise demo"></iframe>`;
+  return `<video src="${h(url)}" controls playsinline preload="metadata"></video><a class="fine" href="${h(url)}" target="_blank" rel="noopener">Open video</a>`;
+}
+
 function greeting() { const hr = new Date().getHours(); return hr < 12 ? 'Morning' : hr < 18 ? 'Afternoon' : 'Evening'; }
 function today() { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; }
 
@@ -780,8 +854,10 @@ export const ICON = {
   cam: I('<path d="M3 7h4l2-3h6l2 3h4v13H3z"/><circle cx="12" cy="13" r="4"/>'),
   mic: I('<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>'),
   clock: I('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'),
+  play: I('<path d="M7 4l13 8-13 8z"/>'),
   qr: I('<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 17h4v4"/>'),
 };
 
 window.addEventListener('hashchange', render);
 render();
+pullInbox().then(r => { if (r?.changed && ['', 'home', 'program'].includes(route().split('/')[1] || '')) render(); });

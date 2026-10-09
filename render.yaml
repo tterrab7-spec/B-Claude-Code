@@ -1,0 +1,28 @@
+# One-click deploy on Render (render.com > New > Blueprint > pick this repo).
+# The persistent disk keeps patient data across restarts; it needs a paid instance.
+services:
+  - type: web
+    name: tuned
+    runtime: node
+    rootDir: tuned
+    plan: starter
+    buildCommand: npm ci --omit=dev
+    startCommand: node server.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: DATA_FILE
+        value: /var/data/db.json
+      - key: CLINICIAN_KEY
+        generateValue: true
+      - key: ADMIN_KEY
+        generateValue: true
+      - key: APP_URL
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+    disk:
+      name: tuned-data
+      mountPath: /var/data
+      sizeGB: 1

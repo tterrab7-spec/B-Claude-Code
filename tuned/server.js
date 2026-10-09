@@ -8,7 +8,9 @@ import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import Anthropic from '@anthropic-ai/sdk';
 import { points } from './public/js/engine.js';
-import { summary as clinicSummary, applyAction, triageRank, newClinical } from './public/js/clinic.js';
+import { summary as clinicSummary, applyAction, triageRank, newClinical, newLibrary, applyLibraryOp, patientMessage, activity, auditEntry, libraryAuditText, actionText } from './public/js/clinic.js';
+import { registerLibrary, SPRINTS, EXERCISES } from './public/js/data.js';
+import { dailyEmail } from './public/js/email.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const PUBLIC = path.join(here, 'public');
@@ -23,8 +25,11 @@ const anthropic = coachOn ? new Anthropic() : null;
 if (!process.env.CLINICIAN_KEY) console.warn('[tuned] CLINICIAN_KEY not set. Using the demo key "tuned-demo". Set it before real use.');
 
 // ---------- Storage
-let db = { users: {}, squads: {}, partners: {}, refHits: [], clinical: {} };
+let db = { users: {}, squads: {}, partners: {}, refHits: [], clinical: {}, library: newLibrary(), audit: [] };
 try { db = { ...db, ...JSON.parse(fs.readFileSync(DATA, 'utf8')) }; } catch (e) { /* first run */ }
+registerLibrary(db.library);
+const STARTED = new Date().toISOString();
+const audit = (req, action, pid, text) => { db.audit.push(auditEntry(req.headers['x-pt-name'] || 'PT', action, pid, text)); if (db.audit.length > 5000) db.audit.splice(0, db.audit.length - 5000); };
 if (!db.partners.DADBACK) db.partners.DADBACK = { code: 'DADBACK', name: 'The Dad Back', kind: 'creator', door: 'life', option: 'dad', revShare: 20, created: new Date().toISOString() };
 let saveTimer = null;
 function persist() {
@@ -120,7 +125,7 @@ async function api(req, res, url) {
   const p = url.pathname.replace(/^\/api\//, '').split('/').map(decodeURIComponent);
   const M = req.method;
 
-  if (p[0] === 'health') return send(res, 200, { ok: true, coach: coachOn, version: 1 });
+  if (p[0] === 'health') return send(res, 200, { ok: true, coach: coachOn, model: coachOn ? COACH_MODEL : null, version: 2, storage: 'json-file', startedAt: STARTED });
 
   if (p[0] === 'sync' && M === 'POST') {
     const { user } = await readBody(req);
@@ -133,7 +138,26 @@ async function api(req, res, url) {
   if (p[0] === 'inbox' && M === 'GET') {
     if (!validId(p[1])) return send(res, 400, { error: 'Bad id' });
     const c = db.clinical[p[1]];
-    return send(res, 200, c ? { messages: c.messages, visits: c.visits, overrides: c.overrides, reviewed: c.reviewed } : { messages: [], visits: [], overrides: [] });
+    return send(res, 200, { messages: c?.messages || [], visits: c?.visits || [], overrides: c?.overrides || [], reviewed: c?.reviewed || null, assignment: c?.assignment || null, library: db.library });
+  }
+
+  if (p[0] === 'messages' && M === 'POST') {
+    if (!validId(p[1]) || !db.users[p[1]]) return send(res, 400, { error: 'Unknown patient' });
+    const b = await readBody(req, 20_000);
+    const err = patientMessage(db.users[p[1]], clinical(p[1]), b.text);
+    if (err) return send(res, 400, { error: err });
+    persist();
+    return send(res, 200, { ok: true, messages: clinical(p[1]).messages });
+  }
+
+  // Daily email feed for n8n (or any scheduler). One entry per opted-in patient.
+  if (p[0] === 'daily' && M === 'GET') {
+    if (!isAdmin(req)) return send(res, 401, { error: 'Admin key required' });
+    const appUrl = process.env.APP_URL || `https://${req.headers.host}/`;
+    const today = new Date().toISOString().slice(0, 10);
+    const emails = Object.values(db.users).filter(u => u.profile?.dailyEmail && u.profile?.email && !(u.sprint?.sessions || []).some(x => x.at.slice(0, 10) === today))
+      .map(u => dailyEmail(u, clinical(u.id), appUrl)).filter(Boolean);
+    return send(res, 200, { date: today, count: emails.length, emails });
   }
 
   if (p[0] === 'coach' && M === 'POST') {
@@ -211,6 +235,33 @@ async function api(req, res, url) {
   // Clinician
   if (p[0] === 'clinician') {
     if (!isClinician(req)) return send(res, 401, { error: 'Clinician key required' });
+    if (p[1] === 'library') {
+      if (M === 'GET') return send(res, 200, db.library);
+      const b = await readBody(req, 300_000);
+      const text = libraryAuditText(b.op, b);
+      const err = applyLibraryOp(db.library, b.op, { ...b, by: req.headers['x-pt-name'] || 'PT' });
+      if (err) return send(res, 400, { error: err });
+      registerLibrary(db.library);
+      if (b.op === 'deleteProgram') delete SPRINTS[b.id];
+      if (b.op === 'deleteExercise') delete EXERCISES[b.id];
+      audit(req, 'library.' + b.op, null, text);
+      persist();
+      return send(res, 200, db.library);
+    }
+    if (p[1] === 'system' && M === 'GET') {
+      const users = Object.values(db.users).filter(u => u.profile);
+      const records = users.map(u => ({ u, c: clinical(u.id) }));
+      let bytes = 0; try { bytes = fs.statSync(DATA).size; } catch (e) {}
+      const count = f => users.reduce((a, u) => a + (f(u) || 0), 0);
+      return send(res, 200, {
+        mode: 'server', storage: 'JSON file on the server', dataFile: path.basename(DATA), bytes, startedAt: STARTED, coach: coachOn, model: coachOn ? COACH_MODEL : null, node: process.version,
+        counts: { patients: users.length, sessions: count(u => u.sprint?.sessions?.length), scores: count(u => u.scores?.length), checkins: count(u => u.checkins?.length), coachChanges: count(u => u.sprint?.changes?.length),
+          messages: records.reduce((a, r) => a + r.c.messages.length, 0), notes: records.reduce((a, r) => a + r.c.notes.length, 0), squads: Object.keys(db.squads).length, partners: Object.keys(db.partners).length,
+          customPrograms: Object.keys(db.library.programs).length, customExercises: Object.keys(db.library.exercises).length, videos: Object.keys(db.library.videos).length },
+        activity: activity(records, db.audit),
+      });
+    }
+    if (p[1] === 'export' && M === 'GET') return send(res, 200, { exportedAt: new Date().toISOString(), ...db }, { 'content-disposition': 'attachment; filename="tuned-export.json"' });
     if (p[1] === 'patients' && !p[2] && M === 'GET') {
       const list = Object.values(db.users).filter(u => u.profile).map(summary);
       list.sort((a, b) => triageRank(a) - triageRank(b) || (b.lastSession || '').localeCompare(a.lastSession || ''));
@@ -224,6 +275,7 @@ async function api(req, res, url) {
       const b = await readBody(req);
       const err = applyAction(u, c, p[3], b);
       if (err) return send(res, 400, { error: err });
+      if (p[3] !== 'read') audit(req, p[3], u.id, actionText(p[3], u, b));
       persist();
       return send(res, 200, { ok: true, clinical: c, summary: summary(u) });
     }

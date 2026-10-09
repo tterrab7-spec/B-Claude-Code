@@ -40,14 +40,26 @@ CLINICIAN_KEY=pick-a-secret ANTHROPIC_API_KEY=sk-ant-... npm start
 | Squads | `#/squad` | Create or join by code, weekly challenge, leaderboard on Tune Points. |
 | Quiet Mode | Settings or the pelvic door | Neutral light theme, "Daily" in place of the brand and tab title, neutral exercise names, optional PIN lock, bladder pad log for post-prostatectomy rehab. |
 | Safety | Intake | Red-flag screen. Urgent answers stop the flow and route to a physician. Post-op requires surgeon clearance. Out-of-license states are flagged. |
-| PT dashboard | `#/pt`, `js/pt.js`, `js/clinic.js` | Caseload triaged by alert level (urgent symptoms, intake flags, drop-off risk, pain flares, visit requests, out-of-license state) with filters. Per patient: pain and Body Score trends, plan editor (swap any exercise, adjust sets and reps), approve or revert every coach change, clinical notes with a SOAP draft generated from the data, messaging, video visit scheduling and RTM time logging. PT changes sync back to the patient's plan. |
+| PT dashboard | `#/pt`, `js/pt.js`, `js/clinic.js` | Caseload triaged by alert level (urgent symptoms, intake flags, drop-off risk, pain flares, unread messages, low compliance, visit requests, out-of-license state). Patient chart: program assignment, compliance % with a 6-week calendar, pain / Body Score / weight trends, two-way messages, plan editor (swap, sets, reps, note to patient), coach change review, clinical notes with a SOAP draft, RTM time, video visits, session log. |
+| Program builder | `#/pt/programs` | Build programs from scratch or duplicate a TUNED one: 3 phases, Session A and B, each exercise with its own sets, reps or time, and a note to the patient. Assign from any chart. |
+| Exercise library | `#/pt/exercises` | All 75 exercises plus your own. Attach a demo video (YouTube, Vimeo or .mp4) to any exercise; it plays inside the patient's session and is linked in the daily email. |
 | Billing | `#/pt/billing` | RTM status per patient this period, estimated revenue (rates in `config.js`), next action to reach the next code, CSV export. |
+| System | `#/pt/system` | The backend, visible: connection and storage, architecture, record counts, live activity (patient events plus the PT audit log), the raw stored record for any patient, full JSON export, daily email preview, and the API endpoint list. |
+| Daily email | `js/email.js`, `GET /api/daily`, `n8n/daily-session-email.json` | Each morning n8n pulls one "today's session" email per opted-in patient and sends it through your email provider. |
 | Demo clinic | `js/demo.js` | With no server, the PT dashboard runs on-device with six sample patients built by replaying sessions through the real engine, plus the device's own patient. With the server, a toggle mixes the demo patients in. |
 | RTM billing | `js/rtm.js` | Tracks data days per 30-day period and management minutes per month against 98975, 98977, 98985, 98979, 98980, 98981 (CY2026 code set). |
 | Partners | `#/partners` | Channel playbooks, printable QR chair cards per partner code and front door, attribution (scans, signups, scored, active, paid). |
 | Plans | `#/plans`, `js/config.js` | Free Body Score, $39/mo membership, $249 Sprint + PT, $79 kit. Paste Stripe Payment Links into `config.js`. |
 
 Launch partner: The Dad Back (`?ref=DADBACK`) lands on the Dad Sprint with a co-brand strip. Partner codes, pricing and PT license states are all in `public/js/config.js`.
+
+## Deploy (shared data across devices)
+
+The Netlify / static version keeps data on each device. For a PT and patients on different phones, run the server:
+
+1. **Render (simplest).** render.com > New > Blueprint > pick this repo. `render.yaml` at the repo root sets everything up, including a 1 GB disk for the data file and generated `CLINICIAN_KEY` / `ADMIN_KEY`. Set `APP_URL` to the site address and, optionally, `ANTHROPIC_API_KEY` for the Claude coach. Starter plan, about $7/month.
+2. **Anywhere with Node 20+.** `cd tuned && npm ci --omit=dev && CLINICIAN_KEY=... ADMIN_KEY=... APP_URL=https://... node server.js`, behind HTTPS.
+3. **Daily email.** In n8n, import `n8n/daily-session-email.json`, set the server URL and admin key in the HTTP Request node and your email credentials in the Send Email node.
 
 ## Before real patients (pilot to production)
 

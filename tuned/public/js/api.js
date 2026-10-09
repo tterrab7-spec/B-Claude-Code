@@ -42,11 +42,29 @@ export async function syncNow() {
   try { return await api.post('sync', { user: s }); } catch (e) { return null; }
 }
 
+// On-device clinic (PT dashboard without a server) keeps its records here.
+export const LOCAL_KEYS = { clinic: 'tuned.clinic', library: 'tuned.library', audit: 'tuned.audit' };
+export function localRead(key, fallback) { try { return JSON.parse(localStorage.getItem(key) || 'null') ?? fallback; } catch (e) { return fallback; } }
+export function localWrite(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {} }
+
 export async function inbox() {
   const h = await health();
   if (!h) {
-    // On-device demo clinic (PT dashboard without a server) writes here.
-    try { const c = JSON.parse(localStorage.getItem('tuned.clinic') || '{}')[get().id]; return c ? { messages: c.messages || [], visits: c.visits || [], overrides: c.overrides || [], reviewed: c.reviewed } : null; } catch (e) { return null; }
+    const c = localRead(LOCAL_KEYS.clinic, {})[get().id] || {};
+    return { messages: c.messages || [], visits: c.visits || [], overrides: c.overrides || [], reviewed: c.reviewed || null, assignment: c.assignment || null, library: localRead(LOCAL_KEYS.library, null) };
   }
   try { return await api.get('inbox/' + encodeURIComponent(get().id)); } catch (e) { return null; }
+}
+
+export async function sendToPT(text) {
+  const s = get();
+  if (await health()) {
+    await syncNow();
+    return api.post('messages/' + encodeURIComponent(s.id), { text });
+  }
+  const all = localRead(LOCAL_KEYS.clinic, {});
+  const c = all[s.id] || {};
+  c.messages = [...(c.messages || []), { from: s.profile?.name || 'Patient', role: 'patient', text: String(text).slice(0, 1000), at: new Date().toISOString() }];
+  all[s.id] = c; localWrite(LOCAL_KEYS.clinic, all);
+  return { ok: true, messages: c.messages };
 }

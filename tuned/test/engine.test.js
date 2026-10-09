@@ -5,7 +5,9 @@ import * as E from '../public/js/engine.js';
 import { composite } from '../public/js/screen.js';
 import { rtmStatus } from '../public/js/rtm.js';
 import { parseCheckin } from '../public/js/voice.js';
-import { summary, applyAction, newClinical, effectiveMods } from '../public/js/clinic.js';
+import { summary, applyAction, newClinical, effectiveMods, newLibrary, applyLibraryOp, compliance } from '../public/js/clinic.js';
+import { registerLibrary } from '../public/js/data.js';
+import { dailyEmail } from '../public/js/email.js';
 import { demoCaseload } from '../public/js/demo.js';
 
 let n = 0; const t = (name, fn) => { fn(); n++; console.log('ok', name); };
@@ -88,6 +90,32 @@ t('clinic: revert, plan edit, urgent alert clears on review', () => {
 t('demo caseload covers every alert type', () => {
   const levels = new Set(demoCaseload().flatMap(({ user, clinical }) => summary(user, clinical).alerts.map(a => a.level)));
   ['urgent', 'high', 'medium', 'info'].forEach(l => assert.ok(levels.has(l), l));
+});
+
+t('library: custom exercise, video, program with prescriptions runs in the engine', () => {
+  const lib = newLibrary();
+  assert.equal(applyLibraryOp(lib, 'saveExercise', { name: 'Hip Airplane', region: 'hip', reps: 6, cues: 'a\nb', video: 'https://youtu.be/abcdefghijk' }), null);
+  const xid = Object.keys(lib.exercises)[0];
+  assert.equal(applyLibraryOp(lib, 'setVideo', { id: 'gluteBridge', video: 'javascript:alert(1)' }), 'Video link must start with https://');
+  assert.equal(applyLibraryOp(lib, 'saveProgram', { title: 'Bad', phases: [] }).startsWith('Each'), true);
+  const ph = { name: 'P', A: [{ id: xid, sets: 2, reps: 8, note: 'slow' }], B: ['gluteBridge'] };
+  assert.equal(applyLibraryOp(lib, 'saveProgram', { title: 'Hip Plan', phases: [ph, ph, ph] }), null);
+  registerLibrary(lib);
+  const pid = Object.keys(lib.programs)[0];
+  const plan = E.sessionPlan(E.startSprint(pid), 0);
+  assert.equal(plan.items[0].id, xid); assert.equal(plan.items[0].ex.reps, 8); assert.equal(plan.items[0].ex.sets, 2); assert.equal(plan.items[0].note, 'slow');
+  assert.equal(plan.items[0].ex.video, 'https://youtu.be/abcdefghijk');
+});
+
+t('daily email uses a newly assigned program and compliance math', () => {
+  const pid = Object.keys(SPRINTS).find(k => k.startsWith('p_'));
+  const u = { id: 'u_mail12345', profile: { name: 'Sam Hill', email: 's@x.com', dailyEmail: true }, sprint: E.startSprint('back40'), scores: [] };
+  const c = newClinical(); c.assignment = { programId: pid, at: new Date().toISOString() };
+  const em = dailyEmail(u, c, 'https://tuned.example/');
+  assert.ok(em.html.includes('Hip Airplane') && em.html.includes('From your PT') && em.html.includes('#/session'));
+  assert.equal(em.to, 's@x.com');
+  const sp = E.startSprint('back40'); sp.startedAt = new Date(Date.now() - 14 * 86400000).toISOString(); sp.sessions = [1, 2, 3, 4].map(() => ({ at: new Date().toISOString(), pain: 3 }));
+  assert.deepEqual(compliance({ sprint: sp }), { done: 4, expected: 8, pct: 50 });
 });
 
 console.log(`\n${n} passed`);

@@ -350,6 +350,23 @@ export const RED_FLAGS = [
 
 export const US_STATES = 'AL AK AZ AR CA CO CT DE DC FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY'.split(' ');
 
+// PT-built content (custom exercises, custom programs, video links) is merged into
+// the same tables at runtime, so every screen and the engine treat it like built-ins.
+const BUILTIN_EX = new Set(Object.keys(EXERCISES));
+const BUILTIN_SPRINTS = new Set(Object.keys(SPRINTS));
+export const isBuiltinExercise = id => BUILTIN_EX.has(id);
+export const isBuiltinProgram = id => BUILTIN_SPRINTS.has(id);
+
+export function registerLibrary(lib) {
+  if (!lib) return;
+  Object.entries(lib.exercises || {}).forEach(([id, e]) => { if (!BUILTIN_EX.has(id)) EXERCISES[id] = { ...e, custom: true }; });
+  Object.entries(lib.videos || {}).forEach(([id, url]) => { if (EXERCISES[id]) EXERCISES[id] = { ...EXERCISES[id], video: url || undefined }; });
+  Object.entries(lib.programs || {}).forEach(([id, p]) => { if (!BUILTIN_SPRINTS.has(id)) SPRINTS[id] = { ...p, custom: true }; });
+}
+
+// A program item is an exercise id, or { id, sets, reps, secs, mins, note } for a PT prescription.
+export const itemId = it => (typeof it === 'string' ? it : it.id);
+
 export function exName(id, quiet) {
   const e = EXERCISES[id];
   if (!e) return id;

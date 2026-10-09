@@ -1,5 +1,5 @@
 // Clinical engine: Sprint schedule, progression rules, Body Score scale, points.
-import { EXERCISES, SPRINTS } from './data.js';
+import { EXERCISES, SPRINTS, itemId } from './data.js';
 
 export const SESSIONS_PER_WEEK = 4;
 export const TOTAL_SESSIONS = 24;          // 6 weeks x 4
@@ -22,11 +22,17 @@ export function sessionPlan(sp, idx = nextIndex(sp)) {
   if (!def) return null;
   const phase = def.phases[phaseOf(Math.min(idx, TOTAL_SESSIONS - 1))];
   const variant = idx % 2 === 0 ? 'A' : 'B';
-  const items = phase[variant].map(base => {
+  const items = phase[variant].map(it => {
+    const base = itemId(it);
+    const presc = typeof it === 'string' ? {} : it;
     const m = sp.mods[base] || {};
     const id = m.swap || base;
-    return { base, id, ex: EXERCISES[id], mod: m };
-  });
+    const src = EXERCISES[id] || { name: id, region: 'general', cues: [], sets: 1, reps: 10 };
+    // A PT prescription on the program item sets the dose for the base exercise.
+    const ex = { ...src };
+    if (!m.swap) ['sets', 'reps', 'secs', 'mins'].forEach(k => { if (presc[k]) { ex[k] = +presc[k]; if (k === 'secs' || k === 'mins') delete ex.reps; if (k === 'reps') { delete ex.secs; delete ex.mins; } } });
+    return { base, id, ex, mod: m, note: m.note || presc.note || '' };
+  }).filter(i => i.ex);
   return { idx, week: weekOf(idx) + 1, phase: phase.name, phaseIdx: phaseOf(idx), variant, items };
 }
 
