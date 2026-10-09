@@ -1,0 +1,16 @@
+{
+  "name": "tuned",
+  "version": "1.0.0",
+  "private": true,
+  "description": "TUNED: performance-maintenance platform for men. Body Score, 6-week Sprints, AI coach, Squads, Quiet Mode, PT dashboard.",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test/engine.test.js"
+  },
+  "engines": { "node": ">=20" },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.133.0"
+  }
+}
