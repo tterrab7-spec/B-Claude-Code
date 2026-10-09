@@ -44,6 +44,9 @@ export async function syncNow() {
 
 export async function inbox() {
   const h = await health();
-  if (!h) return null;
+  if (!h) {
+    // On-device demo clinic (PT dashboard without a server) writes here.
+    try { const c = JSON.parse(localStorage.getItem('tuned.clinic') || '{}')[get().id]; return c ? { messages: c.messages || [], visits: c.visits || [], overrides: c.overrides || [], reviewed: c.reviewed } : null; } catch (e) { return null; }
+  }
   try { return await api.get('inbox/' + encodeURIComponent(get().id)); } catch (e) { return null; }
 }

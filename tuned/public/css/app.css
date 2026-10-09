@@ -340,3 +340,10 @@ body.quiet .phase b { font-family: var(--body); text-transform: none; font-size:
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 .row.wrap > label { min-width: 150px; }
 body.quiet .g-dot { fill: var(--surface); stroke: var(--accent); stroke-width: 3; }
+.seg.filters { max-width: 520px; margin-bottom: 14px; }
+.table-wrap.flat { border: 0; background: transparent; margin-bottom: 8px; }
+.plan-ed select { min-width: 180px; padding: 8px 10px; font-size: 14px; }
+.plan-ed input { padding: 8px 10px !important; font-size: 14px !important; }
+.note-entry { border-left: 3px solid var(--accent); padding: 4px 0 4px 12px; margin-bottom: 12px; }
+.note-entry p { margin: 0 0 4px; }
+.pt .spark { height: 44px; margin-top: 6px; }

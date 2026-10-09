@@ -5,6 +5,8 @@ import * as E from '../public/js/engine.js';
 import { composite } from '../public/js/screen.js';
 import { rtmStatus } from '../public/js/rtm.js';
 import { parseCheckin } from '../public/js/voice.js';
+import { summary, applyAction, newClinical, effectiveMods } from '../public/js/clinic.js';
+import { demoCaseload } from '../public/js/demo.js';
 
 let n = 0; const t = (name, fn) => { fn(); n++; console.log('ok', name); };
 
@@ -64,6 +66,28 @@ t('voice check-in parsing', () => {
   assert.equal(parseCheckin("back's about a 4 today, slept bad").pain, 4);
   assert.equal(parseCheckin("back's about a 4 today, slept bad").sleep, 'poor');
   assert.equal(parseCheckin('knee is a seven').pain, 7);
+});
+
+t('clinic: revert, plan edit, urgent alert clears on review', () => {
+  const sp = E.startSprint('back40');
+  const l = { idx: 8, pain: 8, effort: 'right', at: new Date().toISOString() };
+  sp.sessions.push(l); E.progress(sp, l, 4);
+  const u = { id: 'u_test1234', profile: { name: 'T', painBaseline: 4, flags: [], urgentFlag: new Date(Date.now() - 1000).toISOString() }, sprint: sp, scores: [] };
+  const c = newClinical();
+  assert.ok(summary(u, c).alerts.some(a => a.level === 'urgent'));
+  const i = sp.changes.findIndex(ch => ch.type === 'regress');
+  assert.equal(applyAction(u, c, 'change', { index: i, status: 'reverted' }), null);
+  assert.equal(effectiveMods(u, c).deadBug, undefined);
+  assert.equal(applyAction(u, c, 'plan', { base: 'deadBug', swap: 'deadBugHold', reps: 2 }), null);
+  assert.deepEqual(effectiveMods(u, c).deadBug, { swap: 'deadBugHold', reps: 2 });
+  applyAction(u, c, 'review', { note: 'ok' });
+  assert.ok(!summary(u, c).alerts.some(a => a.level === 'urgent'));
+  assert.equal(applyAction(u, c, 'bogus', {}), 'Unknown action');
+});
+
+t('demo caseload covers every alert type', () => {
+  const levels = new Set(demoCaseload().flatMap(({ user, clinical }) => summary(user, clinical).alerts.map(a => a.level)));
+  ['urgent', 'high', 'medium', 'info'].forEach(l => assert.ok(levels.has(l), l));
 });
 
 console.log(`\n${n} passed`);

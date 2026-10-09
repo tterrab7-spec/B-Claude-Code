@@ -20,6 +20,10 @@ export const CONFIG = {
   ],
   kit: { name: 'TUNED Kit', price: 79, items: ['3 loop bands', 'Long resistance band with door anchor', 'Mini band', 'Dowel', 'Kit-only follow-along sessions'], checkout: '' },
 
+  // RTM billing estimates per code, in dollars. Placeholders: replace with your
+  // contracted or locality-adjusted Medicare rates before using them for planning.
+  rtmRates: { '98975': 20, '98977': 44, '98985': 44, '98979': 26, '98980': 50, '98981': 40 },
+
   // Clinician licensure. Patients in other states are flagged for routing.
   ptStates: ['VA', 'NC', 'MD', 'DC', 'TX'],
 };

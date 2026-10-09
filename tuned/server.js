@@ -7,9 +7,8 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import Anthropic from '@anthropic-ai/sdk';
-import { points, sessionPlan, dropoutRisk, weekOf } from './public/js/engine.js';
-import { rtmStatus } from './public/js/rtm.js';
-import { SPRINTS } from './public/js/data.js';
+import { points } from './public/js/engine.js';
+import { summary as clinicSummary, applyAction, triageRank, newClinical } from './public/js/clinic.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const PUBLIC = path.join(here, 'public');
@@ -37,7 +36,7 @@ function persist() {
     fs.renameSync(tmp, DATA);
   }, 300);
 }
-const clinical = id => (db.clinical[id] ||= { messages: [], minutes: [], visits: [], overrides: [], changeStatus: {}, reviewed: null });
+const clinical = id => { const c = (db.clinical[id] ||= newClinical()); for (const [k, v] of Object.entries(newClinical())) if (!(k in c)) c[k] = v; return c; };
 
 // ---------- HTTP helpers
 const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.mjs': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8',
@@ -67,29 +66,7 @@ const clean = (s, n = 60) => String(s || '').replace(/[<>]/g, '').slice(0, n).tr
 
 function weekSessions(u) { const wk = Date.now() - 7 * 86400000; return (u.sprint?.sessions || []).filter(s => new Date(s.at).getTime() > wk).length; }
 
-function summary(u) {
-  const c = clinical(u.id), sp = u.sprint, def = sp && SPRINTS[sp.id];
-  const scores = u.scores || [];
-  const pains = (sp?.sessions || []).map(s => s.pain);
-  const pendingChanges = (sp?.changes || []).filter((ch, i) => !c.changeStatus[i]).length;
-  const visitReq = (u.visits || []).filter(v => v.status === 'requested' && !c.visits.some(cv => cv.requestId === v.id)).length;
-  const alerts = [];
-  if (u.profile?.urgentFlag) alerts.push({ level: 'urgent', text: 'Coach detected urgent symptoms' });
-  if (u.profile?.needsReview && !c.reviewed) alerts.push({ level: 'high', text: 'Intake safety flags need review' });
-  if (u.profile?.outOfState) alerts.push({ level: 'info', text: `Lives in ${u.profile.state}: needs a PT licensed there` });
-  const risk = dropoutRisk(sp);
-  if (risk.level === 'high') alerts.push({ level: 'high', text: 'Drop-off risk: ' + risk.reason });
-  const flares = (sp?.changes || []).filter((ch, i) => ch.flare && !c.changeStatus[i]).length;
-  if (flares) alerts.push({ level: 'medium', text: `${flares} pain-flare regressions to review` });
-  if (visitReq) alerts.push({ level: 'medium', text: 'Requested a video visit' });
-  return {
-    id: u.id, name: u.profile?.name, age: u.profile?.age, state: u.profile?.state, quiet: !!u.quiet, plan: u.plan, ref: u.ref,
-    program: def?.title, sprintId: sp?.id, week: sp ? weekOf(sp.sessions.length) + 1 : null, sessions: sp?.sessions.length || 0,
-    lastSession: sp?.sessions.at(-1)?.at || null, painBaseline: u.profile?.painBaseline, painLatest: pains.at(-1) ?? null,
-    scoreFirst: scores[0]?.total ?? null, scoreLatest: scores.at(-1)?.total ?? null, risk, alerts, pendingChanges,
-    rtm: rtmStatus(u, c.minutes), syncedAt: u._syncedAt,
-  };
-}
+const summary = u => clinicSummary(u, clinical(u.id));
 
 // ---------- Coach
 const COACH_SYSTEM = `You are the TUNED coach, an AI assistant inside a physical therapy service for men. You work between visits under the supervision of a licensed physical therapist, who reviews every conversation.
@@ -236,8 +213,7 @@ async function api(req, res, url) {
     if (!isClinician(req)) return send(res, 401, { error: 'Clinician key required' });
     if (p[1] === 'patients' && !p[2] && M === 'GET') {
       const list = Object.values(db.users).filter(u => u.profile).map(summary);
-      const rank = s => s.alerts.some(a => a.level === 'urgent') ? 0 : s.alerts.some(a => a.level === 'high') ? 1 : s.alerts.length ? 2 : 3;
-      list.sort((a, b) => rank(a) - rank(b) || (b.lastSession || '').localeCompare(a.lastSession || ''));
+      list.sort((a, b) => triageRank(a) - triageRank(b) || (b.lastSession || '').localeCompare(a.lastSession || ''));
       return send(res, 200, { patients: list });
     }
     const u = db.users[p[2]];
@@ -246,20 +222,8 @@ async function api(req, res, url) {
     if (p[1] === 'patients' && !p[3] && M === 'GET') return send(res, 200, { user: u, clinical: c, summary: summary(u) });
     if (p[1] === 'patients' && M === 'POST') {
       const b = await readBody(req);
-      const by = clean(b.by || 'Your PT', 40);
-      if (p[3] === 'message') { if (!b.text) return send(res, 400, { error: 'Empty' }); c.messages.push({ from: by, text: clean(b.text, 1000), at: new Date().toISOString() }); }
-      else if (p[3] === 'minutes') { const m = Math.max(1, Math.min(120, +b.minutes || 0)); c.minutes.push({ minutes: m, interactive: !!b.interactive, note: clean(b.note, 200), by, at: new Date().toISOString() }); }
-      else if (p[3] === 'visit') {
-        const when = new Date(b.when); if (isNaN(when)) return send(res, 400, { error: 'Pick a date and time' });
-        c.visits.push({ id: 'cv' + Date.now(), requestId: b.requestId || null, when: when.toISOString(), link: `https://meet.jit.si/TUNED-${crypto.randomBytes(6).toString('hex')}`, status: 'scheduled', by });
-      }
-      else if (p[3] === 'review') { c.reviewed = { by, at: new Date().toISOString(), note: clean(b.note, 300) }; if (u.profile) u.profile.urgentFlag = null; }
-      else if (p[3] === 'change') {
-        const i = +b.index; const ch = u.sprint?.changes?.[i]; if (!ch) return send(res, 400, { error: 'No such change' });
-        c.changeStatus[i] = { status: b.status === 'reverted' ? 'reverted' : 'approved', by, at: new Date().toISOString() };
-        if (b.status === 'reverted') c.overrides.push({ id: 'o' + Date.now() + i, base: ch.base, mod: ch.type === 'regress' || ch.type === 'progress' ? (ch.from === ch.base ? {} : { swap: ch.from }) : {}, at: new Date().toISOString() });
-      }
-      else return send(res, 404, { error: 'Unknown action' });
+      const err = applyAction(u, c, p[3], b);
+      if (err) return send(res, 400, { error: err });
       persist();
       return send(res, 200, { ok: true, clinical: c, summary: summary(u) });
     }

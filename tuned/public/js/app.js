@@ -355,6 +355,7 @@ async function viewHome() {
         st.appliedOverrides = [...(st.appliedOverrides || []), ...fresh.map(o => o.id)];
         if (r.reviewed) st.profile.needsReview = false;
       });
+      if (fresh.length && route().split('/')[1] in { '': 1, home: 1 }) return render(); // redraw with the PT's plan changes
     }
     const el = document.getElementById('inbox'); if (!el) return;
     el.innerHTML = [...(r.messages || []).slice(-2).map(m => `<div class="banner pt">${ICON.pt}<div><b>${h(m.from)}:</b> ${h(m.text)}</div></div>`),

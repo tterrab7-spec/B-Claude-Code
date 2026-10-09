@@ -1,6 +1,6 @@
 // Offline shell + long-lived cache for the pose model and engine.
-const CACHE = 'tuned-v1';
-const SHELL = ['./', 'index.html', 'css/app.css', 'js/app.js', 'js/data.js', 'js/store.js', 'js/engine.js', 'js/screen.js', 'js/pose.js', 'js/voice.js', 'js/coach.js', 'js/api.js', 'js/config.js', 'js/rtm.js', 'js/pt.js', 'js/partners.js', 'icon.svg', 'manifest.webmanifest'];
+const CACHE = 'tuned-v2';
+const SHELL = ['./', 'index.html', 'css/app.css', 'js/app.js', 'js/data.js', 'js/store.js', 'js/engine.js', 'js/screen.js', 'js/pose.js', 'js/voice.js', 'js/coach.js', 'js/api.js', 'js/config.js', 'js/rtm.js', 'js/clinic.js', 'js/demo.js', 'js/pt.js', 'js/partners.js', 'icon.svg', 'manifest.webmanifest'];
 
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });

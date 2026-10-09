@@ -40,7 +40,9 @@ CLINICIAN_KEY=pick-a-secret ANTHROPIC_API_KEY=sk-ant-... npm start
 | Squads | `#/squad` | Create or join by code, weekly challenge, leaderboard on Tune Points. |
 | Quiet Mode | Settings or the pelvic door | Neutral light theme, "Daily" in place of the brand and tab title, neutral exercise names, optional PIN lock, bladder pad log for post-prostatectomy rehab. |
 | Safety | Intake | Red-flag screen. Urgent answers stop the flow and route to a physician. Post-op requires surgeon clearance. Out-of-license states are flagged. |
-| PT dashboard | `#/pt` | Caseload triage by alert level, drop-off risk, pain and score trends, AI change approve/revert (reverts sync back to the patient), messaging, video visit scheduling, time logging. |
+| PT dashboard | `#/pt`, `js/pt.js`, `js/clinic.js` | Caseload triaged by alert level (urgent symptoms, intake flags, drop-off risk, pain flares, visit requests, out-of-license state) with filters. Per patient: pain and Body Score trends, plan editor (swap any exercise, adjust sets and reps), approve or revert every coach change, clinical notes with a SOAP draft generated from the data, messaging, video visit scheduling and RTM time logging. PT changes sync back to the patient's plan. |
+| Billing | `#/pt/billing` | RTM status per patient this period, estimated revenue (rates in `config.js`), next action to reach the next code, CSV export. |
+| Demo clinic | `js/demo.js` | With no server, the PT dashboard runs on-device with six sample patients built by replaying sessions through the real engine, plus the device's own patient. With the server, a toggle mixes the demo patients in. |
 | RTM billing | `js/rtm.js` | Tracks data days per 30-day period and management minutes per month against 98975, 98977, 98985, 98979, 98980, 98981 (CY2026 code set). |
 | Partners | `#/partners` | Channel playbooks, printable QR chair cards per partner code and front door, attribution (scans, signups, scored, active, paid). |
 | Plans | `#/plans`, `js/config.js` | Free Body Score, $39/mo membership, $249 Sprint + PT, $79 kit. Paste Stripe Payment Links into `config.js`. |
