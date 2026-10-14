@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Parcelyst FAQ</title>
+<meta name="description" content="Answers about data sources, scoring, markets, reports and billing.">
+<meta property="og:title" content="Parcelyst FAQ">
+<meta property="og:description" content="Answers about data sources, scoring, markets, reports and billing.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='1.5' y='1.5' width='29' height='29' rx='3' fill='%2312202b'/%3E%3Cpath d='M6 22.5 L13 9.5 L26 12 L22.5 25.5 Z' fill='none' stroke='%23f3f5f2' stroke-width='1.6'/%3E%3Ccircle cx='17.5' cy='18.5' r='3' fill='%23e2561f'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<main><section class="section"><div class="wrap" style="max-width:900px">
+<span class="eyebrow">FAQ</span><h1 style="margin:12px 0 28px">Questions, answered.</h1>
+<details class="faq" open><summary>Where does the property data come from?</summary><p>On lookup we query connected providers (RentCast for residential records and value/rent AVMs, ATTOM for expanded profiles, Regrid for parcel, zoning and acreage) and verify the address with the U.S. Census geocoder. Market defaults come from HUD, FHFA, Freddie Mac, Treasury, FDIC, Census and local assessors. Each report cites the source for every input.</p></details>
+<details class="faq"><summary>Do you have MLS listings?</summary><p>Not yet. MLS data requires a broker participation agreement in each MLS. Until then, list price comes from you or from provider sale listings, and agents can import expired and withdrawn lists from their own MLS access.</p></details>
+<details class="faq"><summary>What is the demo data in the Deal Finder?</summary><p>Until a data provider is connected for your market, the finder runs on a synthetic dataset so you can see how scoring works. Demo records are marked on every row. Import your county lists to work real leads today.</p></details>
+<details class="faq"><summary>How accurate is the investment score?</summary><p>The score is a weighted summary of six standard metrics against common lender and investor benchmarks. It is a screening tool, not a prediction. The methodology page lists every weight and threshold.</p></details>
+<details class="faq"><summary>Can I analyze properties outside your markets?</summary><p>Yes. Any U.S. address works. Outside live markets the tax rate, rent and growth defaults are national, so review them before relying on the result.</p></details>
+<details class="faq"><summary>How do I get a PDF?</summary><p>Open a full report and choose Download PDF. It uses your browser's print-to-PDF with a layout built for letter-size pages.</p></details>
+<details class="faq"><summary>Is this financial or tax advice?</summary><p>No. Parcelyst is an analysis tool. Talk to a lender, attorney and CPA before you commit capital. The tax section estimates depreciation and cost segregation so you know what to ask.</p></details>
+<details class="faq"><summary>Can my team share an account?</summary><p>Pro includes 3 seats that share the plan's limits, markets and saved work. Brokerages can add more seats on an enterprise plan.</p></details>
+</div></section></main>
+
+<script src="js/shared/markets.js"></script>
+<script src="js/shared/plans.js"></script>
+<script src="js/shared/engine.js"></script>
+<script src="js/shared/scoring.js"></script>
+<script src="js/shared/defaults.js"></script>
+<script src="js/shared/csv.js"></script>
+<script src="js/ui.js"></script>
+<script>
+PUI.siteHeader('faq.html'); PUI.siteFooter();
+</script>
+</body>
+</html>

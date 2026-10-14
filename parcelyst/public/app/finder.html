@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Deal Finder | Parcelyst</title>
+<meta name="description" content="Off-market deals, likely-to-list owners and developable land.">
+<meta property="og:title" content="Deal Finder | Parcelyst">
+<meta property="og:description" content="Off-market deals, likely-to-list owners and developable land.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='1.5' y='1.5' width='29' height='29' rx='3' fill='%2312202b'/%3E%3Cpath d='M6 22.5 L13 9.5 L26 12 L22.5 25.5 Z' fill='none' stroke='%23f3f5f2' stroke-width='1.6'/%3E%3Ccircle cx='17.5' cy='18.5' r='3' fill='%23e2561f'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="../css/app.css">
+<link rel="stylesheet" href="../css/report.css">
+</head>
+<body class="in-app">
+
+<main>
+  <div class="page-head"><div class="stack" style="gap:6px"><span class="eyebrow" id="f-eyebrow">Find</span><h1 id="f-title">Deal Finder</h1><p class="muted small" id="f-sub"></p></div>
+    <div class="row"><div class="seg" role="group" aria-label="Tool"><button type="button" data-mode="investor">Deals</button><button type="button" data-mode="agent">Listings</button><button type="button" data-mode="land">Land</button></div></div></div>
+  <div id="f-banner"></div>
+  <div class="f-grid">
+    <form class="panel panel-pad stack f-filters" id="ff" style="gap:14px">
+      <div class="field"><label for="f-market">Market</label><select class="input" id="f-market"></select></div>
+      <div class="field"><label for="f-locality">Locality</label><select class="input" id="f-locality"><option value="">All localities</option></select></div>
+      <div class="field" id="f-group-wrap"><label for="f-group">Asset type</label><select class="input" id="f-group"><option value="all">All</option><option value="residential">Residential (1-4)</option><option value="commercial">Commercial</option><option value="land">Land</option></select></div>
+      <div class="field"><label for="f-q">Keyword</label><input class="input" id="f-q" placeholder="Street, owner, ZIP"></div>
+      <fieldset style="border:0;padding:0;margin:0" class="stack" id="f-signals"><legend class="eyebrow" style="margin-bottom:8px">Signals</legend></fieldset>
+      <div class="grid g2" style="gap:10px"><div class="field"><label for="f-minscore">Min score</label><input class="input num" id="f-minscore" inputmode="numeric" value="0"></div><div class="field"><label for="f-mineq">Min equity %</label><input class="input num" id="f-mineq" inputmode="numeric" placeholder="0"></div>
+      <div class="field"><label for="f-minyrs">Min years owned</label><input class="input num" id="f-minyrs" inputmode="numeric" placeholder="0"></div><div class="field"><label for="f-minac">Min acres</label><input class="input num" id="f-minac" inputmode="decimal" placeholder="0"></div>
+      <div class="field"><label for="f-minv">Min value</label><input class="input num" id="f-minv" inputmode="numeric" placeholder="$0"></div><div class="field"><label for="f-maxv">Max value</label><input class="input num" id="f-maxv" inputmode="numeric" placeholder="No max"></div></div>
+      <div class="field"><label for="f-sort">Sort by</label><select class="input" id="f-sort"><option value="score">Score</option><option value="equity">Equity</option><option value="value">Value</option><option value="acres">Acreage</option></select></div>
+      <div class="row"><button class="btn btn-ink" type="submit">Apply</button><button class="btn btn-ghost" type="button" id="f-reset">Reset</button></div>
+    </form>
+    <section class="stack" style="gap:14px;min-width:0">
+      <div class="row" style="justify-content:space-between"><div class="row" id="f-stats"></div><div class="row"><button class="btn btn-line btn-sm" id="f-save">Save search</button><button class="btn btn-line btn-sm" id="f-export">Export CSV</button></div></div>
+      <div id="f-results"><div class="skeleton" style="height:300px"></div></div>
+      <div class="row" id="f-pager" style="justify-content:center"></div>
+      <div id="f-saved"></div>
+    </section>
+  </div>
+</main>
+<style>
+.f-grid { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 18px; align-items: start; }
+.f-filters { position: sticky; top: 16px; }
+@media (max-width: 1000px) { .f-grid { grid-template-columns: minmax(0, 1fr); } .f-filters { position: static; } }
+.sig { display: flex; flex-wrap: wrap; gap: 4px; }
+.sig .chip { font-size: .7rem; }
+.masked { color: var(--ink-3); letter-spacing: .02em; }
+.f-prop { min-width: 230px; } .f-own { min-width: 150px; } .f-why { min-width: 210px; }
+</style>
+
+<script src="../js/shared/markets.js"></script>
+<script src="../js/shared/plans.js"></script>
+<script src="../js/shared/engine.js"></script>
+<script src="../js/shared/scoring.js"></script>
+<script src="../js/shared/defaults.js"></script>
+<script src="../js/shared/csv.js"></script>
+<script src="../js/ui.js"></script>
+<script src="../js/report.js"></script>
+<script>
+
+var F = PUI.fmt, esc = PUI.esc, cfg = null, me = null, page = 1, last = null;
+var MODES = {
+  investor: { title: 'Deal Finder', eyebrow: 'Off-market', sub: 'Owners most likely to sell below market, ranked by motivation signals.', feature: 'finder', signals: [['taxDelinquent', 'Tax delinquent'], ['preforeclosure', 'Pre-foreclosure'], ['probate', 'Probate / estate'], ['vacant', 'Vacant'], ['absentee', 'Absentee owner'], ['outOfState', 'Out-of-state owner'], ['expired', 'Expired / withdrawn listing']] },
+  agent: { title: 'Listing Prospector', eyebrow: 'Likely to list', sub: 'Homeowners and commercial owners most likely to list in the next 6-12 months.', feature: 'prospector', signals: [['expired', 'Expired / withdrawn listing'], ['probate', 'Probate / estate'], ['absentee', 'Landlord (absentee)'], ['vacant', 'Vacant'], ['preforeclosure', 'Pre-foreclosure']] },
+  land: { title: 'Land Finder', eyebrow: 'Development', sub: 'Developable acreage ranked by size, zoning, utilities and owner situation.', feature: 'landFinder', signals: [['probate', 'Estate / heirs'], ['absentee', 'Absentee owner'], ['taxDelinquent', 'Tax delinquent']] }
+};
+var mode = MODES[PUI.qs('mode')] ? PUI.qs('mode') : 'investor';
+function $(id) { return document.getElementById(id); }
+function setupMode() {
+  var M = MODES[mode];
+  $('f-title').textContent = M.title; $('f-eyebrow').textContent = M.eyebrow; $('f-sub').textContent = M.sub; document.title = M.title + ' | Parcelyst';
+  document.querySelectorAll('[data-mode]').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-mode') === mode); });
+  $('f-signals').innerHTML = '<legend class="eyebrow" style="margin-bottom:8px">Must have</legend>' + M.signals.map(function (s) { return '<label class="check"><input type="checkbox" data-sig="' + s[0] + '"> ' + s[1] + '</label>'; }).join('');
+  $('f-group-wrap').hidden = mode === 'land';
+  $('f-sort').value = mode === 'land' ? 'score' : 'score';
+}
+function params() {
+  var p = new URLSearchParams();
+  p.set('mode', mode); p.set('market', $('f-market').value); p.set('page', page); p.set('pageSize', 25);
+  if ($('f-locality').value) p.set('locality', $('f-locality').value);
+  if (mode !== 'land' && $('f-group').value !== 'all') p.set('assetGroup', $('f-group').value);
+  if ($('f-q').value.trim()) p.set('q', $('f-q').value.trim());
+  document.querySelectorAll('[data-sig]').forEach(function (c) { if (c.checked) p.set(c.getAttribute('data-sig'), 'true'); });
+  var n = function (id, k, mul) { var v = parseFloat(String($(id).value).replace(/[$,%]/g, '')); if (!isNaN(v) && v > 0) p.set(k, mul ? v * mul : v); };
+  n('f-minscore', 'minScore'); n('f-mineq', 'minEquity', 0.01); n('f-minyrs', 'minYearsOwned'); n('f-minac', 'minAcres'); n('f-minv', 'minValue'); n('f-maxv', 'maxValue');
+  p.set('sort', $('f-sort').value);
+  return p;
+}
+function yrs(d) { if (!d) return '—'; return Math.floor((Date.now() - new Date(d)) / 3.15576e10) + ' yrs'; }
+function run() {
+  $('f-results').innerHTML = '<div class="skeleton" style="height:300px"></div>';
+  PUI.api('GET', '/api/search?' + params().toString()).then(function (j) {
+    last = j;
+    var demo = j.stats.demo > 0;
+    $('f-stats').innerHTML = '<span class="chip">' + F.n(j.total) + ' matches</span><span class="chip good">' + F.n(j.stats.hot) + ' hot (60+)</span><span class="chip warn">' + F.n(j.stats.warm) + ' warm</span>' + (demo ? '<span class="tag-demo" title="Synthetic records until a data provider is connected">Includes demo records</span>' : '');
+    var banner = '';
+    if (j.preview) banner = '<div class="notice blaze" style="margin-bottom:14px"><div><strong>' + (j.lockedMarket ? 'This market is not on your plan.' : 'Preview: addresses and owners are hidden.') + '</strong> ' + (j.lockedMarket ? 'Add it for $39/month or switch your market in settings.' : MODES[mode].title + ' is included with ' + (mode === 'land' ? 'Pro' : mode === 'agent' ? 'Agent and Pro' : 'Investor, Agent and Pro') + '. You are seeing the top 8 of ' + F.n(j.total) + '.') + ' <a href="' + (j.lockedMarket ? 'account.html' : '../pricing.html') + '">' + (j.lockedMarket ? 'Manage markets' : 'Start a 7-day trial') + '</a></div></div>';
+    else if (demo) banner = '<div class="notice" style="margin-bottom:14px"><div>Rows tagged <span class="tag-demo">Demo</span> are synthetic so you can see how scoring works. <a href="imports.html">Import county lists</a> or connect a data provider to work real leads.</div></div>';
+    $('f-banner').innerHTML = banner;
+    if (!j.results.length) { $('f-results').innerHTML = '<div class="notice"><div>No records match. Loosen a filter.</div></div>'; $('f-pager').innerHTML = ''; return; }
+    $('f-results').innerHTML = '<div class="table-wrap"><table class="t"><thead><tr><th>Score</th><th class="f-prop">Property</th><th class="f-own">Owner</th><th class="n">Est. value</th><th class="n">Equity</th><th class="n">Owned</th><th class="f-why">Why it ranks</th></tr></thead><tbody>' + j.results.map(function (x, i) {
+      var r = x.record, t = PUI.toneOfScore(x.score);
+      var size = r.assetType === 'Land' ? (r.lotAcres + ' ac · ' + (r.zoning || '')) : r.buildingSf ? F.n(r.buildingSf) + ' SF' : r.beds ? r.beds + 'bd · ' + F.n(r.sqft) + ' sf' : '';
+      return '<tr class="click" data-i="' + i + '"><td><span class="score-badge tone-' + t + '">' + x.score + '</span></td><td><strong class="' + (r.masked ? 'masked' : '') + '">' + esc(r.address) + '</strong> ' + (r.source === 'demo' ? '<span class="tag-demo">Demo</span>' : r.source && r.source.indexOf('import') === 0 ? '<span class="chip plat">Import</span>' : '') + '<div class="xs muted">' + esc(r.city) + ', ' + esc(r.state) + ' ' + esc(r.zip) + ' · ' + esc(r.assetType) + (size ? ' · ' + esc(size) : '') + '</div></td>' +
+        '<td class="small' + (r.masked ? ' masked' : '') + '">' + esc(r.ownerName || '—') + '<div class="xs muted">' + esc(r.ownerType || '') + '</div></td><td class="n">' + F.usd(r.estValue, { compact: true }) + '</td><td class="n">' + (r.equityPct === null || r.equityPct === undefined ? '—' : Math.round(r.equityPct * 100) + '%') + '</td><td class="n">' + yrs(r.lastSaleDate) + '</td>' +
+        '<td><div class="sig">' + x.signals.filter(function (s) { return s.points > 0; }).slice(0, 3).map(function (s) { return '<span class="chip ' + (s.points >= 15 ? 'blaze' : '') + '">' + esc(s.label) + '</span>'; }).join('') + '</div></td></tr>';
+    }).join('') + '</tbody></table></div>';
+    var pages = Math.ceil(j.total / j.pageSize);
+    $('f-pager').innerHTML = j.preview || pages <= 1 ? '' : '<button class="btn btn-line btn-sm" data-pg="' + (page - 1) + '"' + (page <= 1 ? ' disabled' : '') + '>Previous</button><span class="small muted">Page ' + page + ' of ' + pages + '</span><button class="btn btn-line btn-sm" data-pg="' + (page + 1) + '"' + (page >= pages ? ' disabled' : '') + '>Next</button>';
+  }).catch(PUI.errorHandler);
+}
+function detail(x) {
+  var r = x.record, kind = mode === 'land' ? 'land' : null;
+  var sig = x.signals.map(function (s) { return '<div class="row small" style="justify-content:space-between"><span>' + esc(s.label) + '</span><span class="num ' + (s.points >= 0 ? 'tone-good' : 'tone-bad') + '">' + (s.points >= 0 ? '+' : '') + s.points + '</span></div>'; }).join('');
+  var facts = [['Asset type', r.assetType], ['Locality', r.localityName], ['Est. value', F.usd(r.estValue)], ['Assessed', F.usd(r.assessedValue)], ['Last sale', r.lastSaleDate ? F.usd(r.lastSalePrice) + ' · ' + r.lastSaleDate : '—'], ['Est. loan balance', F.usd(r.loanBalanceEst)], ['Equity', r.equityPct === null || r.equityPct === undefined ? '—' : Math.round(r.equityPct * 100) + '%'], ['Owner type', r.ownerType], ['Mailing address', r.mailingAddress || '—'], r.lotAcres ? ['Acres / zoning', r.lotAcres + ' · ' + (r.zoning || '—')] : null, r.utilities ? ['Utilities', r.utilities] : null, r.occupancyPct ? ['Occupancy', Math.round(r.occupancyPct * 100) + '%'] : null, r.leaseExpiry ? ['Major lease expires', r.leaseExpiry] : null, r.loanMaturity ? ['Loan maturity', r.loanMaturity] : null, r.taxDelinquentAmount ? ['Taxes owed', F.usd(r.taxDelinquentAmount)] : null, r.listingStatus && r.listingStatus !== 'none' ? ['Listing', r.listingStatus + (r.listPrice ? ' · ' + F.usd(r.listPrice) : '') + (r.daysOnMarket ? ' · ' + r.daysOnMarket + ' DOM' : '')] : null].filter(Boolean);
+  PUI.modal('<div class="row" style="justify-content:space-between;align-items:flex-start"><div class="stack" style="gap:4px;min-width:0"><span class="eyebrow">' + esc(MODES[mode].title) + '</span><h3>' + esc(r.address) + '</h3><span class="small muted">' + esc(r.city + ', ' + r.state + ' ' + r.zip) + '</span></div><span class="score-badge tone-' + PUI.toneOfScore(x.score) + '">' + x.score + '</span></div>' +
+    (r.masked ? '<div class="notice blaze"><div>Upgrade to see the address, owner and mailing details. <a href="../pricing.html">See plans</a></div></div>' : '') +
+    '<div class="panel panel-pad stack" style="gap:6px"><span class="eyebrow">Score breakdown</span>' + sig + '</div>' + PReport.kv(facts.map(function (f) { return [esc(f[0]), esc(f[1] === undefined || f[1] === null ? '—' : f[1])]; })) +
+    '<div class="row"><a class="btn btn-primary" href="analyze.html?property=' + encodeURIComponent(r.id) + (kind ? '&kind=' + kind : '') + '">Analyze this property</a>' + (r.masked ? '' : '<button class="btn btn-ink" id="add-pipe">Add to pipeline</button>') + '<button class="btn btn-line" data-close>Close</button></div>' +
+    '<p class="xs muted">Contact owners in line with TCPA, Do-Not-Call and Fair Housing rules.</p>', function (body, close) {
+    var b = body.querySelector('#add-pipe');
+    if (b) b.onclick = function () { PUI.api('POST', '/api/pipeline', { propertyId: r.id, mode: mode }).then(function () { close(); PUI.toast('Added to pipeline'); }).catch(PUI.errorHandler); };
+  });
+}
+function saved() {
+  if (!me) return;
+  PUI.api('GET', '/api/searches').then(function (j) {
+    var list = j.searches.filter(function (s) { return s.mode === mode; });
+    $('f-saved').innerHTML = list.length ? '<div class="panel"><div class="panel-head"><h3>Saved searches</h3></div><div class="panel-pad stack" style="gap:8px">' + list.map(function (s) { return '<div class="row" style="justify-content:space-between"><span><strong>' + esc(s.name) + '</strong> <span class="xs muted">' + s.lastCount + ' at last run</span></span><span class="row"><button class="btn btn-line btn-sm" data-run="' + s.id + '">Run</button><button class="btn btn-ghost btn-sm" data-sdel="' + s.id + '">Remove</button></span></div>'; }).join('') + '</div></div>' : '';
+  }).catch(function () {});
+}
+function filtersObj() { var o = {}; params().forEach(function (v, k) { if (['page', 'pageSize', 'mode'].indexOf(k) === -1) o[k] = v; }); return o; }
+document.addEventListener('click', function (e) {
+  var tr = e.target.closest('#f-results tr[data-i]'); if (tr && last) { detail(last.results[+tr.getAttribute('data-i')]); return; }
+  var pg = e.target.closest('[data-pg]'); if (pg && !pg.disabled) { page = +pg.getAttribute('data-pg'); run(); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+  var rn = e.target.closest('[data-run]'); if (rn) { PUI.api('POST', '/api/searches/' + rn.getAttribute('data-run') + '/run', {}).then(function (j) { PUI.toast(j.count + ' matches, ' + j.newSinceLast + ' new since last run'); saved(); }).catch(PUI.errorHandler); return; }
+  var sd = e.target.closest('[data-sdel]'); if (sd) { PUI.api('DELETE', '/api/searches/' + sd.getAttribute('data-sdel')).then(saved).catch(PUI.errorHandler); return; }
+  var md = e.target.closest('[data-mode]'); if (md) { mode = md.getAttribute('data-mode'); history.replaceState(null, '', '?mode=' + mode); page = 1; setupMode(); run(); saved(); document.querySelectorAll('.side-nav a').forEach(function (a) { a.toggleAttribute('aria-current', a.getAttribute('href').indexOf('mode=' + mode) !== -1); if (a.getAttribute('aria-current') !== null) a.setAttribute('aria-current', 'page'); }); }
+});
+$('ff').addEventListener('submit', function (e) { e.preventDefault(); page = 1; run(); });
+$('f-reset').addEventListener('click', function () { $('ff').reset(); $('f-minscore').value = 0; fillLoc(); page = 1; run(); });
+$('f-market').addEventListener('change', function () { fillLoc(); page = 1; run(); });
+$('f-export').addEventListener('click', function () { if (!me) return PUI.errorHandler({ status: 401 }); var p = params(); PUI.api('GET', '/api/search/export?' + p.toString()).then(function (j) { PUI.download(j.filename, j.csv); PUI.me(true); }).catch(PUI.errorHandler); });
+$('f-save').addEventListener('click', function () { if (!me) return PUI.errorHandler({ status: 401 }); PUI.modal('<h3>Save this search</h3><div class="field"><label for="ss-name">Name</label><input class="input" id="ss-name" value="' + esc(MODES[mode].title + ' · ' + $('f-market').selectedOptions[0].text) + '"></div><div class="row"><button class="btn btn-primary" id="ss-go">Save</button><button class="btn btn-line" data-close>Cancel</button></div>', function (body, close) { body.querySelector('#ss-go').onclick = function () { PUI.api('POST', '/api/searches', { name: body.querySelector('#ss-name').value, mode: mode, filters: filtersObj() }).then(function () { close(); PUI.toast('Search saved'); saved(); }).catch(PUI.errorHandler); }; }); });
+function fillLoc() { var m = cfg.markets.filter(function (x) { return x.id === $('f-market').value; })[0]; $('f-locality').innerHTML = '<option value="">All localities</option>' + m.localities.map(function (l) { return '<option value="' + l.id + '">' + esc(l.name) + '</option>'; }).join(''); }
+var navKey = 'finder.html?mode=' + mode;
+PUI.appShell(navKey).then(function (u) {
+  me = u;
+  return PUI.config().then(function (c) {
+    cfg = c;
+    var mine = u && u.markets && u.markets.length ? u.markets : null;
+    $('f-market').innerHTML = c.markets.map(function (m) { return '<option value="' + m.id + '">' + esc(m.name) + (m.status === 'beta' ? ' (beta)' : '') + (mine && mine.indexOf(m.id) === -1 && u.marketSlots !== null ? ' · not on plan' : '') + '</option>'; }).join('');
+    var want = PUI.qs('market') || (mine ? mine[0] : null); if (want) $('f-market').value = want;
+    fillLoc(); setupMode(); run(); saved();
+  });
+});
+
+</script>
+</body>
+</html>

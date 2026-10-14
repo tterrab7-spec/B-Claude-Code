@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Parcelyst</title>
+<meta name="description" content="Investment analysis, off-market deal finding and listing prospecting for residential, commercial and land in Hampton Roads and Richmond, VA.">
+<meta property="og:title" content="Parcelyst">
+<meta property="og:description" content="Investment analysis, off-market deal finding and listing prospecting for residential, commercial and land in Hampton Roads and Richmond, VA.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='1.5' y='1.5' width='29' height='29' rx='3' fill='%2312202b'/%3E%3Cpath d='M6 22.5 L13 9.5 L26 12 L22.5 25.5 Z' fill='none' stroke='%23f3f5f2' stroke-width='1.6'/%3E%3Ccircle cx='17.5' cy='18.5' r='3' fill='%23e2561f'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/report.css">
+</head>
+<body>
+
+<main>
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div class="stack hero-copy" style="gap:22px">
+      <span class="eyebrow">Residential &middot; Commercial &middot; Land</span>
+      <h1>Know what a property is worth <em>to you</em> before you make the offer.</h1>
+      <p class="lede">Parcelyst underwrites any address in seconds, then goes looking for the next one: off-market deals for investors, likely-to-list owners for agents, and developable acreage for builders. Every assumption is shown, sourced and editable.</p>
+      <div id="hero-search" class="hero-search"></div>
+      <p class="small muted">Free: 5 analyses a month. Full reports from $29. Live in <strong>Hampton Roads</strong> and <strong>Richmond</strong>; beta in Austin and Jackson County, MO.</p>
+    </div>
+    <div class="hero-demo titleblock" id="demo" aria-live="polite">
+      <div class="tb-row"><div class="tb-cell"><div class="tb-label">Subject property</div><strong>4417 Bayberry Ln, Chesapeake VA</strong><div class="xs muted">4 bd &middot; 2.5 ba &middot; 2,140 sf &middot; built 1994 &middot; sample deal</div></div><div class="tb-cell" style="text-align:center"><div class="tb-label">Score</div><div id="d-score" class="num" style="font-size:1.6rem;font-weight:700">--</div></div></div>
+      <div class="tb-row" style="grid-template-columns:1fr"><div class="tb-cell"><label for="d-price" class="tb-label" style="margin:0">Your offer</label><div class="row" style="justify-content:space-between"><span><span id="d-price-v" class="num" style="font-size:1.5rem;font-weight:700">$329,000</span> <span class="xs muted">asking $349,000</span></span><span id="d-verdict" class="verdict warn">--</span></div><input type="range" id="d-price" min="280000" max="400000" step="1000" value="329000" style="width:100%;accent-color:var(--blaze)"></div></div>
+      <div class="demo-grid">
+        <div class="tb-cell"><div class="tb-label">Cash flow / mo</div><div id="d-cf" class="num demo-v">--</div></div>
+        <div class="tb-cell"><div class="tb-label">Cap rate</div><div id="d-cap" class="num demo-v">--</div></div>
+        <div class="tb-cell"><div class="tb-label">Cash-on-cash</div><div id="d-coc" class="num demo-v">--</div></div>
+        <div class="tb-cell"><div class="tb-label">7-yr IRR</div><div id="d-irr" class="num demo-v">--</div></div>
+        <div class="tb-cell"><div class="tb-label">DSCR</div><div id="d-dscr" class="num demo-v">--</div></div>
+        <div class="tb-cell"><div class="tb-label">Flip max offer</div><div id="d-mao" class="num demo-v">--</div></div>
+      </div>
+      <div class="tb-cell xs muted" style="border-top:1px solid var(--ink)">Drag the offer. The full engine runs in your browser: 25% down at 6.25%, Chesapeake tax rate, HUD rent, FHFA appreciation.</div>
+    </div>
+  </div>
+</section>
+
+<section class="section band-sheet">
+  <div class="wrap stack" style="gap:36px">
+    <div class="stack" style="gap:12px;max-width:760px"><span class="eyebrow">One platform, four jobs</span><h2>Underwrite it, find it, pitch it, build it.</h2><p class="lede">The same parcel data and the same math sit under every tool, so a lead you find in the morning is a full report by lunch.</p></div>
+    <div class="grid g4 tools">
+      <a class="tool" href="app/analyze.html"><span class="tool-k">Analyze</span><h3>Investment reports</h3><p>Cap rate, cash-on-cash, DSCR, IRR, bidding scenarios, flip MAO, tax benefits and a 0-100 score for houses, small multifamily, commercial and land.</p><span class="tool-for">For everyone</span></a>
+      <a class="tool" href="app/finder.html?mode=investor"><span class="tool-k">Deal Finder</span><h3>Off-market sellers</h3><p>Ranks every parcel by motivation: tax delinquency, pre-foreclosure, probate, vacancy, absentee and out-of-state owners, long holds and high equity.</p><span class="tool-for">For investors</span></a>
+      <a class="tool" href="app/finder.html?mode=agent"><span class="tool-k">Listing Prospector</span><h3>Who lists next</h3><p>Likely-to-list scoring for homeowners and commercial owners: tenure, equity, expired listings, estates, lease expirations and loan maturities.</p><span class="tool-for">For agents &amp; brokers</span></a>
+      <a class="tool" href="app/finder.html?mode=land"><span class="tool-k">Land Finder</span><h3>Developable acreage</h3><p>Finds 5-300 acre parcels with residential or agricultural zoning, long-held or estate ownership, then runs lot yield and residual land value.</p><span class="tool-for">For developers &amp; builders</span></a>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap split">
+    <div class="stack" style="gap:16px">
+      <span class="eyebrow">The report</span>
+      <h2>Fourteen sections a lender, partner or client can check line by line.</h2>
+      <p class="lede">Every report is a shareable link and a print-ready PDF. Agents can put their name, photo and brokerage on it.</p>
+      <ol class="sections-list">
+        <li>Executive summary &amp; investment score</li><li>Operating statement</li><li>Financing &amp; DSCR</li><li>Value, equity &amp; cash flow projection</li><li>Total return, IRR &amp; equity multiple</li><li>Bidding scenarios &amp; break-even price</li><li>Price vs. rate sensitivity heatmap</li><li>Conservative / base / optimistic cases</li><li>Fix &amp; flip maximum allowable offer</li><li>Strategy fit: hold, flip, house hack, STR</li><li>Depreciation &amp; cost segregation</li><li>Versus Treasuries, CDs and savings</li><li>Key insights</li><li>Every source and assumption</li>
+      </ol>
+      <div class="row"><a class="btn btn-ink" href="sample-report.html">Read a sample report</a><a class="btn btn-line" href="methodology.html">How the math works</a></div>
+    </div>
+    <div class="report-peek" id="peek" aria-hidden="true"></div>
+  </div>
+</section>
+
+<section class="section band-ink">
+  <div class="wrap stack" style="gap:40px">
+    <div class="stack" style="gap:12px;max-width:780px"><span class="eyebrow" style="color:var(--blaze)">Commercial &amp; land</span><h2>Built by people who underwrite rent rolls and subdivisions, not just single-family rentals.</h2></div>
+    <div class="grid g2" style="gap:28px">
+      <div class="stack ink-card"><h3>Commercial underwriting</h3><p class="muted">Line-item rent roll with NNN recoveries, lease rollover, renewal probability, downtime, TI and leasing commissions. Loan sized by the lesser of LTV and DSCR, with debt yield, levered and unlevered IRR, and an exit on forward NOI.</p>
+        <div class="mini-roll"><div><span>Atlantic Freight</span><span>38,000 SF</span><span>$7.85 NNN</span><span>5.5 yrs</span></div><div><span>James River Supply</span><span>16,000 SF</span><span>$8.40 NNN</span><span>1.8 yrs</span></div><div><span>Suite C</span><span>10,000 SF</span><span class="vac">Vacant</span><span>lease-up</span></div></div>
+        <p class="xs muted">Industrial, retail, office, multifamily 5+, self-storage, mixed-use.</p></div>
+      <div class="stack ink-card"><h3>Lot-yield residual</h3><p class="muted">Gross acres to developable acres to lots, then finished lot value, site work per lot, proffers and impact fees, soft costs, entitlement time and builder takedown pace. You get the most you can pay for the dirt and the IRR at the asking price.</p>
+        <div class="mini-yield"><div><b id="ly-ac">48</b><span>gross acres</span></div><div><b>68%</b><span>developable</span></div><div><b id="ly-lots">--</b><span>lots</span></div><div><b id="ly-res">--</b><span>max land price</span></div></div>
+        <p class="xs muted">Takedown schedules modeled the way national builders buy lots.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap stack" style="gap:28px">
+    <div class="stack" style="gap:12px;max-width:760px"><span class="eyebrow">Sources</span><h2>Every assumption shown. Every source cited.</h2><p class="lede">No black box and no claim of "zero assumptions." Underwriting is assumptions; ours are visible, dated and editable on every line.</p></div>
+    <div class="table-wrap"><table class="t"><thead><tr><th>Source</th><th>What we use</th><th>Refresh</th></tr></thead><tbody>
+      <tr><td><strong>Freddie Mac PMMS</strong></td><td>30-year fixed mortgage rate</td><td>Weekly (via FRED)</td></tr>
+      <tr><td><strong>U.S. Treasury</strong></td><td>5- and 10-year yields for alternatives and commercial loan pricing</td><td>Daily (via FRED)</td></tr>
+      <tr><td><strong>FHFA House Price Index</strong></td><td>MSA appreciation, 1- and 5-year</td><td>Quarterly</td></tr>
+      <tr><td><strong>HUD Fair Market Rents</strong></td><td>Rent baseline by bedroom count and MSA</td><td>Annual</td></tr>
+      <tr><td><strong>Census HVS &amp; geocoder</strong></td><td>Rental vacancy; address verification</td><td>Quarterly / live</td></tr>
+      <tr><td><strong>FDIC national rates</strong></td><td>Savings and CD benchmarks</td><td>Monthly</td></tr>
+      <tr><td><strong>Local assessors &amp; treasurers</strong></td><td>Tax rates per locality; delinquent tax lists you import</td><td>Each fiscal year</td></tr>
+      <tr><td><strong>RentCast, ATTOM, Regrid</strong></td><td>Parcel, owner, sale history, value and rent AVMs, zoning, acreage</td><td>Live on lookup</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="section band-sheet">
+  <div class="wrap stack" style="gap:28px">
+    <div class="row" style="justify-content:space-between;align-items:flex-end"><div class="stack" style="gap:12px"><span class="eyebrow">Pricing</span><h2>Start free. Pay when it earns its keep.</h2></div><a class="btn btn-line" href="pricing.html">Compare all plans</a></div>
+    <div class="grid g3" id="plan-teaser"></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap split" style="align-items:center">
+    <div class="stack" style="gap:14px"><span class="eyebrow">Markets</span><h2>Deep before wide.</h2><p class="lede">We launch a market only when every locality's tax rate, rent baseline, growth rate and commercial benchmark is loaded. Hampton Roads and Richmond are live. Austin and Jackson County, MO are in beta.</p><a class="btn btn-line" href="markets.html" style="align-self:flex-start">See coverage and request a market</a></div>
+    <div class="grid g2" id="market-list" style="gap:12px"></div>
+  </div>
+</section>
+
+<section class="section band-ink">
+  <div class="wrap row" style="justify-content:space-between;gap:24px">
+    <div class="stack" style="gap:10px;max-width:640px"><h2>Run your next deal through it.</h2><p class="muted">Five free analyses a month, no card required.</p></div>
+    <div class="row"><a class="btn btn-primary btn-lg" href="auth.html?mode=signup">Create free account</a><a class="btn btn-line btn-lg" href="app/analyze.html">Try without an account</a></div>
+  </div>
+</section>
+</main>
+<style>
+.hero { padding-block: clamp(40px, 7vw, 88px); background-image: linear-gradient(var(--line-2) 1px, transparent 1px), linear-gradient(90deg, var(--line-2) 1px, transparent 1px); background-size: 32px 32px; background-position: -1px -1px; }
+.hero-grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: clamp(28px, 5vw, 64px); align-items: center; }
+.hero h1 em { font-style: normal; color: var(--blaze); }
+@media (max-width: 960px) { .hero-grid { grid-template-columns: minmax(0, 1fr); } }
+.hero-search .addr { display: flex; flex-direction: column; gap: 10px; }
+.addr-row { display: flex; gap: 8px; }
+.addr-row .input { padding: 14px 14px; font-size: 1rem; }
+@media (max-width: 560px) { .addr-row { flex-direction: column; } }
+.hero-demo { box-shadow: var(--shadow); }
+.demo-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.demo-grid .tb-cell { border-bottom: 1px solid var(--ink); border-left: 1px solid var(--ink); }
+.demo-grid .tb-cell:nth-child(3n+1) { border-left: 0; }
+.demo-v { font-size: 1.15rem; font-weight: 700; }
+.tools .tool { display: flex; flex-direction: column; gap: 10px; padding: 22px; border: 1px solid var(--line); border-radius: var(--r); background: var(--paper); color: var(--ink); text-decoration: none; transition: border-color .15s, transform .15s; min-width: 0; }
+.tools .tool:hover { border-color: var(--ink); transform: translateY(-2px); color: var(--ink); }
+.tool-k { font: 600 .7rem/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--blaze-ink); }
+.tool p { color: var(--ink-2); font-size: .93rem; flex: 1; }
+.tool-for { font-size: .8rem; color: var(--ink-3); border-top: 1px dashed var(--line); padding-top: 10px; }
+.split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 64px); }
+@media (max-width: 900px) { .split { grid-template-columns: minmax(0, 1fr); } }
+.sections-list { columns: 2; column-gap: 28px; padding-left: 22px; margin: 0; color: var(--ink-2); font-size: .95rem; }
+.sections-list li { padding: 3px 0; break-inside: avoid; }
+.sections-list li::marker { font-family: var(--mono); color: var(--blaze-ink); font-size: .8rem; }
+@media (max-width: 520px) { .sections-list { columns: 1; } }
+.report-peek { border: 1.5px solid var(--ink); border-radius: var(--r); background: var(--sheet); padding: 18px; max-height: 560px; overflow: hidden; position: relative; box-shadow: var(--shadow); }
+.report-peek::after { content: ''; position: absolute; inset: auto 0 0 0; height: 120px; background: linear-gradient(transparent, var(--sheet)); }
+.report-peek .rsec { border: 0; padding: 0 0 16px; }
+.ink-card { border: 1px solid color-mix(in srgb, var(--paper) 22%, transparent); border-radius: var(--r); padding: 24px; gap: 14px; }
+.mini-roll { display: grid; gap: 1px; font: 500 .82rem/1.2 var(--mono); border: 1px solid color-mix(in srgb, var(--paper) 22%, transparent); border-radius: 4px; overflow: hidden; }
+.mini-roll div { display: grid; grid-template-columns: 1.6fr 1fr 1fr .8fr; gap: 8px; padding: 9px 12px; background: color-mix(in srgb, var(--paper) 6%, transparent); }
+.mini-roll .vac { color: var(--blaze); }
+.mini-yield { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; border: 1px solid color-mix(in srgb, var(--paper) 22%, transparent); border-radius: 4px; overflow: hidden; }
+.mini-yield div { padding: 12px; background: color-mix(in srgb, var(--paper) 6%, transparent); display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.mini-yield b { font: 700 1.2rem/1 var(--mono); color: var(--paper); }
+.mini-yield span { font-size: .72rem; color: color-mix(in srgb, var(--paper) 65%, transparent); }
+@media (max-width: 520px) { .mini-yield { grid-template-columns: repeat(2, minmax(0, 1fr)); } .mini-roll div { grid-template-columns: 1.4fr 1fr 1fr; } .mini-roll div span:last-child { display: none; } }
+.plan-mini { display: flex; flex-direction: column; gap: 12px; padding: 22px; border: 1px solid var(--line); border-radius: var(--r); background: var(--paper); }
+.plan-mini.pop { border: 1.5px solid var(--ink); }
+.plan-mini .p { font: 700 2rem/1 var(--mono); }
+.mk { border: 1px solid var(--line); border-radius: var(--r); padding: 14px 16px; background: var(--sheet); display: flex; flex-direction: column; gap: 6px; }
+</style>
+
+<script src="js/shared/markets.js"></script>
+<script src="js/shared/plans.js"></script>
+<script src="js/shared/engine.js"></script>
+<script src="js/shared/scoring.js"></script>
+<script src="js/shared/defaults.js"></script>
+<script src="js/shared/csv.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/samples.js"></script>
+<script src="js/report.js"></script>
+<script>
+
+PUI.siteHeader('index.html'); PUI.siteFooter();
+PUI.addressBox(document.getElementById('hero-search'), { id: 'hero-addr', go: function (a, k) { location.href = 'app/analyze.html?address=' + encodeURIComponent(a) + '&kind=' + k; } });
+(function demo() {
+  var S = PSamples.residential, F = PUI.fmt, range = document.getElementById('d-price');
+  function run() {
+    var inp = Object.assign({}, S.inputs, { price: +range.value });
+    var r = PEngine.analyzeResidential(inp), m = r.metrics;
+    document.getElementById('d-price-v').textContent = F.usd(+range.value);
+    document.getElementById('d-score').textContent = r.score;
+    var v = document.getElementById('d-verdict'); v.textContent = r.verdict.label; v.className = 'verdict ' + r.verdict.tone;
+    function put(id, t, tone) { var e = document.getElementById(id); e.textContent = t; e.className = 'num demo-v' + (tone ? ' tone-' + tone : ''); }
+    put('d-cf', F.usd(m.cfMonthly), m.cfMonthly > 100 ? 'good' : m.cfMonthly > -50 ? 'warn' : 'bad');
+    put('d-cap', F.pct(m.cap), m.cap >= .06 ? 'good' : m.cap >= .045 ? 'warn' : 'bad');
+    put('d-coc', F.pct(m.coc), m.coc >= .08 ? 'good' : m.coc >= .03 ? 'warn' : 'bad');
+    put('d-irr', F.pct(m.irr), m.irr >= .12 ? 'good' : m.irr >= .08 ? 'warn' : 'bad');
+    put('d-dscr', F.x(m.dscr), m.dscr >= 1.25 ? 'good' : m.dscr >= 1 ? 'warn' : 'bad');
+    put('d-mao', F.usd(r.bestFlip.mao));
+  }
+  range.addEventListener('input', run); run();
+  var L = PEngine.analyzeLand(PSamples.land.inputs);
+  document.getElementById('ly-lots').textContent = L.metrics.lots;
+  document.getElementById('ly-res').textContent = F.usd(L.metrics.staticResidual, { compact: true });
+  var R = PEngine.analyzeResidential(S.inputs);
+  PReport.render(document.getElementById('peek'), R, {});
+})();
+(function plans() {
+  var P = PPlans.PLANS, F = PUI.fmt;
+  document.getElementById('plan-teaser').innerHTML = ['investor', 'agent', 'pro'].map(function (k) { var p = P[k]; return '<div class="plan-mini' + (p.popular ? ' pop' : '') + '"><div class="row" style="justify-content:space-between"><h3>' + p.name + '</h3>' + (p.popular ? '<span class="chip blaze">Most popular</span>' : '') + '</div><div><span class="p">$' + p.monthly + '</span><span class="muted">/mo</span></div><p class="small muted">' + PUI.esc(p.tagline) + '</p><ul class="pts">' + p.bullets.slice(0, 4).map(function (b) { return '<li class="good">' + PUI.esc(b) + '</li>'; }).join('') + '</ul></div>'; }).join('');
+  document.getElementById('market-list').innerHTML = PMarkets.MARKETS.map(function (m) { return '<div class="mk"><div class="row" style="justify-content:space-between"><strong>' + m.name + ', ' + m.state + '</strong><span class="chip ' + (m.status === 'live' ? 'good' : 'warn') + '">' + (m.status === 'live' ? 'Live' : 'Beta') + '</span></div><span class="xs muted">' + m.localities.map(function (l) { return l.name; }).join(' &middot; ') + '</span></div>'; }).join('');
+})();
+
+</script>
+</body>
+</html>

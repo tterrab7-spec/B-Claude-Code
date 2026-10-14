@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Reports | Parcelyst</title>
+<meta name="description" content="Saved analyses and reports.">
+<meta property="og:title" content="Reports | Parcelyst">
+<meta property="og:description" content="Saved analyses and reports.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='1.5' y='1.5' width='29' height='29' rx='3' fill='%2312202b'/%3E%3Cpath d='M6 22.5 L13 9.5 L26 12 L22.5 25.5 Z' fill='none' stroke='%23f3f5f2' stroke-width='1.6'/%3E%3Ccircle cx='17.5' cy='18.5' r='3' fill='%23e2561f'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="../css/app.css">
+</head>
+<body class="in-app">
+
+<main>
+  <div class="page-head"><div class="stack" style="gap:6px"><span class="eyebrow">Reports</span><h1>Saved analyses</h1></div><a class="btn btn-primary" href="analyze.html">New analysis</a></div>
+  <div class="row" style="margin-bottom:14px"><input class="input" id="flt" placeholder="Filter by address" style="max-width:320px" aria-label="Filter"><div class="seg" role="group" aria-label="Type"><button type="button" data-k="" aria-pressed="true">All</button><button type="button" data-k="residential" aria-pressed="false">Residential</button><button type="button" data-k="commercial" aria-pressed="false">Commercial</button><button type="button" data-k="land" aria-pressed="false">Land</button></div></div>
+  <div id="list"><div class="skeleton" style="height:200px"></div></div>
+</main>
+
+<script src="../js/shared/markets.js"></script>
+<script src="../js/shared/plans.js"></script>
+<script src="../js/shared/engine.js"></script>
+<script src="../js/shared/scoring.js"></script>
+<script src="../js/shared/defaults.js"></script>
+<script src="../js/shared/csv.js"></script>
+<script src="../js/ui.js"></script>
+<script>
+
+var all = [], kind = '', F = PUI.fmt, esc = PUI.esc;
+function draw() {
+  var q = document.getElementById('flt').value.toLowerCase();
+  var rows = all.filter(function (a) { return (!kind || a.kind === kind) && (!q || a.title.toLowerCase().indexOf(q) !== -1); });
+  if (!rows.length) { document.getElementById('list').innerHTML = '<div class="notice"><div>' + (all.length ? 'No analyses match.' : 'No saved analyses yet. <a href="analyze.html">Analyze a property</a> and save it.') + '</div></div>'; return; }
+  document.getElementById('list').innerHTML = '<div class="table-wrap"><table class="t"><thead><tr><th>Score</th><th>Property</th><th>Type</th><th class="n">Price</th><th class="n">Key metric</th><th>Status</th><th>Updated</th><th></th></tr></thead><tbody>' + rows.map(function (a) {
+    var s = a.summary || {}, t = PUI.toneOfScore(s.score);
+    var key = a.kind === 'land' ? (s.lots ? s.lots + ' lots' : '') : a.kind === 'commercial' ? 'Cap ' + F.pct(s.cap, 2) : F.usd(s.cfMonthly) + '/mo';
+    return '<tr class="click" data-id="' + a.id + '"><td><span class="score-badge tone-' + t + '">' + (s.score === undefined ? '-' : s.score) + '</span></td><td><strong>' + esc(a.title) + '</strong><div class="xs muted">' + esc(s.verdict || '') + '</div></td><td>' + esc(a.kind) + '</td><td class="n">' + F.usd(s.price) + '</td><td class="n">' + key + '</td><td>' + (a.unlocked ? '<span class="chip good">Full report</span>' : '<span class="chip">Summary</span>') + (a.shareToken ? ' <span class="chip plat">Shared</span>' : '') + '</td><td class="xs muted">' + esc((a.updatedAt || '').slice(0, 10)) + '</td><td><button class="btn btn-ghost btn-sm" data-del="' + a.id + '" aria-label="Delete">Delete</button></td></tr>';
+  }).join('') + '</tbody></table></div>';
+}
+document.getElementById('flt').addEventListener('input', draw);
+document.querySelectorAll('[data-k]').forEach(function (b) { b.addEventListener('click', function () { kind = b.getAttribute('data-k'); document.querySelectorAll('[data-k]').forEach(function (o) { o.setAttribute('aria-pressed', o === b); }); draw(); }); });
+document.getElementById('list').addEventListener('click', function (e) {
+  var d = e.target.closest('[data-del]');
+  if (d) { e.stopPropagation(); var did = d.getAttribute('data-del'); PUI.modal('<h3>Delete this analysis?</h3><p class="muted small">This cannot be undone. Share links stop working.</p><div class="row"><button class="btn btn-primary" id="yes">Delete</button><button class="btn btn-line" data-close>Cancel</button></div>', function (body, close) { body.querySelector('#yes').onclick = function () { PUI.api('DELETE', '/api/analyses/' + did).then(function () { all = all.filter(function (a) { return a.id !== did; }); draw(); close(); PUI.toast('Deleted'); }).catch(PUI.errorHandler); }; }); return; }
+  var tr = e.target.closest('tr[data-id]'); if (tr) location.href = 'report.html?id=' + tr.getAttribute('data-id');
+});
+PUI.appShell('reports.html', { requireAuth: true }).then(function (me) { if (!me) return; PUI.api('GET', '/api/analyses').then(function (j) { all = j.analyses; draw(); }).catch(PUI.errorHandler); });
+
+</script>
+</body>
+</html>

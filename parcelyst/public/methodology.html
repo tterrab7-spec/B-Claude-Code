@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Parcelyst Methodology</title>
+<meta name="description" content="Formulas, score weights and lead-scoring signals used in every Parcelyst report.">
+<meta property="og:title" content="Parcelyst Methodology">
+<meta property="og:description" content="Formulas, score weights and lead-scoring signals used in every Parcelyst report.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='1.5' y='1.5' width='29' height='29' rx='3' fill='%2312202b'/%3E%3Cpath d='M6 22.5 L13 9.5 L26 12 L22.5 25.5 Z' fill='none' stroke='%23f3f5f2' stroke-width='1.6'/%3E%3Ccircle cx='17.5' cy='18.5' r='3' fill='%23e2561f'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<main><section class="section"><div class="wrap stack" style="gap:28px;max-width:960px">
+<div class="stack" style="gap:12px"><span class="eyebrow">Methodology</span><h1>How the math works</h1><p class="lede">The engine is open about every formula. These definitions match the code that produces your report.</p></div>
+<div class="panel panel-pad stack"><h3>Core metrics</h3><div class="table-wrap"><table class="t"><thead><tr><th>Metric</th><th>Formula</th></tr></thead><tbody>
+<tr><td>Net operating income</td><td class="mono small">Gross rent &minus; vacancy + other income &minus; taxes, insurance, HOA, utilities, maintenance, CapEx reserve, management</td></tr>
+<tr><td>Cap rate</td><td class="mono small">Year-1 NOI &divide; purchase price</td></tr>
+<tr><td>Cash-on-cash</td><td class="mono small">(NOI &minus; annual debt service) &divide; (down payment + closing + rehab)</td></tr>
+<tr><td>DSCR</td><td class="mono small">NOI &divide; annual debt service</td></tr>
+<tr><td>Debt yield (commercial)</td><td class="mono small">Year-1 NOI &divide; loan amount</td></tr>
+<tr><td>GRM</td><td class="mono small">Price &divide; gross annual rent</td></tr>
+<tr><td>Break-even occupancy</td><td class="mono small">(Operating expenses + debt service) &divide; gross potential income</td></tr>
+<tr><td>IRR</td><td class="mono small">Rate where NPV of [&minus;cash invested, annual cash flows, sale proceeds net of selling costs and loan payoff] = 0, solved by Newton-Raphson with bisection fallback</td></tr>
+<tr><td>Equity multiple</td><td class="mono small">Total cash returned &divide; cash invested</td></tr>
+<tr><td>Flip MAO</td><td class="mono small">(ARV &times; (1 &minus; selling %) &divide; (1 + target ROI) &minus; renovation &minus; holding) &divide; (1 + buyer closing %)</td></tr>
+<tr><td>Commercial exit</td><td class="mono small">Forward (year N+1) NOI &divide; exit cap, less selling costs</td></tr>
+<tr><td>Loan sizing</td><td class="mono small">min(LTV &times; price, NOI &divide; (min DSCR &times; annual loan constant))</td></tr>
+<tr><td>Static land residual</td><td class="mono small">(Lot revenue &times; (1 &minus; margin) &minus; hard, fees, soft, contingency) &divide; (1 + closing + carry)</td></tr>
+</tbody></table></div></div>
+<div class="panel panel-pad stack"><h3>Investment score weights</h3><div class="grid g3">
+<div><h4>Residential</h4><ul class="pts"><li class="good">Cap rate 20 (3% &rarr; 8%)</li><li class="good">Cash-on-cash 20 (0% &rarr; 10%)</li><li class="good">DSCR 15 (1.0x &rarr; 1.5x)</li><li class="good">Cash flow / unit 15 ($0 &rarr; $300)</li><li class="good">GRM 15 (18 &rarr; 9)</li><li class="good">IRR 15 (5% &rarr; 16%)</li></ul></div>
+<div><h4>Commercial</h4><ul class="pts"><li class="good">Cap vs. market 20 (&minus;100 &rarr; +100 bps)</li><li class="good">DSCR 15 (1.0x &rarr; 1.5x)</li><li class="good">Cash-on-cash 15 (2% &rarr; 10%)</li><li class="good">Debt yield 15 (7% &rarr; 11%)</li><li class="good">Levered IRR 20 (6% &rarr; 16%)</li><li class="good">WALT or occupancy 15</li></ul></div>
+<div><h4>Land</h4><ul class="pts"><li class="good">Land % of finished lot 35 (35% &rarr; 15%)</li><li class="good">Margin at ask 35 (5% &rarr; 25%)</li><li class="good">Project IRR 30 (8% &rarr; 25%)</li></ul></div></div>
+<p class="small muted">Points scale linearly between the two thresholds shown. 75+ is Strong Buy, 60-74 Buy, 45-59 Negotiate, under 45 Pass.</p></div>
+<div class="panel panel-pad stack"><h3>Lead scores</h3><p class="muted">Deal Finder, Listing Prospector and Land Finder scores are sums of named signals capped at 100. Each signal and its points appear on the record. Examples: pre-foreclosure +24, delinquent taxes +20, expired listing +24 (agent), 7-13 year tenure +18 (agent), loan maturity within 24 months +16 (agent, commercial), 20-300 acres +22 (land).</p></div>
+</div></section></main>
+
+<script src="js/shared/markets.js"></script>
+<script src="js/shared/plans.js"></script>
+<script src="js/shared/engine.js"></script>
+<script src="js/shared/scoring.js"></script>
+<script src="js/shared/defaults.js"></script>
+<script src="js/shared/csv.js"></script>
+<script src="js/ui.js"></script>
+<script>
+PUI.siteHeader('methodology.html'); PUI.siteFooter();
+</script>
+</body>
+</html>

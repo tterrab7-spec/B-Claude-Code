@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>List Import | Parcelyst</title>
+<meta name="description" content="Import county and list-provider CSVs.">
+<meta property="og:title" content="List Import | Parcelyst">
+<meta property="og:description" content="Import county and list-provider CSVs.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='1.5' y='1.5' width='29' height='29' rx='3' fill='%2312202b'/%3E%3Cpath d='M6 22.5 L13 9.5 L26 12 L22.5 25.5 Z' fill='none' stroke='%23f3f5f2' stroke-width='1.6'/%3E%3Ccircle cx='17.5' cy='18.5' r='3' fill='%23e2561f'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="../css/app.css">
+<link rel="stylesheet" href="../css/report.css">
+</head>
+<body class="in-app">
+
+<main>
+  <div class="page-head"><div class="stack" style="gap:6px"><span class="eyebrow">List import</span><h1>Bring your own lists</h1><p class="muted small" style="max-width:70ch">Upload a delinquent tax list from the treasurer, a probate or code-violation export, an expired-listing pull, an assessor export or a file from PropStream, DealMachine, BatchLeads or PropertyRadar. Columns map automatically and every row is scored in the finders. Imports are private to your account.</p></div></div>
+  <div class="grid g2" style="align-items:start">
+    <form class="panel panel-pad stack" id="imf">
+      <div class="field"><label for="im-file">CSV file</label><input class="input" type="file" id="im-file" accept=".csv,text/csv" required></div>
+      <div class="grid g2"><div class="field"><label for="im-type">List type</label><select class="input" id="im-type"></select><div class="hint">Stamps a signal on every row (for example, delinquent taxes).</div></div><div class="field"><label for="im-market">Default market</label><select class="input" id="im-market"></select><div class="hint">Used when a row's ZIP is not recognized.</div></div></div>
+      <div class="row"><button class="btn btn-line" type="submit">Preview</button><button class="btn btn-primary" type="button" id="im-go" disabled>Import</button></div>
+      <p class="xs muted">Need a template? <a href="#" id="tmpl">Download a sample CSV</a>.</p>
+    </form>
+    <div class="stack" id="im-out"><div class="notice"><div>Choose a file and preview it to check the column mapping before importing.</div></div></div>
+  </div>
+  <h3 style="margin:28px 0 12px">Past imports</h3><div id="im-past"></div>
+</main>
+
+<script src="../js/shared/markets.js"></script>
+<script src="../js/shared/plans.js"></script>
+<script src="../js/shared/engine.js"></script>
+<script src="../js/shared/scoring.js"></script>
+<script src="../js/shared/defaults.js"></script>
+<script src="../js/shared/csv.js"></script>
+<script src="../js/ui.js"></script>
+<script src="../js/report.js"></script>
+<script>
+
+var esc = PUI.esc, text = null, fname = null;
+function past() { PUI.api('GET', '/api/imports').then(function (j) { document.getElementById('im-past').innerHTML = j.imports.length ? PReport.table(['File', 'Market', 'Rows', 'Date'], j.imports.map(function (i) { return [esc(i.filename), esc(i.market || 'auto'), i.rows, esc((i.created_at || '').slice(0, 16))]; }), { num: [2] }) : '<p class="muted small">None yet.</p>'; }).catch(function () {}); }
+document.getElementById('im-file').addEventListener('change', function (e) { var f = e.target.files[0]; if (!f) return; fname = f.name; var r = new FileReader(); r.onload = function () { text = r.result; document.getElementById('im-go').disabled = true; }; r.readAsText(f); });
+document.getElementById('imf').addEventListener('submit', function (e) {
+  e.preventDefault(); if (!text) return PUI.toast('Choose a CSV file first', true);
+  PUI.api('POST', '/api/import', { csv: text, filename: fname, listType: document.getElementById('im-type').value, market: document.getElementById('im-market').value, preview: true }).then(function (j) {
+    var mapped = Object.keys(j.mapping).map(function (k) { return [esc(k), esc(j.headers[j.mapping[k]])]; });
+    document.getElementById('im-out').innerHTML = '<div class="panel panel-pad stack"><div class="row"><span class="chip good">' + j.count + ' rows ready</span>' + (j.skipped ? '<span class="chip warn">' + j.skipped + ' skipped (no address)</span>' : '') + '<span class="chip">' + j.inMarket + ' in a live market</span></div><h4>Column mapping</h4>' + PReport.table(['Field', 'Your column'], mapped) + '<h4>First rows</h4>' + PReport.table(['Address', 'Owner', 'Type', 'Signals'], j.sample.map(function (r) { return [esc(r.address + ', ' + (r.city || '') + ' ' + (r.zip || '')), esc(r.ownerName || ''), esc(r.assetType), esc([r.taxDelinquent ? 'Tax delinquent' : '', r.probate ? 'Probate' : '', r.absentee ? 'Absentee' : '', r.outOfState ? 'Out of state' : '', r.vacant ? 'Vacant' : '', r.preforeclosure ? 'Pre-foreclosure' : ''].filter(Boolean).join(', '))]; })) + '</div>';
+    document.getElementById('im-go').disabled = !j.count;
+  }).catch(PUI.errorHandler);
+});
+document.getElementById('im-go').addEventListener('click', function () {
+  var b = this; b.disabled = true;
+  PUI.api('POST', '/api/import', { csv: text, filename: fname, listType: document.getElementById('im-type').value, market: document.getElementById('im-market').value }).then(function (j) { PUI.toast('Imported ' + j.imported + ' records'); document.getElementById('im-out').innerHTML = '<div class="notice"><div><strong>' + j.imported + ' records imported.</strong> Open the <a href="finder.html?mode=investor">Deal Finder</a> to work them.</div></div>'; past(); }).catch(function (e) { b.disabled = false; PUI.errorHandler(e); });
+});
+document.getElementById('tmpl').addEventListener('click', function (e) { e.preventDefault(); PUI.download('parcelyst-import-template.csv', 'Property Address,City,State,Zip,Owner Name,Mailing Address,Mailing City,Mailing State,Parcel ID,Property Type,Bedrooms,Bathrooms,Building Sqft,Acres,Year Built,Zoning,Assessed Value,Last Sale Date,Last Sale Price,Amount Due,Phone,Email\n"812 Holly St",Norfolk,VA,23517,"Estate of Ruth Bell","812 Holly St",Norfolk,VA,12345678,Single Family,3,1.5,1480,0.14,1948,R-8,245000,06/14/1989,61000,"$3,412",,\n'); });
+PUI.appShell('imports.html', { requireAuth: true }).then(function (me) {
+  if (!me) return;
+  PUI.config().then(function (c) {
+    document.getElementById('im-type').innerHTML = c.listTypes.map(function (t) { return '<option value="' + t.id + '">' + esc(t.label) + '</option>'; }).join('');
+    document.getElementById('im-market').innerHTML = c.markets.map(function (m) { return '<option value="' + m.id + '">' + esc(m.name) + '</option>'; }).join('');
+  });
+  past();
+});
+
+</script>
+</body>
+</html>

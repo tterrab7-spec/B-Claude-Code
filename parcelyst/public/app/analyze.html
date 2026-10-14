@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Analyze | Parcelyst</title>
+<meta name="description" content="Underwrite a residential, commercial or land deal.">
+<meta property="og:title" content="Analyze | Parcelyst">
+<meta property="og:description" content="Underwrite a residential, commercial or land deal.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='1.5' y='1.5' width='29' height='29' rx='3' fill='%2312202b'/%3E%3Cpath d='M6 22.5 L13 9.5 L26 12 L22.5 25.5 Z' fill='none' stroke='%23f3f5f2' stroke-width='1.6'/%3E%3Ccircle cx='17.5' cy='18.5' r='3' fill='%23e2561f'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="../css/app.css">
+<link rel="stylesheet" href="../css/report.css">
+</head>
+<body class="in-app">
+
+<main>
+  <div class="page-head"><div class="stack" style="gap:6px"><span class="eyebrow">Analyze</span><h1>Underwrite a property</h1></div>
+    <div class="row xs muted">Try a sample: <button class="btn btn-line btn-sm" data-sample="residential">Rental house</button><button class="btn btn-line btn-sm" data-sample="commercial">Industrial NNN</button><button class="btn btn-line btn-sm" data-sample="land">48-acre parcel</button></div></div>
+  <div class="panel panel-pad stack" style="gap:12px;margin-bottom:18px"><div id="search" class="hero-search"></div><div class="row xs muted" style="justify-content:space-between"><span>Pulls owner, tax, sale history and value/rent estimates where a data provider is connected. Anything missing is filled from market references and can be edited.</span><button class="btn btn-ghost btn-sm" id="manual">Enter details manually</button></div><div id="status"></div></div>
+  <div id="empty" class="notice"><div>Enter an address, pick a sample, or enter details manually to start. Results update as you type.</div></div>
+  <div id="work" hidden>
+    <div id="prop" style="margin-bottom:16px"></div>
+    <div class="an-grid"><div id="form" class="stack" style="gap:14px;min-width:0"></div><aside id="results" class="an-results"></aside></div>
+  </div>
+</main>
+<style>
+.hero-search .addr { display: flex; flex-direction: column; gap: 10px; }
+.addr-row { display: flex; gap: 8px; } @media (max-width: 560px) { .addr-row { flex-direction: column; } }
+.an-grid { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 18px; align-items: start; }
+.an-results { position: sticky; top: 16px; }
+@media (max-width: 1100px) { .an-grid { grid-template-columns: minmax(0, 1fr); } .an-results { position: static; order: -1; } }
+fieldset .grid.g3 { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+#rr .input { padding: 6px 8px; font-size: .85rem; }
+</style>
+
+<script src="../js/shared/markets.js"></script>
+<script src="../js/shared/plans.js"></script>
+<script src="../js/shared/engine.js"></script>
+<script src="../js/shared/scoring.js"></script>
+<script src="../js/shared/defaults.js"></script>
+<script src="../js/shared/csv.js"></script>
+<script src="../js/ui.js"></script>
+<script src="../js/samples.js"></script>
+<script src="../js/report.js"></script>
+<script src="../js/analyzer.js"></script>
+<script>
+PUI.appShell('analyze.html').then(function () { PAnalyzer.init(); });
+</script>
+</body>
+</html>

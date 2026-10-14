@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Pipeline | Parcelyst</title>
+<meta name="description" content="Track leads from first contact to closing.">
+<meta property="og:title" content="Pipeline | Parcelyst">
+<meta property="og:description" content="Track leads from first contact to closing.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='1.5' y='1.5' width='29' height='29' rx='3' fill='%2312202b'/%3E%3Cpath d='M6 22.5 L13 9.5 L26 12 L22.5 25.5 Z' fill='none' stroke='%23f3f5f2' stroke-width='1.6'/%3E%3Ccircle cx='17.5' cy='18.5' r='3' fill='%23e2561f'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="../css/app.css">
+</head>
+<body class="in-app">
+
+<main>
+  <div class="page-head"><div class="stack" style="gap:6px"><span class="eyebrow">Pipeline</span><h1>Leads in progress</h1></div><a class="btn btn-line" href="finder.html?mode=investor">Find more leads</a></div>
+  <div id="board"><div class="skeleton" style="height:300px"></div></div>
+</main>
+<style>
+.board { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(250px, 1fr); gap: 12px; overflow-x: auto; padding-bottom: 8px; }
+.col { background: var(--line-2); border-radius: var(--r); padding: 10px; display: flex; flex-direction: column; gap: 8px; min-height: 160px; }
+.col h4 { font: 600 .72rem/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-2); display: flex; justify-content: space-between; padding: 4px 2px 6px; }
+.lead { background: var(--sheet); border: 1px solid var(--line); border-radius: var(--r); padding: 10px; display: flex; flex-direction: column; gap: 6px; font-size: .86rem; }
+.lead select, .lead textarea { font-size: .8rem; padding: 5px 7px; }
+</style>
+
+<script src="../js/shared/markets.js"></script>
+<script src="../js/shared/plans.js"></script>
+<script src="../js/shared/engine.js"></script>
+<script src="../js/shared/scoring.js"></script>
+<script src="../js/shared/defaults.js"></script>
+<script src="../js/shared/csv.js"></script>
+<script src="../js/ui.js"></script>
+<script>
+
+var F = PUI.fmt, esc = PUI.esc, data = null;
+function draw() {
+  if (!data.items.length) { document.getElementById('board').innerHTML = '<div class="notice"><div>No leads yet. Open any record in the <a href="finder.html?mode=investor">Deal Finder</a>, <a href="finder.html?mode=agent">Listing Prospector</a> or <a href="finder.html?mode=land">Land Finder</a> and choose Add to pipeline.</div></div>'; return; }
+  document.getElementById('board').innerHTML = '<div class="board">' + data.stages.map(function (st) {
+    var items = data.items.filter(function (i) { return i.stage === st; });
+    return '<div class="col"><h4><span>' + esc(st) + '</span><span>' + items.length + '</span></h4>' + items.map(function (i) {
+      var s = i.snapshot || {};
+      return '<div class="lead"><div class="row" style="justify-content:space-between;flex-wrap:nowrap;gap:8px"><strong style="min-width:0">' + esc(s.address) + '</strong><span class="score-badge tone-' + PUI.toneOfScore(i.score) + '" style="width:32px;height:32px;font-size:.78rem">' + i.score + '</span></div><span class="xs muted">' + esc((s.city || '') + ', ' + (s.state || '') + ' · ' + (s.assetType || '') + ' · ' + F.usd(s.estValue, { compact: true })) + '</span><span class="xs">' + esc(s.ownerName || '') + '</span>' + (s.mailingAddress ? '<span class="xs muted">' + esc(s.mailingAddress) + '</span>' : '') + '<div class="sig" style="display:flex;flex-wrap:wrap;gap:4px">' + (s.signals || []).slice(0, 3).map(function (g) { return '<span class="chip" style="font-size:.68rem">' + esc(g) + '</span>'; }).join('') + '</div>' +
+        '<select class="input" data-stage="' + i.id + '" aria-label="Stage">' + data.stages.map(function (o) { return '<option' + (o === i.stage ? ' selected' : '') + '>' + esc(o) + '</option>'; }).join('') + '</select><textarea class="input" rows="2" data-note="' + i.id + '" placeholder="Notes" aria-label="Notes">' + esc(i.note || '') + '</textarea>' +
+        '<div class="row" style="justify-content:space-between"><a class="xs" href="analyze.html?property=' + encodeURIComponent(i.propertyId) + (i.mode === 'land' ? '&kind=land' : '') + '">Analyze</a><button class="btn btn-ghost btn-sm" data-rm="' + i.id + '">Remove</button></div></div>';
+    }).join('') + '</div>';
+  }).join('') + '</div>';
+}
+document.addEventListener('change', function (e) {
+  var s = e.target.closest('[data-stage]'); if (s) { var id = +s.getAttribute('data-stage'); PUI.api('PUT', '/api/pipeline/' + id, { stage: s.value }).then(function () { data.items.forEach(function (i) { if (i.id === id) i.stage = s.value; }); draw(); }).catch(PUI.errorHandler); }
+  var n = e.target.closest('[data-note]'); if (n) PUI.api('PUT', '/api/pipeline/' + n.getAttribute('data-note'), { note: n.value }).then(function () { PUI.toast('Note saved'); }).catch(PUI.errorHandler);
+});
+document.addEventListener('click', function (e) { var r = e.target.closest('[data-rm]'); if (r) { var id = +r.getAttribute('data-rm'); PUI.api('DELETE', '/api/pipeline/' + id).then(function () { data.items = data.items.filter(function (i) { return i.id !== id; }); draw(); }).catch(PUI.errorHandler); } });
+PUI.appShell('pipeline.html', { requireAuth: true }).then(function (me) { if (!me) return; PUI.api('GET', '/api/pipeline').then(function (j) { data = j; draw(); }).catch(PUI.errorHandler); });
+
+</script>
+</body>
+</html>

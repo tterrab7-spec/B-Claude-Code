@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Dashboard | Parcelyst</title>
+<meta name="description" content="Your Parcelyst workspace.">
+<meta property="og:title" content="Dashboard | Parcelyst">
+<meta property="og:description" content="Your Parcelyst workspace.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='1.5' y='1.5' width='29' height='29' rx='3' fill='%2312202b'/%3E%3Cpath d='M6 22.5 L13 9.5 L26 12 L22.5 25.5 Z' fill='none' stroke='%23f3f5f2' stroke-width='1.6'/%3E%3Ccircle cx='17.5' cy='18.5' r='3' fill='%23e2561f'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="../css/app.css">
+</head>
+<body class="in-app">
+
+<main>
+  <div class="page-head"><div class="stack" style="gap:6px"><span class="eyebrow" id="d-date"></span><h1 id="d-hello">Dashboard</h1></div><a class="btn btn-primary" href="analyze.html">New analysis</a></div>
+  <div class="panel panel-pad" style="margin-bottom:18px"><div id="d-search" class="hero-search"></div></div>
+  <div class="grid g4" id="d-usage" style="margin-bottom:18px"></div>
+  <div class="grid g2" style="align-items:start">
+    <div class="panel"><div class="panel-head"><h3>Recent analyses</h3><a class="small" href="reports.html">All reports</a></div><div id="d-recent" class="panel-pad"><div class="skeleton" style="height:120px"></div></div></div>
+    <div class="panel"><div class="panel-head"><h3 id="d-hot-title">Top leads in your market</h3><a class="small" id="d-hot-link" href="finder.html?mode=investor">Open finder</a></div><div id="d-hot" class="panel-pad"><div class="skeleton" style="height:120px"></div></div></div>
+  </div>
+</main>
+<style>.hero-search .addr { display: flex; flex-direction: column; gap: 10px; } .addr-row { display: flex; gap: 8px; } @media (max-width: 560px) { .addr-row { flex-direction: column; } } .ustat { padding: 16px; }</style>
+
+<script src="../js/shared/markets.js"></script>
+<script src="../js/shared/plans.js"></script>
+<script src="../js/shared/engine.js"></script>
+<script src="../js/shared/scoring.js"></script>
+<script src="../js/shared/defaults.js"></script>
+<script src="../js/shared/csv.js"></script>
+<script src="../js/ui.js"></script>
+<script>
+
+var F = PUI.fmt, esc = PUI.esc;
+document.getElementById('d-date').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+PUI.addressBox(document.getElementById('d-search'), { id: 'd-addr', go: function (a, k) { location.href = 'analyze.html?address=' + encodeURIComponent(a) + '&kind=' + k; } });
+PUI.appShell('dashboard.html').then(function (u) {
+  if (!u) { document.getElementById('d-hello').textContent = 'Welcome to Parcelyst'; document.getElementById('d-recent').innerHTML = '<p class="muted small">Create a free account to save analyses. <a href="../auth.html?mode=signup">Sign up</a></p>'; }
+  else {
+    document.getElementById('d-hello').textContent = 'Good ' + (new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 17 ? 'afternoon' : 'evening') + (u.name ? ', ' + u.name.split(' ')[0] : '');
+    var us = u.usage;
+    document.getElementById('d-usage').innerHTML = [['Plan', u.planName, u.plan === 'free' ? '<a href="../pricing.html">Upgrade</a>' : esc(u.planInterval || '')], ['Reports this month', us.reports.used + (us.reports.limit !== null ? ' / ' + us.reports.limit : ''), u.credits ? u.credits + ' credits banked' : ''], ['Live pulls', us.lookups.used + (us.lookups.limit !== null ? ' / ' + us.lookups.limit : ''), 'resets monthly'], ['Export rows', us.exports.used + (us.exports.limit ? ' / ' + F.n(us.exports.limit) : ''), u.markets.length ? 'Market: ' + u.markets.join(', ') : 'No market selected']].map(function (s) { return '<div class="panel ustat stat"><span class="k">' + s[0] + '</span><span class="v" style="font-size:1.3rem">' + esc(s[1]) + '</span><span class="xs muted">' + s[2] + '</span></div>'; }).join('');
+    PUI.api('GET', '/api/analyses').then(function (j) {
+      var a = j.analyses.slice(0, 6);
+      document.getElementById('d-recent').innerHTML = a.length ? '<div class="stack" style="gap:10px">' + a.map(function (x) { var s = x.summary || {}; return '<a class="row" style="text-decoration:none;color:inherit;justify-content:space-between;flex-wrap:nowrap" href="report.html?id=' + x.id + '"><span class="row" style="flex-wrap:nowrap;min-width:0"><span class="score-badge tone-' + PUI.toneOfScore(s.score) + '">' + s.score + '</span><span style="min-width:0"><strong>' + esc(x.title) + '</strong><div class="xs muted">' + esc(x.kind) + ' · ' + esc(s.verdict) + '</div></span></span><span class="num small">' + F.usd(s.price, { compact: true }) + '</span></a>'; }).join('') + '</div>' : '<p class="muted small">No analyses yet. Enter an address above.</p>';
+    }).catch(PUI.errorHandler);
+  }
+  var mode = u && u.features.prospector && u.role === 'agent' ? 'agent' : u && u.features.landFinder && u.role === 'developer' ? 'land' : 'investor';
+  var market = u && u.markets.length ? u.markets[0] : 'hampton-roads';
+  document.getElementById('d-hot-title').textContent = mode === 'agent' ? 'Most likely to list' : mode === 'land' ? 'Top land parcels' : 'Most motivated sellers';
+  document.getElementById('d-hot-link').href = 'finder.html?mode=' + mode + '&market=' + market;
+  PUI.api('GET', '/api/search?mode=' + mode + '&market=' + market + '&pageSize=6').then(function (j) {
+    document.getElementById('d-hot').innerHTML = (j.preview ? '<div class="notice blaze xs" style="margin-bottom:10px"><div>Preview. Owner details unlock on paid plans.</div></div>' : '') + '<div class="stack" style="gap:10px">' + j.results.slice(0, 6).map(function (x) { var r = x.record; return '<div class="row" style="justify-content:space-between;flex-wrap:nowrap"><span class="row" style="flex-wrap:nowrap;min-width:0"><span class="score-badge tone-' + PUI.toneOfScore(x.score) + '">' + x.score + '</span><span style="min-width:0"><strong>' + esc(r.address) + '</strong> ' + (r.source === 'demo' ? '<span class="tag-demo">Demo</span>' : '') + '<div class="xs muted">' + esc(x.signals.filter(function (s) { return s.points > 0; }).slice(0, 2).map(function (s) { return s.label; }).join(' · ')) + '</div></span></span><span class="num small">' + F.usd(r.estValue, { compact: true }) + '</span></div>'; }).join('') + '</div>';
+  }).catch(function () { document.getElementById('d-hot').innerHTML = '<p class="muted small">Unavailable.</p>'; });
+});
+
+</script>
+</body>
+</html>

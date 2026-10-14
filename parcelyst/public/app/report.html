@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Report | Parcelyst</title>
+<meta name="description" content="Full investment report.">
+<meta property="og:title" content="Report | Parcelyst">
+<meta property="og:description" content="Full investment report.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='1.5' y='1.5' width='29' height='29' rx='3' fill='%2312202b'/%3E%3Cpath d='M6 22.5 L13 9.5 L26 12 L22.5 25.5 Z' fill='none' stroke='%23f3f5f2' stroke-width='1.6'/%3E%3Ccircle cx='17.5' cy='18.5' r='3' fill='%23e2561f'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="../css/app.css">
+<link rel="stylesheet" href="../css/report.css">
+</head>
+<body class="in-app">
+
+<main>
+  <div class="page-head no-print"><div class="stack" style="gap:6px"><a class="small" href="reports.html">&larr; All reports</a><h1 id="r-title">Report</h1></div>
+    <div class="row" id="r-actions"></div></div>
+  <div id="report"><div class="skeleton" style="height:360px"></div></div>
+</main>
+
+<script src="../js/shared/markets.js"></script>
+<script src="../js/shared/plans.js"></script>
+<script src="../js/shared/engine.js"></script>
+<script src="../js/shared/scoring.js"></script>
+<script src="../js/shared/defaults.js"></script>
+<script src="../js/shared/csv.js"></script>
+<script src="../js/ui.js"></script>
+<script src="../js/report.js"></script>
+<script>
+
+var id = PUI.qs('id'), F = PUI.fmt, data = null;
+function actions() {
+  var a = document.getElementById('r-actions');
+  a.innerHTML = '<a class="btn btn-line btn-sm" href="analyze.html?id=' + encodeURIComponent(id) + '">Edit assumptions</a>' + (data.unlocked ? '<button class="btn btn-line btn-sm" id="share">Copy share link</button><button class="btn btn-ink btn-sm" id="pdf">Download PDF</button>' : '');
+  if (data.unlocked) {
+    a.querySelector('#pdf').onclick = function () { window.print(); };
+    a.querySelector('#share').onclick = function () { PUI.api('POST', '/api/analyses/' + id + '/share', {}).then(function (j) { var full = j.url.indexOf('http') === 0 ? j.url : location.origin + j.url; (navigator.clipboard ? navigator.clipboard.writeText(full) : Promise.reject()).then(function () { PUI.toast('Share link copied'); }).catch(function () { PUI.modal('<h3>Share link</h3><input class="input" readonly value="' + PUI.esc(full) + '" onclick="this.select()"><button class="btn btn-line" data-close>Done</button>'); }); }).catch(PUI.errorHandler); };
+  }
+}
+function draw() {
+  var unlockHtml = '';
+  if (!data.unlocked) {
+    var c = data.canUnlock;
+    unlockHtml = c.allowance > 0 ? '<button class="btn btn-primary" id="unlock">Unlock (' + c.allowance + ' left this month)</button>' : c.credits > 0 ? '<button class="btn btn-primary" id="unlock">Use 1 credit (' + c.credits + ' left)</button>' : '<button class="btn btn-primary" data-buy="pack:report1">Buy this report ($29)</button><a class="btn btn-line" href="../pricing.html">See plans</a>';
+  }
+  PReport.render(document.getElementById('report'), data.result, { locked: !data.unlocked, unlockHtml: unlockHtml, branding: data.branding, partner: window.__partner });
+  var u = document.getElementById('unlock');
+  if (u) u.onclick = function () { u.disabled = true; PUI.api('POST', '/api/analyses/' + id + '/unlock', {}).then(function () { data.unlocked = true; actions(); draw(); PUI.me(true); PUI.toast('Report unlocked'); }).catch(function (e) { u.disabled = false; PUI.errorHandler(e); }); };
+  document.querySelectorAll('[data-buy]').forEach(function (b) { b.onclick = function () { try { sessionStorage.setItem('parcelyst-unlock', id); } catch (x) {} PUI.checkout(b.getAttribute('data-buy')); }; });
+}
+PUI.appShell('reports.html', { requireAuth: true }).then(function (me) {
+  if (!me) return;
+  PUI.config().then(function (c) { window.__partner = c.partner; });
+  PUI.api('GET', '/api/analyses/' + encodeURIComponent(id)).then(function (j) {
+    data = j; document.getElementById('r-title').textContent = j.analysis.title; document.title = j.analysis.title + ' | Parcelyst';
+    actions(); draw();
+    if (PUI.qs('print')) setTimeout(function () { window.print(); }, 400);
+  }).catch(PUI.errorHandler);
+});
+
+</script>
+</body>
+</html>

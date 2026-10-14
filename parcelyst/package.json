@@ -1,0 +1,17 @@
+{
+  "name": "parcelyst",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Residential, commercial and land investment analysis, off-market deal finding and listing prospecting.",
+  "main": "server/index.js",
+  "engines": { "node": ">=22.13" },
+  "scripts": {
+    "start": "node --no-warnings=ExperimentalWarning server/index.js",
+    "dev": "BILLING_MODE=dev node --no-warnings=ExperimentalWarning --watch server/index.js",
+    "test": "node --no-warnings=ExperimentalWarning --test test/*.test.js",
+    "build:static": "node scripts/build-static.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}

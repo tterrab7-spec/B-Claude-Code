@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Parcelyst Markets</title>
+<meta name="description" content="Live coverage in Hampton Roads and Richmond, VA, with Austin, TX and Jackson County, MO in beta.">
+<meta property="og:title" content="Parcelyst Markets">
+<meta property="og:description" content="Live coverage in Hampton Roads and Richmond, VA, with Austin, TX and Jackson County, MO in beta.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='1.5' y='1.5' width='29' height='29' rx='3' fill='%2312202b'/%3E%3Cpath d='M6 22.5 L13 9.5 L26 12 L22.5 25.5 Z' fill='none' stroke='%23f3f5f2' stroke-width='1.6'/%3E%3Ccircle cx='17.5' cy='18.5' r='3' fill='%23e2561f'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/report.css">
+</head>
+<body>
+
+<main>
+<section class="section" style="padding-bottom:32px"><div class="wrap stack" style="gap:14px;max-width:880px"><span class="eyebrow">Coverage</span><h1>Markets</h1><p class="lede">Each market ships with locality tax rates, HUD rent baselines, FHFA appreciation, rental vacancy, commercial cap rates and rents by asset class, and land development costs. Values are reviewed each fiscal year and shown on every report.</p></div></section>
+<section style="padding-bottom:64px"><div class="wrap stack" style="gap:28px" id="mk"></div></section>
+<section class="section band-sheet"><div class="wrap" style="display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:40px" id="req-wrap">
+  <div class="stack" style="gap:10px"><span class="eyebrow">Request</span><h2>Want your market next?</h2><p class="muted">We prioritize markets by demand. Tell us where you invest or list.</p></div>
+  <form class="panel panel-pad stack" id="req"><div class="grid g2"><div class="field"><label for="r-email">Email</label><input class="input" type="email" id="r-email" required></div><div class="field"><label for="r-market">Market (city, county or MSA)</label><input class="input" id="r-market" required></div></div><button class="btn btn-ink" type="submit" style="align-self:flex-start">Request market</button></form>
+</div></section>
+</main>
+<style>@media (max-width: 820px) { #req-wrap { grid-template-columns: minmax(0, 1fr) !important; } }</style>
+
+<script src="js/shared/markets.js"></script>
+<script src="js/shared/plans.js"></script>
+<script src="js/shared/engine.js"></script>
+<script src="js/shared/scoring.js"></script>
+<script src="js/shared/defaults.js"></script>
+<script src="js/shared/csv.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/report.js"></script>
+<script>
+PUI.siteHeader('markets.html'); PUI.siteFooter();
+var F = PUI.fmt, esc = PUI.esc;
+document.getElementById('mk').innerHTML = PMarkets.MARKETS.map(function (m) {
+  var r = m.residential, c = m.commercial;
+  var tax = function (l) { return m.taxBasis === 'per100' ? '$' + l.taxRate.toFixed(2) + ' / $100' : (l.taxRate * 100).toFixed(2) + '% eff.'; };
+  return '<div class="panel"><div class="panel-head"><div class="stack" style="gap:4px"><h3 style="font-size:1.3rem">' + esc(m.name) + (m.name.indexOf(m.state) === -1 ? ', ' + m.state : '') + '</h3><span class="xs muted">' + esc(m.msa) + ' MSA &middot; reference values as of ' + m.asOf + '</span></div><span class="chip ' + (m.status === 'live' ? 'good' : 'warn') + '">' + (m.status === 'live' ? 'Live' : 'Beta') + '</span></div>' +
+    '<div class="panel-pad grid g3" style="gap:24px"><div><h4 style="margin-bottom:10px">Localities &amp; tax rates</h4>' + PReport.table(['Locality', 'Rate', 'Median'], m.localities.map(function (l) { return [esc(l.name), tax(l), F.usd(l.medianValue, { compact: true })]; }), { num: [1, 2] }) + '</div>' +
+    '<div><h4 style="margin-bottom:10px">Residential</h4>' + PReport.kv([['HUD FMR, 2BR', F.usd(r.fmr2br)], ['Appreciation, 1-yr', F.pct(r.appreciation1y)], ['Appreciation, 5-yr CAGR', F.pct(r.appreciation5y)], ['Rental vacancy', F.pct(r.vacancy)], ['Insurance (% value)', F.pct(r.insurancePct, 2)], ['Rent growth', F.pct(r.rentGrowth)]]) + '<h4 style="margin:18px 0 10px">Land</h4>' + PReport.kv([['Finished SFD lot', F.usd(m.land.finishedLotSfd)], ['Finished TH lot', F.usd(m.land.finishedLotTh)], ['Site work / lot', F.usd(m.land.devCostPerLot)], ['Fees / proffers / lot', F.usd(m.land.impactFeePerLot)]]) + '</div>' +
+    '<div><h4 style="margin-bottom:10px">Commercial benchmarks</h4>' + PReport.table(['Class', 'Cap', 'Rent $/SF', 'Vac.'], Object.keys(c).map(function (k) { return [k, F.pct(c[k].cap, 2), c[k].rentPsf ? '$' + c[k].rentPsf : '&ndash;', F.pct(c[k].vacancy, 0)]; }), { num: [1, 2, 3] }) + '</div></div></div>';
+}).join('');
+document.getElementById('req').addEventListener('submit', function (e) { e.preventDefault(); PUI.api('POST', '/api/leads', { kind: 'market-request', email: document.getElementById('r-email').value, message: document.getElementById('r-market').value }).then(function () { e.target.reset(); PUI.toast('Request logged. Thanks.'); }).catch(PUI.errorHandler); });
+
+</script>
+</body>
+</html>

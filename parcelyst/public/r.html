@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Parcelyst Report</title>
+<meta name="description" content="A shared Parcelyst investment report.">
+<meta property="og:title" content="Parcelyst Report">
+<meta property="og:description" content="A shared Parcelyst investment report.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='1.5' y='1.5' width='29' height='29' rx='3' fill='%2312202b'/%3E%3Cpath d='M6 22.5 L13 9.5 L26 12 L22.5 25.5 Z' fill='none' stroke='%23f3f5f2' stroke-width='1.6'/%3E%3Ccircle cx='17.5' cy='18.5' r='3' fill='%23e2561f'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/report.css">
+</head>
+<body>
+
+<header class="site-header"><div class="wrap"><a class="brand" href="index.html" id="r-brand"></a><div class="header-cta" style="margin-left:auto"><button class="btn btn-line btn-sm no-print" id="pdf">Download PDF</button><a class="btn btn-ink btn-sm no-print" href="auth.html?mode=signup">Analyze your own</a></div></div></header>
+<main class="section" style="padding-top:28px"><div class="wrap"><div id="report"><div class="skeleton" style="height:320px"></div></div></div></main>
+
+<script src="js/shared/markets.js"></script>
+<script src="js/shared/plans.js"></script>
+<script src="js/shared/engine.js"></script>
+<script src="js/shared/scoring.js"></script>
+<script src="js/shared/defaults.js"></script>
+<script src="js/shared/csv.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/report.js"></script>
+<script>
+
+document.getElementById('r-brand').innerHTML = PUI.MARK + '<span>' + PUI.BRAND + '</span>';
+document.getElementById('pdf').addEventListener('click', function () { window.print(); });
+PUI.api('GET', '/api/shared/' + encodeURIComponent(PUI.qs('t') || '')).then(function (j) {
+  document.title = j.analysis.title + ' | Parcelyst report';
+  PReport.render(document.getElementById('report'), j.result, { branding: j.branding });
+}).catch(function (e) { document.getElementById('report').innerHTML = '<div class="notice warn"><div>' + PUI.esc(e.message) + '</div></div>'; });
+
+</script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Parcelyst Sample Report</title>
+<meta name="description" content="A full residential, commercial and land investment report rendered from sample deals.">
+<meta property="og:title" content="Parcelyst Sample Report">
+<meta property="og:description" content="A full residential, commercial and land investment report rendered from sample deals.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='1.5' y='1.5' width='29' height='29' rx='3' fill='%2312202b'/%3E%3Cpath d='M6 22.5 L13 9.5 L26 12 L22.5 25.5 Z' fill='none' stroke='%23f3f5f2' stroke-width='1.6'/%3E%3Ccircle cx='17.5' cy='18.5' r='3' fill='%23e2561f'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/report.css">
+</head>
+<body>
+
+<main>
+<section class="section" style="padding-bottom:24px"><div class="wrap stack" style="gap:16px">
+  <span class="eyebrow">Sample report</span><h1>See exactly what you get.</h1>
+  <p class="lede">Three illustrative deals, rendered by the same engine the app uses. Change the property type to see residential, commercial and land reports.</p>
+  <div class="row"><div class="seg" role="group" aria-label="Report type"><button type="button" data-s="residential" aria-pressed="true">Residential rental</button><button type="button" data-s="commercial" aria-pressed="false">Industrial (NNN)</button><button type="button" data-s="land" aria-pressed="false">Land / lots</button></div><a class="btn btn-line btn-sm" id="open-in" href="app/analyze.html">Open in analyzer</a></div>
+</div></section>
+<section style="padding-bottom:80px"><div class="wrap"><div id="report"></div></div></section>
+</main>
+
+<script src="js/shared/markets.js"></script>
+<script src="js/shared/plans.js"></script>
+<script src="js/shared/engine.js"></script>
+<script src="js/shared/scoring.js"></script>
+<script src="js/shared/defaults.js"></script>
+<script src="js/shared/csv.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/samples.js"></script>
+<script src="js/report.js"></script>
+<script>
+PUI.siteHeader('sample-report.html'); PUI.siteFooter();
+function show(k) {
+  var s = PSamples[k];
+  PReport.render(document.getElementById('report'), PEngine.analyze(s.inputs), {});
+  document.querySelectorAll('[data-s]').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-s') === k); });
+  document.getElementById('open-in').onclick = function (e) { e.preventDefault(); try { sessionStorage.setItem('parcelyst-pending', JSON.stringify({ inputs: s.inputs, kind: k })); } catch (x) {} location.href = 'app/analyze.html?sample=' + k; };
+}
+document.querySelectorAll('[data-s]').forEach(function (b) { b.addEventListener('click', function () { show(b.getAttribute('data-s')); }); });
+show(location.hash === '#commercial' ? 'commercial' : location.hash === '#land' ? 'land' : 'residential');
+
+</script>
+</body>
+</html>

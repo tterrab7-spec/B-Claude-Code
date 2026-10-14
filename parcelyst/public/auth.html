@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Sign in to Parcelyst</title>
+<meta name="description" content="Sign in or create a free Parcelyst account.">
+<meta property="og:title" content="Sign in to Parcelyst">
+<meta property="og:description" content="Sign in or create a free Parcelyst account.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='1.5' y='1.5' width='29' height='29' rx='3' fill='%2312202b'/%3E%3Cpath d='M6 22.5 L13 9.5 L26 12 L22.5 25.5 Z' fill='none' stroke='%23f3f5f2' stroke-width='1.6'/%3E%3Ccircle cx='17.5' cy='18.5' r='3' fill='%23e2561f'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<main class="auth-main"><div class="auth-card panel">
+  <a class="brand" href="index.html" id="auth-brand"></a>
+  <div class="seg" role="group" aria-label="Sign in or create account" style="align-self:flex-start"><button type="button" data-m="signin" aria-pressed="true">Sign in</button><button type="button" data-m="signup" aria-pressed="false">Create account</button></div>
+  <form id="af" class="stack" style="gap:14px">
+    <div class="field su"><label for="a-name">Full name</label><input class="input" id="a-name" autocomplete="name"></div>
+    <div class="field"><label for="a-email">Email</label><input class="input" id="a-email" type="email" autocomplete="email" required></div>
+    <div class="field"><label for="a-pw">Password</label><input class="input" id="a-pw" type="password" autocomplete="current-password" minlength="8" required><div class="hint su">At least 8 characters.</div></div>
+    <div class="field su"><label for="a-role">I am mainly a</label><select class="input" id="a-role"><option value="investor">Investor</option><option value="agent">Agent / broker</option><option value="developer">Developer / builder</option><option value="lender">Lender</option></select></div>
+    <button class="btn btn-primary btn-lg" type="submit" id="a-go">Sign in</button>
+    <p class="xs muted su">By creating an account you agree to the <a href="terms.html">Terms</a> and <a href="privacy.html">Privacy Policy</a>.</p>
+  </form>
+  <div id="a-demo"></div>
+</div></main>
+<style>.auth-main { min-height: 100vh; display: grid; place-items: center; padding: 32px max(16px, env(safe-area-inset-right, 0px)) 32px max(16px, env(safe-area-inset-left, 0px)); background-image: linear-gradient(var(--line-2) 1px, transparent 1px), linear-gradient(90deg, var(--line-2) 1px, transparent 1px); background-size: 32px 32px; } .auth-card { width: 100%; max-width: 440px; padding: 28px; display: flex; flex-direction: column; gap: 20px; box-shadow: var(--shadow); }</style>
+
+<script src="js/shared/markets.js"></script>
+<script src="js/shared/plans.js"></script>
+<script src="js/shared/engine.js"></script>
+<script src="js/shared/scoring.js"></script>
+<script src="js/shared/defaults.js"></script>
+<script src="js/shared/csv.js"></script>
+<script src="js/ui.js"></script>
+<script>
+
+document.getElementById('auth-brand').innerHTML = PUI.MARK + '<span>' + PUI.BRAND + '</span>';
+var mode = PUI.qs('mode') === 'signup' ? 'signup' : 'signin';
+function setMode(m) { mode = m; document.querySelectorAll('[data-m]').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-m') === m); }); document.querySelectorAll('.su').forEach(function (e) { e.hidden = m !== 'signup'; }); document.getElementById('a-go').textContent = m === 'signup' ? 'Create free account' : 'Sign in'; document.getElementById('a-pw').autocomplete = m === 'signup' ? 'new-password' : 'current-password'; }
+document.querySelectorAll('[data-m]').forEach(function (b) { b.addEventListener('click', function () { setMode(b.getAttribute('data-m')); }); });
+setMode(mode);
+PUI.detect().then(function (m) { if (m === 'demo') document.getElementById('a-demo').innerHTML = '<div class="notice warn xs"><div>Demo mode: this copy of the site has no server, so your account lives in this browser only and purchases are simulated.</div></div>'; });
+document.getElementById('af').addEventListener('submit', function (e) {
+  e.preventDefault();
+  var b = document.getElementById('a-go'); b.disabled = true;
+  var body = { email: document.getElementById('a-email').value, password: document.getElementById('a-pw').value };
+  if (mode === 'signup') { body.name = document.getElementById('a-name').value; body.role = document.getElementById('a-role').value; }
+  PUI.api('POST', mode === 'signup' ? '/api/auth/signup' : '/api/auth/login', body).then(function () {
+    var next = PUI.qs('next'); location.href = next && next.charAt(0) === '/' ? next : PUI.ROOT + 'app/dashboard.html';
+  }).catch(function (err) { b.disabled = false; PUI.toast(err.message, true); });
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Account | Parcelyst</title>
+<meta name="description" content="Plan, markets, branding, team and billing.">
+<meta property="og:title" content="Account | Parcelyst">
+<meta property="og:description" content="Plan, markets, branding, team and billing.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='1.5' y='1.5' width='29' height='29' rx='3' fill='%2312202b'/%3E%3Cpath d='M6 22.5 L13 9.5 L26 12 L22.5 25.5 Z' fill='none' stroke='%23f3f5f2' stroke-width='1.6'/%3E%3Ccircle cx='17.5' cy='18.5' r='3' fill='%23e2561f'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="../css/app.css">
+<link rel="stylesheet" href="../css/report.css">
+</head>
+<body class="in-app">
+
+<main>
+  <div class="page-head"><div class="stack" style="gap:6px"><span class="eyebrow">Account</span><h1>Plan &amp; settings</h1></div></div>
+  <div id="acct-banner"></div>
+  <div class="grid g2" style="align-items:start">
+    <div class="stack" style="gap:18px">
+      <div class="panel"><div class="panel-head"><h3>Your plan</h3><a class="small" href="../pricing.html">Compare plans</a></div><div class="panel-pad stack" id="plan"></div></div>
+      <div class="panel"><div class="panel-head"><h3>Markets</h3></div><div class="panel-pad stack" id="mkts"></div></div>
+      <div class="panel"><div class="panel-head"><h3>Team</h3></div><div class="panel-pad stack" id="team"></div></div>
+    </div>
+    <div class="stack" style="gap:18px">
+      <form class="panel" id="prof"><div class="panel-head"><h3>Profile</h3></div><div class="panel-pad stack"><div class="grid g2"><div class="field"><label for="p-name">Name</label><input class="input" id="p-name"></div><div class="field"><label for="p-role">Role</label><select class="input" id="p-role"><option value="investor">Investor</option><option value="agent">Agent / broker</option><option value="developer">Developer / builder</option><option value="lender">Lender</option></select></div></div><button class="btn btn-ink" type="submit" style="align-self:flex-start">Save profile</button></div></form>
+      <form class="panel" id="brand"><div class="panel-head"><h3>Report branding</h3><span class="chip" id="brand-chip">Agent &amp; Pro</span></div><div class="panel-pad stack"><p class="small muted">Appears at the top of every report you share.</p><div class="grid g2"><div class="field"><label for="b-name">Display name</label><input class="input" id="b-name"></div><div class="field"><label for="b-title">Title</label><input class="input" id="b-title" placeholder="REALTOR&reg;, Associate Broker"></div><div class="field"><label for="b-brokerage">Brokerage</label><input class="input" id="b-brokerage"></div><div class="field"><label for="b-license">License #</label><input class="input" id="b-license"></div><div class="field"><label for="b-phone">Phone</label><input class="input" id="b-phone"></div><div class="field"><label for="b-email">Email</label><input class="input" id="b-email" type="email"></div></div><div class="field"><label for="b-photo">Headshot URL</label><input class="input" id="b-photo" placeholder="https://"></div><button class="btn btn-ink" type="submit" style="align-self:flex-start">Save branding</button></div></form>
+      <div class="panel"><div class="panel-head"><h3>Billing</h3></div><div class="panel-pad stack" id="billing"></div></div>
+    </div>
+  </div>
+</main>
+
+<script src="../js/shared/markets.js"></script>
+<script src="../js/shared/plans.js"></script>
+<script src="../js/shared/engine.js"></script>
+<script src="../js/shared/scoring.js"></script>
+<script src="../js/shared/defaults.js"></script>
+<script src="../js/shared/csv.js"></script>
+<script src="../js/ui.js"></script>
+<script src="../js/report.js"></script>
+<script>
+
+var F = PUI.fmt, esc = PUI.esc, me = null, cfg = null;
+function $(id) { return document.getElementById(id); }
+function draw() {
+  var u = me, P = PPlans.PLANS[u.plan] || PPlans.PLANS.free;
+  var meter = function (k, label) { var x = u.usage[k]; return '<div><div class="row small" style="justify-content:space-between"><span>' + label + '</span><span class="num">' + F.n(x.used) + (x.limit !== null ? ' / ' + F.n(x.limit) : '') + '</span></div>' + (x.limit ? '<div class="meter"><i style="width:' + Math.min(100, x.used / x.limit * 100) + '%"></i></div>' : '') + '</div>'; };
+  $('plan').innerHTML = '<div class="row" style="justify-content:space-between"><div><div class="stat"><span class="k">Current plan</span><span class="v">' + esc(P.name) + '</span></div><span class="xs muted">' + (u.plan === 'free' ? 'Free forever' : esc(u.planInterval || '') + ' · ' + esc(u.planStatus) + (u.planRenewsAt ? ' · renews ' + u.planRenewsAt.slice(0, 10) : '')) + '</span></div><div class="stat"><span class="k">Report credits</span><span class="v">' + u.credits + '</span></div></div>' +
+    meter('reports', 'Reports this month') + meter('lookups', 'Live property pulls') + meter('exports', 'Export rows') +
+    '<div class="row">' + (u.plan === 'free' ? '<button class="btn btn-primary" data-buy="plan:investor:monthly">Start Investor trial</button><button class="btn btn-ink" data-buy="plan:agent:monthly">Start Agent trial</button>' : u.plan !== 'pro' ? '<button class="btn btn-ink" data-buy="plan:pro:' + (u.planInterval || 'monthly') + '">Upgrade to Pro</button>' : '') + '<button class="btn btn-line" data-buy="pack:report5">Buy 5 reports ($99)</button></div>';
+  var slots = u.marketSlots;
+  $('mkts').innerHTML = '<p class="small muted">' + (slots === null ? 'Your plan includes every live market.' : slots === 0 ? 'Finder access starts with Investor. Analyses work in every market on any plan.' : 'Your plan covers ' + slots + ' market' + (slots > 1 ? 's' : '') + '. Choose ' + (slots > 1 ? 'them' : 'it') + ' below.') + '</p>' +
+    (slots === null || slots === 0 ? '' : '<div class="stack" style="gap:8px">' + cfg.markets.map(function (m) { return '<label class="check"><input type="checkbox" data-mk="' + m.id + '"' + (u.markets.indexOf(m.id) !== -1 ? ' checked' : '') + '> ' + esc(m.name) + (m.status === 'beta' ? ' <span class="chip warn">Beta</span>' : '') + '</label>'; }).join('') + '</div><div class="row"><button class="btn btn-ink btn-sm" id="mk-save">Save markets</button><button class="btn btn-line btn-sm" data-buy="addon:market">Add a market ($39/mo)</button></div>');
+  var ms = $('mk-save'); if (ms) ms.onclick = function () { var sel = Array.from(document.querySelectorAll('[data-mk]:checked')).map(function (c) { return c.getAttribute('data-mk'); }); if (sel.length > slots) return PUI.toast('Your plan covers ' + slots + ' market(s). Uncheck one or add a market.', true); PUI.api('PUT', '/api/me', { markets: sel }).then(function (j) { me = j.user; draw(); PUI.toast('Markets saved'); }).catch(PUI.errorHandler); };
+  $('p-name').value = u.name || ''; $('p-role').value = u.role || 'investor';
+  var b = u.branding || {}; $('b-name').value = b.name || ''; $('b-title').value = b.title || ''; $('b-brokerage').value = b.brokerage || ''; $('b-license').value = b.license || ''; $('b-phone').value = b.phone || ''; $('b-email').value = b.email || ''; $('b-photo').value = b.photoUrl || '';
+  $('brand-chip').className = 'chip ' + (u.features.branding ? 'good' : ''); $('brand-chip').textContent = u.features.branding ? 'Active' : 'Agent & Pro';
+  PUI.api('GET', '/api/team').then(function (t) {
+    $('team').innerHTML = '<p class="small muted">' + (t.seats > 1 ? 'Seats used: ' + (t.members.length + 1) + ' of ' + t.seats + '. Teammates share this plan\'s limits.' : 'Team seats come with Pro (3 seats).') + '</p>' + (t.members.length ? '<div class="stack" style="gap:6px">' + t.members.map(function (m) { return '<div class="row" style="justify-content:space-between"><span class="small">' + esc(m.name || m.email) + ' <span class="muted xs">' + esc(m.email) + '</span></span><button class="btn btn-ghost btn-sm" data-rmteam="' + m.id + '">Remove</button></div>'; }).join('') + '</div>' : '') +
+      (t.seats > 1 && !u.teamOwnerId ? '<form class="row" id="tm"><input class="input" id="tm-email" type="email" placeholder="teammate@company.com" required style="flex:1;min-width:180px" aria-label="Teammate email"><button class="btn btn-ink btn-sm" type="submit">Add teammate</button></form>' : '');
+    var tm = $('tm'); if (tm) tm.onsubmit = function (e) { e.preventDefault(); PUI.api('POST', '/api/team', { email: $('tm-email').value }).then(function (j) { PUI.modal('<h3>Teammate added</h3>' + (j.tempPassword ? '<p class="small">Share this temporary password with them. They sign in with their email and can change it later.</p><input class="input mono" readonly value="' + esc(j.tempPassword) + '" onclick="this.select()">' : '<p class="small">They can sign in with their existing account.</p>') + '<button class="btn btn-line" data-close>Done</button>'); draw(); }).catch(PUI.errorHandler); };
+  }).catch(function () {});
+  PUI.api('GET', '/api/billing/payments').then(function (j) {
+    $('billing').innerHTML = '<p class="small muted">Billing is ' + (cfg.billing === 'stripe' ? 'handled securely by Stripe. Update cards, download invoices or cancel from the billing portal.' : cfg.billing === 'dev' ? 'in developer mode on this server: purchases apply instantly and no card is charged.' : cfg.billing === 'demo' ? 'simulated in demo mode: purchases apply instantly in this browser.' : 'not configured on this server yet.') + '</p>' + (cfg.billing === 'stripe' ? '<button class="btn btn-line" id="portal" style="align-self:flex-start">Open billing portal</button>' : '') +
+      (j.payments.length ? PReport.table(['Date', 'Item', 'Amount'], j.payments.map(function (p) { return [esc((p.created_at || '').slice(0, 10)), esc(p.product), p.amount_cents ? F.usd(p.amount_cents / 100) : '—']; }), { num: [2] }) : '');
+    var po = $('portal'); if (po) po.onclick = function () { PUI.api('POST', '/api/billing/portal', {}).then(function (r) { location.href = r.url; }).catch(PUI.errorHandler); };
+  }).catch(function () {});
+}
+$('prof').onsubmit = function (e) { e.preventDefault(); PUI.api('PUT', '/api/me', { name: $('p-name').value, role: $('p-role').value }).then(function (j) { me = j.user; PUI.toast('Profile saved'); }).catch(PUI.errorHandler); };
+$('brand').onsubmit = function (e) { e.preventDefault(); PUI.api('PUT', '/api/me', { branding: { name: $('b-name').value, title: $('b-title').value, brokerage: $('b-brokerage').value, license: $('b-license').value, phone: $('b-phone').value, email: $('b-email').value, photoUrl: $('b-photo').value } }).then(function (j) { me = j.user; PUI.toast('Branding saved'); }).catch(PUI.errorHandler); };
+document.addEventListener('click', function (e) {
+  var b = e.target.closest('[data-buy]'); if (b) { PUI.checkout(b.getAttribute('data-buy')); return; }
+  var t = e.target.closest('[data-rmteam]'); if (t) PUI.api('DELETE', '/api/team/' + t.getAttribute('data-rmteam')).then(draw).catch(PUI.errorHandler);
+});
+PUI.appShell('account.html', { requireAuth: true }).then(function (u) {
+  if (!u) return;
+  return PUI.config().then(function (c) {
+    cfg = c; me = u; draw();
+    var pur = PUI.qs('purchased');
+    if (pur) {
+      $('acct-banner').innerHTML = '<div class="notice" style="margin-bottom:16px"><div><strong>Thanks. Your purchase is active.</strong> ' + (cfg.billing === 'stripe' ? 'It can take a few seconds for Stripe to confirm; refresh if you do not see it yet.' : '') + '</div></div>';
+      var pend = null; try { pend = sessionStorage.getItem('parcelyst-unlock'); sessionStorage.removeItem('parcelyst-unlock'); } catch (x) {}
+      if (pend) setTimeout(function () { location.href = 'report.html?id=' + encodeURIComponent(pend); }, 1500);
+    }
+  });
+});
+
+</script>
+</body>
+</html>

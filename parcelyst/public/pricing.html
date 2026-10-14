@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Parcelyst Pricing</title>
+<meta name="description" content="Plans for investors, agents and teams, plus single investment reports from $29.">
+<meta property="og:title" content="Parcelyst Pricing">
+<meta property="og:description" content="Plans for investors, agents and teams, plus single investment reports from $29.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='1.5' y='1.5' width='29' height='29' rx='3' fill='%2312202b'/%3E%3Cpath d='M6 22.5 L13 9.5 L26 12 L22.5 25.5 Z' fill='none' stroke='%23f3f5f2' stroke-width='1.6'/%3E%3Ccircle cx='17.5' cy='18.5' r='3' fill='%23e2561f'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<main>
+<section class="section" style="padding-bottom:40px">
+  <div class="wrap stack" style="gap:18px;align-items:center;text-align:center">
+    <span class="eyebrow">Pricing</span>
+    <h1 style="max-width:16ch">Priced for people who do deals every month.</h1>
+    <p class="lede" style="margin:0 auto">Subscriptions for investors, agents and teams, plus one-off reports when you only need one. Every paid plan starts with a 7-day free trial.</p>
+    <div class="seg" role="group" aria-label="Billing period"><button type="button" data-int="monthly" aria-pressed="false">Monthly</button><button type="button" data-int="annual" aria-pressed="true">Annual &middot; save ~16%</button></div>
+  </div>
+</section>
+<section style="padding-bottom:64px"><div class="wrap"><div class="grid g4 plans" id="plans"></div></div></section>
+
+<section class="section band-sheet">
+  <div class="wrap stack" style="gap:24px">
+    <div class="row" style="justify-content:space-between;align-items:flex-end"><div class="stack" style="gap:10px"><span class="eyebrow">One-off reports</span><h2>Just need one report?</h2><p class="muted">Full report with PDF and share link. Credits never expire and work on any plan, including Free.</p></div></div>
+    <div class="grid g3" id="packs"></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap stack" style="gap:24px">
+    <div class="stack" style="gap:10px"><span class="eyebrow">Compare</span><h2>What each plan includes</h2></div>
+    <div class="table-wrap"><table class="t" id="compare"></table></div>
+    <h3 style="margin-top:24px">Add-ons</h3>
+    <div class="grid g4" id="addons"></div>
+  </div>
+</section>
+
+<section class="section band-sheet">
+  <div class="wrap split2">
+    <div class="stack" style="gap:6px"><span class="eyebrow">Questions</span><h2>Billing FAQ</h2></div>
+    <div>
+      <details class="faq"><summary>How does the free trial work?</summary><p>Investor, Agent and Pro start with 7 days free. You add a card at checkout and can cancel any time before the trial ends from Plan &amp; Settings. You will not be charged until day 8.</p></details>
+      <details class="faq"><summary>What is a "live property pull"?</summary><p>A lookup that hits a paid data provider (owner, tax history, value and rent estimates). Re-opening a property you already pulled, or running more analyses on it, does not count. Searching the Deal Finder does not count either.</p></details>
+      <details class="faq"><summary>What happens when I hit a monthly limit?</summary><p>Nothing breaks. You can keep analyzing; extra reports are $9 each on paid plans, or you can upgrade mid-cycle and Stripe prorates the difference.</p></details>
+      <details class="faq"><summary>Can I switch markets?</summary><p>Investor and Agent include one market. You can change it once per billing cycle from settings, or add another market for $39/month. Pro includes every live market.</p></details>
+      <details class="faq"><summary>What is an exclusive ZIP?</summary><p>Agents can lock a ZIP code so no other Parcelyst agent sees likely-to-list scores there. One agent per ZIP, first come first served, $99/month per ZIP.</p></details>
+      <details class="faq"><summary>Do you offer brokerage or team pricing?</summary><p>Yes. Pro covers 3 seats. For brokerages, white-label reports and API access, contact us below.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap split2">
+    <div class="stack" style="gap:10px"><span class="eyebrow">Brokerage &amp; enterprise</span><h2>Need white-label, territories or an API?</h2><p class="muted">We set up branded reports on your domain, assign ZIP territories to agents, and onboard new markets for funds and builders.</p></div>
+    <form class="panel panel-pad stack" id="ent">
+      <div class="grid g2"><div class="field"><label for="e-name">Name</label><input class="input" id="e-name" required></div><div class="field"><label for="e-email">Work email</label><input class="input" id="e-email" type="email" required></div></div>
+      <div class="field"><label for="e-msg">What do you need?</label><textarea class="input" id="e-msg" rows="4" placeholder="Team size, markets, use case"></textarea></div>
+      <button class="btn btn-ink" type="submit" style="align-self:flex-start">Contact sales</button>
+    </form>
+  </div>
+</section>
+</main>
+<style>
+.plans .plan { display: flex; flex-direction: column; gap: 14px; padding: 24px; border: 1px solid var(--line); border-radius: var(--r); background: var(--sheet); min-width: 0; }
+.plans .plan.pop { border: 1.5px solid var(--ink); box-shadow: var(--shadow); }
+.plan .p { font: 700 2.4rem/1 var(--mono); letter-spacing: -.03em; }
+.plan .pts { flex: 1; }
+.pack { display: flex; flex-direction: column; gap: 12px; padding: 22px; border: 1px solid var(--line); border-radius: var(--r); background: var(--paper); }
+.pack.pop { border: 1.5px solid var(--ink); }
+.split2 { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(24px, 5vw, 64px); }
+@media (max-width: 860px) { .split2 { grid-template-columns: minmax(0, 1fr); } }
+#compare td:not(:first-child), #compare th:not(:first-child) { text-align: center; }
+.addon { padding: 18px; border: 1px dashed var(--ink-3); border-radius: var(--r); display: flex; flex-direction: column; gap: 6px; }
+</style>
+
+<script src="js/shared/markets.js"></script>
+<script src="js/shared/plans.js"></script>
+<script src="js/shared/engine.js"></script>
+<script src="js/shared/scoring.js"></script>
+<script src="js/shared/defaults.js"></script>
+<script src="js/shared/csv.js"></script>
+<script src="js/ui.js"></script>
+<script>
+PUI.siteHeader('pricing.html'); PUI.siteFooter();
+var P = PPlans, interval = 'annual', esc = PUI.esc;
+function renderPlans() {
+  document.getElementById('plans').innerHTML = ['free', 'investor', 'agent', 'pro'].map(function (k) {
+    var p = P.PLANS[k], price = interval === 'annual' ? p.annualMonthly : p.monthly;
+    var cta = k === 'free' ? '<a class="btn btn-line" href="auth.html?mode=signup">Start free</a>' : '<button class="btn ' + (p.popular ? 'btn-primary' : 'btn-ink') + '" data-buy="plan:' + k + ':' + interval + '">Start 7-day trial</button>';
+    return '<div class="plan' + (p.popular ? ' pop' : '') + '"><div class="row" style="justify-content:space-between"><h3>' + p.name + '</h3>' + (p.popular ? '<span class="chip blaze">Most popular</span>' : '') + '</div>' +
+      '<div><span class="p">$' + price + '</span><span class="muted">/mo</span><div class="xs muted" style="margin-top:6px">' + (k === 'free' ? 'No card required' : interval === 'annual' ? 'Billed $' + (price * 12).toLocaleString() + ' yearly' : 'Billed monthly') + '</div></div>' +
+      '<p class="small muted">' + esc(p.tagline) + '</p><ul class="pts">' + p.bullets.map(function (b) { return '<li class="good">' + esc(b) + '</li>'; }).join('') + '</ul>' + cta + '</div>';
+  }).join('');
+}
+document.querySelectorAll('[data-int]').forEach(function (b) { b.addEventListener('click', function () { interval = b.getAttribute('data-int'); document.querySelectorAll('[data-int]').forEach(function (o) { o.setAttribute('aria-pressed', o === b); }); renderPlans(); }); });
+renderPlans();
+document.getElementById('packs').innerHTML = Object.keys(P.PACKS).map(function (k) { var p = P.PACKS[k]; return '<div class="pack' + (p.popular ? ' pop' : '') + '"><div class="row" style="justify-content:space-between"><h3>' + p.name + '</h3>' + (p.popular ? '<span class="chip blaze">Best value</span>' : '') + '</div><div><span class="num" style="font-size:2rem;font-weight:700">$' + p.price + '</span><span class="muted"> one-time</span></div><ul class="pts">' + p.bullets.map(function (b) { return '<li class="good">' + esc(b) + '</li>'; }).join('') + '</ul><button class="btn btn-line" data-buy="pack:' + k + '">Buy ' + (p.credits === 1 ? 'report' : p.credits + ' reports') + '</button></div>'; }).join('');
+document.getElementById('addons').innerHTML = Object.keys(P.ADDONS).map(function (k) { var a = P.ADDONS[k]; return '<div class="addon"><strong>' + esc(a.name) + '</strong><span class="num" style="font-size:1.2rem;font-weight:700">$' + a.price + '<span class="muted small" style="font-family:var(--body);font-weight:400"> ' + esc(a.unit) + '</span></span><span class="small muted">' + esc(a.note) + '</span></div>'; }).join('');
+var rows = [
+  ['Analyses / month', '5', 'Unlimited', 'Unlimited', 'Unlimited'], ['Live property pulls / month', '5', '150', '200', '500'], ['Full PDF reports / month', 'Buy as needed', '20', '40', '120'],
+  ['Residential, commercial & land underwriting', 1, 1, 1, 1], ['Bidding, sensitivity, flip MAO, tax analysis', 1, 1, 1, 1], ['Off-market Deal Finder', 0, 1, 1, 1], ['Listing Prospector (likely-to-list)', 0, 0, 1, 1], ['Land Finder', 0, 0, 0, 1],
+  ['Markets included', '-', '1', '1', 'All live'], ['County list import (CSV)', 0, 1, 1, 1], ['CSV export rows / month', '0', '1,000', '2,500', '15,000'], ['Saved searches', '0', '10', '20', '100'], ['Pipeline / CRM stages', 0, 1, 1, 1],
+  ['Branded client reports', 0, 0, 1, 1], ['Shareable report links', 0, 1, 1, 1], ['Seats', '1', '1', '1', '3']
+];
+document.getElementById('compare').innerHTML = '<thead><tr><th>Feature</th><th>Free</th><th>Investor</th><th>Agent</th><th>Pro</th></tr></thead><tbody>' + rows.map(function (r) { return '<tr><td>' + r[0] + '</td>' + r.slice(1).map(function (c) { return '<td>' + (c === 1 ? '<span class="tone-good" aria-label="Included">&#10003;</span>' : c === 0 ? '<span class="muted" aria-label="Not included">&ndash;</span>' : esc(c)) + '</td>'; }).join('') + '</tr>'; }).join('') + '</tbody>';
+document.addEventListener('click', function (e) { var b = e.target.closest('[data-buy]'); if (b) { b.disabled = true; PUI.checkout(b.getAttribute('data-buy')).finally(function () { b.disabled = false; }); } });
+var buy = PUI.qs('buy'); if (buy) PUI.checkout(buy);
+if (PUI.qs('canceled')) PUI.toast('Checkout canceled. You were not charged.');
+document.getElementById('ent').addEventListener('submit', function (e) { e.preventDefault(); PUI.api('POST', '/api/leads', { kind: 'enterprise', name: document.getElementById('e-name').value, email: document.getElementById('e-email').value, message: document.getElementById('e-msg').value }).then(function () { e.target.reset(); PUI.toast('Thanks. We will reply within one business day.'); }).catch(PUI.errorHandler); });
+
+</script>
+</body>
+</html>
