@@ -71,7 +71,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 <header>
   <p class="eyebrow">Build assessment · RingLead AI · DirtBid · VocalBridg</p>
   <h1>Yes, this can be rebuilt. And it should live inside RingLead AI.</h1>
-  <p class="meta">Prepared for Tim Terrab, Canterbury Development Group / nine-company AI portfolio · 21 Oct 2026 · Technical owner: Muhammad Ali</p>
+  <p class="meta">Prepared for Barrett Franklin, Partner and VP at Canterbury Development Group and co-founder of the nine-company AI portfolio · 21 Oct 2026 · Technical owner: Muhammad Ali</p>
 </header>
 
 <div class="verdict">
@@ -146,6 +146,44 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 </table></div>
 <p class="note">Your real estate track record is the wedge with every one of these firms. 300 plus finished lots to NVR and 250 plus affordable units is a founder story that a construction-tech investor hears maybe twice a year. The engine's job is to put that story in front of them when they have a signal (new fund closed, new partner hired, recent construction-tech investment), not cold.</p>
 
+<h2>VocalBridg: two buyer profiles, both tested live</h2>
+<p>VocalBridg has no public web footprint and I have not been told exactly what it does, so I ran the two most likely buyer profiles for a voice product in this portfolio. Both returned enough volume to fill a quarter. Tell me which one is right, or describe the product in a sentence, and that becomes the play the engine runs.</p>
+
+<h3>Profile A: service businesses hiring front-desk and phone staff right now, VA / NC / MD / DC, 11 to 200 employees</h3>
+<p>This is the AI-receptionist buyer. The signal is an open job post for a receptionist, front desk, patient coordinator or scheduler. They are paying to hire the thing a voice agent replaces, this month. It is the strongest single signal in this document.</p>
+<div class="tablewrap"><table>
+<tr><th>Match count</th><th>Sample of 10</th><th>Title</th><th>Hiring for</th></tr>
+<tr><td class="num" rowspan="10">111</td><td>Advantia Health</td><td>Practice Manager</td><td>Front desk</td></tr>
+<tr><td>NOVA Plastic Surgery</td><td>Practice Manager</td><td>Front desk</td></tr>
+<tr><td>CarolinasDentist (3 practice managers returned)</td><td>Practice Manager</td><td>Front desk, scheduler</td></tr>
+<tr><td>Reston Dermatology + Cosmetic Center</td><td>Practice Manager</td><td>Front desk</td></tr>
+<tr><td>Horizon Eye Care</td><td>Practice Manager</td><td>Patient coordinator</td></tr>
+<tr><td>Flagship Specialty Partners</td><td>Practice Manager</td><td>Front desk</td></tr>
+<tr><td>Premier Pediatric Therapy Source</td><td>Practice Manager</td><td>Front desk</td></tr>
+<tr><td>Haynes Novick Kohn Immigration</td><td>Practice Manager</td><td>Receptionist</td></tr>
+</table></div>
+<p class="note">All ten have an email on file and nine have a direct dial. Every one of these is a practice that is losing calls today. Expand the geography to the whole US and the same filter runs into the thousands.</p>
+
+<h3>Profile B: software companies hiring voice or speech engineers, US, 11 to 500 employees</h3>
+<p>This is the developer-platform buyer, if VocalBridg is a voice layer other products build on. The signal is an open role for a voice AI, speech, conversational AI or telephony engineer. A company hiring that role either builds voice in-house or buys it.</p>
+<div class="tablewrap"><table>
+<tr><th>Match count</th><th>Sample of 10</th><th>Title</th><th>Read</th></tr>
+<tr><td class="num" rowspan="10">77</td><td>Rad AI</td><td>Chief Product Officer</td><td>Buyer. Radiology AI adding voice.</td></tr>
+<tr><td>Canary Technologies</td><td>VP of Engineering</td><td>Buyer. Hotel guest messaging, voice is the next channel.</td></tr>
+<tr><td>Salient</td><td>VP of Engineering</td><td>Buyer. Auto-loan servicing voice agents.</td></tr>
+<tr><td>Simpplr</td><td>VP of Engineering</td><td>Buyer. Employee experience platform.</td></tr>
+<tr><td>RemoFirst</td><td>VP of Engineering</td><td>Buyer. Global payroll, support automation.</td></tr>
+<tr><td>Gail</td><td>VP of Engineering</td><td>Buyer. AI phone agents for insurance; also a competitor.</td></tr>
+<tr><td>Zyphra</td><td>VP of Engineering</td><td>Partner or competitor. Foundation model lab.</td></tr>
+<tr><td>Deepgram</td><td>Chief Product Officer</td><td>Partner or acquirer, not a buyer. Speech-to-text vendor.</td></tr>
+<tr><td>inoxoft</td><td>VP of Engineering</td><td>Channel. Dev shop that builds voice for clients.</td></tr>
+<tr><td>eScience &amp; Technology Solutions</td><td>CTO</td><td>Channel. Government contractor.</td></tr>
+</table></div>
+<p class="note">Notice the last four rows. A raw search cannot tell a buyer from a competitor or an acquirer. The scoring layer tags each one, and the acquirer tags feed the second pipeline automatically. That is the kind of judgment Pancake's one-line why-it-fits is meant to supply.</p>
+
+<h3>How VocalBridg closes, not just finds</h3>
+<p>VocalBridg is the one product in the portfolio that can sell itself in its own channel. The outreach sequence for Profile A should not end in a calendar link. It should end in a phone call placed by VocalBridg to the practice manager who replied, booking the demo on that call. The prospect experiences the product before anyone pitches it. For Profile B the first touch is a link to a live demo number plus a two-paragraph note about the role they are hiring for. In both cases the engine hands the reply to a named closer within the hour. Software finds; a person closes.</p>
+
 <h2>The build: five layers on your existing stack</h2>
 <div class="arch">
   <div class="layer"><div class="n">LAYER 1</div><div class="t">Signal engine</div><div class="s">n8n schedules. Apollo, TheirStack, Wappalyzer or BuiltWith, Crunchbase, plus vertical feeds Pancake does not have: county land-disturbance permits, site-plan approvals, VDOT lettings, eVA and BidNet postings, Dodge or ConstructConnect leads.</div></div>
@@ -170,8 +208,9 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 <tr><th>Product</th><th>Who</th><th>Strongest signals</th><th>Channel</th></tr>
 <tr><td>DirtBid</td><td>Owner, president, chief estimator at site-work, grading, utility and heavy civil contractors. 11 to 500 staff. VA first, then NC, MD, SC.</td><td>New land-disturbance permit or site-plan approval in their county. Named on a VDOT or municipal bid tab. Hiring an estimator. Using HCSS or a spreadsheet estimating stack.</td><td>Voice first, email second.</td></tr>
 <tr><td>RingLead AI</td><td>Owners and sales leads at service businesses with inbound call volume and no SDR: home services, dealerships, clinics, agencies. 5 to 100 staff.</td><td>Hiring an SDR, appointment setter or receptionist. Running paid ads (Meta ad library). Using CallRail or a basic VoIP. Google review velocity rising.</td><td>Email plus voice demo in RingLead's own voice.</td></tr>
-<tr><td>VocalBridg</td><td>Product and engineering leads building voice into an app or agent. Seed to Series B software companies.</td><td>Job posts mentioning voice AI, speech, telephony or Twilio. Recent funding. Tech stack shows Vapi, Retell, Twilio or ElevenLabs.</td><td>Email and LinkedIn.</td></tr>
-<tr><td>Acquirers</td><td>Corporate development at HCSS, Procore, Trimble, Autodesk, Bentley, Invoca, CallRail, Dialpad, RingCentral and similar.</td><td>They just announced an acquisition. New corp dev hire. Partner program opened. Earnings call mentions AI roadmap.</td><td>Warm intro where possible, then direct email. Never a pitch in the first touch.</td></tr>
+<tr><td>VocalBridg (Profile A)</td><td>Practice managers, office managers and owners at medical, dental, legal and home-service businesses. 11 to 200 staff. Mid-Atlantic first.</td><td>Open job post for receptionist, front desk, scheduler or patient coordinator. Google reviews mentioning missed calls or hold times. Running paid ads. Using a basic VoIP with no IVR.</td><td>Email, then a call placed by VocalBridg itself.</td></tr>
+<tr><td>VocalBridg (Profile B)</td><td>CTO, VP Engineering and product leads at software companies adding voice. Seed to Series B.</td><td>Open role for voice AI, speech or telephony engineer. Recent funding. Tech stack shows Twilio, Vapi, Retell, Deepgram or ElevenLabs.</td><td>Email with a live demo number, plus LinkedIn.</td></tr>
+<tr><td>Acquirers</td><td>Corporate development at HCSS, Procore, Trimble, Autodesk and Bentley for DirtBid. Invoca, CallRail, Dialpad and RingCentral for RingLead AI. Weave, Deepgram, Twilio, Five9 and Podium for VocalBridg.</td><td>They just announced an acquisition. New corp dev hire. Partner program opened. Earnings call mentions AI roadmap.</td><td>Warm intro where possible, then direct email. Never a pitch in the first touch.</td></tr>
 <tr><td>Investors</td><td>Partners at construction-tech, proptech and vertical-AI funds.</td><td>New fund closed. New partner. Recent investment in an adjacent company. Partner speaking at a built-world conference.</td><td>Email referencing the specific signal. Lead with the lots-delivered track record.</td></tr>
 </table></div>
 
@@ -208,7 +247,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
   <div class="seat"><div class="who">First-principles thinker</div><p>A pipeline is signals times reach times message quality times follow-through. Pancake supplies generic signals and borrowed reach. You already own reach (RingLead AI) and you own domain knowledge that produces better signals (permits, lettings). The only variable Pancake wins on is time to first send. Everything else favors the build, and the build's output compounds while the subscription's does not.</p></div>
   <div class="seat"><div class="who">Expansionist</div><p>Find-and-reach inside RingLead AI is a product category, not a feature. A 30-person excavation contractor will pay for a tool that tells them who just pulled a permit and calls them. Every construction-adjacent vertical has the same shape. The acquirer pipeline is the real prize: the engine that found the buyer is also the engine the buyer is acquiring.</p></div>
   <div class="seat"><div class="who">Outsider</div><p>From outside the industry this looks like a company with great tools and nobody at the front desk. Whatever you choose, someone has to answer replies within the hour, book the meeting and show up. Software does not close. Decide who that person is before you decide what to build.</p></div>
-  <div class="seat"><div class="who">Executor</div><p>Monday: start the Pancake 7-day trial as a benchmark and start warming three secondary domains. Tuesday: Muhammad stands up the Postgres schema and the first n8n signal job. Wednesday: I deliver the scoring prompt and the Slack approval bot. By Friday you are approving real DirtBid leads. Keep the Pancake trial going for the week and compare lead quality side by side.</p></div>
+  <div class="seat"><div class="who">Executor</div><p>Monday: start the Pancake 7-day trial as a benchmark and start warming three secondary domains. Tuesday: Muhammad stands up the Postgres schema and the first n8n signal job. Wednesday: I deliver the scoring prompt and the Slack approval bot. By Friday you are approving real DirtBid and VocalBridg leads. Keep the Pancake trial going for the week and compare lead quality side by side.</p></div>
   <div class="seat chair"><div class="who">Chairman's call</div><p>Build, and run the Pancake trial in parallel for one week as a yardstick, not a crutch. The Contrarian is right that a product without a closer is dead, so the build ships with a named owner for replies and meetings from day one. The acquirer and investor pipeline goes live in week 5, not week 1, because it needs the DirtBid site and the trademark opinion in place first. Decision stands unless the week 2 approval round shows fewer than 50 leads you would actually call.</p></div>
 </div>
 
@@ -219,6 +258,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
   <li><strong>Start the Pancake trial</strong> on a card you can cancel. One Play for DirtBid buyers. We compare its leads to ours in week 2.</li>
   <li><strong>Name the closer.</strong> Who answers replies and takes the meetings for each product. If it is you, block two hours a day for it.</li>
   <li><strong>Approve enrichment of the first 100 DirtBid leads</strong> from today's search. 100 credits out of 2,520 available. That becomes the week 1 approval queue.</li>
+  <li><strong>Tell me which VocalBridg buyer is right,</strong> A, B or both. Then approve enrichment of the 111 Profile A practice managers. They are hiring the job VocalBridg does, this month, and they are in your backyard.</li>
   <li><strong>Commission a trademark search</strong> on RingLead AI and VocalBridg before the acquirer pipeline sends anything.</li>
   <li><strong>Put a one-page DirtBid site up.</strong> Even a landing page with a two-minute demo. Nothing goes to an acquirer or investor until a search for the name returns something.</li>
 </ol>
