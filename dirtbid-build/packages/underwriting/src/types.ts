@@ -259,6 +259,8 @@ export interface UnderwritingResult {
   version: string;
   generatedAt: string;
   input: UnderwritingInput;
+  /** Market defaults merged with any per-run overrides: the numbers the pro forma actually used */
+  assumptions: CostAssumptions;
   market: { code: string; name: string; state: string; jurisdiction: string; zipBand: { zip: string; area: string; label: string } | null };
   zoning: {
     recognized: boolean;

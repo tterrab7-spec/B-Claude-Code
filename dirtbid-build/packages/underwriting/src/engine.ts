@@ -245,6 +245,7 @@ export function underwrite(input: UnderwritingInput, now: Date = new Date()): Un
     version: ENGINE_VERSION,
     generatedAt: now.toISOString(),
     input,
+    assumptions,
     market: { code: market.code, name: market.name, state: market.state, jurisdiction: market.jurisdiction, zipBand: zipBand ? { zip: zipBand.zip, area: zipBand.area, label: zipBand.label } : null },
     zoning: { recognized: !!rule, rule, baseUnits: units.base, maxUnitsEstimate: Math.max(units.max, ...scenarios.filter((s) => s.viable && s.confidence !== 'low').map((s) => s.units), 0), maxUnitsLabel: units.label },
     overlays,

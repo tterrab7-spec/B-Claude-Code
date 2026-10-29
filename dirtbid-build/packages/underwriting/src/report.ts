@@ -88,7 +88,7 @@ export function buildReport(r: UnderwritingResult, tier: 'lite' | 'enhanced' = '
     address: r.input.address ?? 'Address not provided',
     gauges: {
       approvalProbability: { value: r.scores.approvalProbability, label: r.scores.approvalLabel, caption: 'Based on district rules, overlays and comparable approvals' },
-      valueMaximization: { value: r.scores.valueMaximization, max: 10, caption: `${rec.name} vs. ${pct(r.input.assumptions?.targetRoi ?? 0) || 'target'} return` },
+      valueMaximization: { value: r.scores.valueMaximization, max: 10, caption: `${rec.name}: ${pct(rec.roi)} ROI vs. ${pct(r.assumptions.targetRoi)} target` },
       risk: { level: r.scores.riskLevel, caption: r.scores.riskReasons[0] ?? 'No material risks flagged' },
     },
     callouts: [

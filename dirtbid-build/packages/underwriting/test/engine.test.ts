@@ -110,3 +110,12 @@ describe('registry', () => {
     expect(listMarkets().map((m) => m.code).sort()).toEqual(['ALTADENA_CA', 'GENERIC_US', 'HAMPTON_ROADS_VA']);
   });
 });
+
+describe('assumptions on the result', () => {
+  it('exposes merged assumptions and uses them in the report caption', () => {
+    const r = underwrite({ marketCode: 'HAMPTON_ROADS_VA', lotSizeSf: 12000, zoningCode: 'R-10', projectType: 'vacant_land', arvPerSf: 290, assumptions: { targetRoi: 0.2 } });
+    expect(r.assumptions.targetRoi).toBe(0.2);
+    expect(r.assumptions.hardCostPerSf).toBe(HAMPTON_ROADS_VA.assumptions.hardCostPerSf);
+    expect(buildReport(r).gauges.valueMaximization.caption).toContain('20% target');
+  });
+});
