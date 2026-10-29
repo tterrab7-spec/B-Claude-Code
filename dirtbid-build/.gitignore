@@ -6,3 +6,7 @@ coverage
 dist
 node_modules
 uploads
+apps/web/dist-demo
+apps/web/screenshots
+apps/web/playwright-report
+apps/web/test-results
