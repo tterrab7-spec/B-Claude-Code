@@ -1,0 +1,586 @@
+<title>HumanCheck</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a two-pane workbench. Left pane is the draft, right pane is the inspection report. Stacks on phones. */
+:root{
+  --bg:#F2F4F7; --surface:#FFFFFF; --surface-2:#E9EDF2; --line:#D5DCE4;
+  --ink:#141C26; --muted:#5A6878; --accent:#2F49C9; --accent-ink:#FFFFFF;
+  --good:#1E7F4C; --good-bg:#DDF3E6; --warn:#A66A00; --warn-bg:#FBEFD2; --crit:#B93228; --crit-bg:#FADFDC;
+  --mark:#FFE8A3; --mark-strong:#FFC9C3;
+  --display:"Bricolage Grotesque","IBM Plex Sans",system-ui,sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --radius:10px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0F141A; --surface:#171E27; --surface-2:#1F2833; --line:#2C3744;
+  --ink:#E7ECF2; --muted:#98A6B6; --accent:#8CA0FF; --accent-ink:#0F141A;
+  --good:#5BD08C; --good-bg:#15321F; --warn:#F0B64A; --warn-bg:#3A2B0A; --crit:#FF7B70; --crit-bg:#3F1A17;
+  --mark:#4A3C0E; --mark-strong:#5A1F1A; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#0F141A; --surface:#171E27; --surface-2:#1F2833; --line:#2C3744;
+  --ink:#E7ECF2; --muted:#98A6B6; --accent:#8CA0FF; --accent-ink:#0F141A;
+  --good:#5BD08C; --good-bg:#15321F; --warn:#F0B64A; --warn-bg:#3A2B0A; --crit:#FF7B70; --crit-bg:#3F1A17;
+  --mark:#4A3C0E; --mark-strong:#5A1F1A; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 32px}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;letter-spacing:-.01em}
+button{font:inherit;cursor:pointer}
+button:focus-visible,textarea:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+a{color:var(--accent)}
+.wrap{max-width:1240px;margin:0 auto}
+
+header.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-block:18px 14px;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px}
+.brand .mark{width:30px;height:30px;border-radius:8px;background:var(--accent);display:grid;place-items:center}
+.brand .mark svg{width:18px;height:18px}
+.brand h1{font-size:20px;font-weight:700}
+.brand small{display:block;font-family:var(--body);font-weight:400;color:var(--muted);font-size:12px;margin-top:-2px}
+.status{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted);font-family:var(--mono)}
+.status .dot{width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.status.ok .dot{background:var(--good)} .status.off .dot{background:var(--warn)}
+
+.steps{display:flex;gap:6px;flex-wrap:wrap;padding-block:14px 4px}
+.step{display:flex;align-items:center;gap:8px;padding:6px 12px 6px 8px;border:1px solid var(--line);border-radius:999px;background:var(--surface);font-size:12.5px;color:var(--muted)}
+.step b{display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--surface-2);font-family:var(--mono);font-size:11px;color:var(--ink)}
+.step.done{border-color:var(--good);color:var(--ink)} .step.done b{background:var(--good);color:#fff}
+.step.active{border-color:var(--accent);color:var(--ink)} .step.active b{background:var(--accent);color:var(--accent-ink)}
+
+main{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:18px;padding-top:12px}
+@media (max-width:900px){main{grid-template-columns:1fr}}
+.pane{min-width:0;display:flex;flex-direction:column;gap:14px}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;min-width:0}
+.card h2{font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.card h2 .count{font-family:var(--mono);font-size:12px;font-weight:500;color:var(--muted)}
+.eyebrow{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+
+textarea{width:100%;min-height:300px;resize:vertical;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);
+  font:inherit;line-height:1.55;padding:12px 14px}
+textarea.small{min-height:90px}
+.meta{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:8px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center}
+.btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:9px 14px;border-radius:8px;font-weight:500;display:inline-flex;align-items:center;gap:8px;min-height:38px}
+.btn:hover{background:var(--surface-2)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:transparent}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn .spin{width:14px;height:14px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.btn .spin{animation:none}}
+.link{background:none;border:0;color:var(--accent);padding:0;font-size:13px;text-decoration:underline}
+
+details.opts{border-top:1px solid var(--line);margin-top:12px;padding-top:10px}
+details.opts summary{cursor:pointer;font-weight:600;font-size:13.5px;color:var(--ink)}
+.opt-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+@media (max-width:560px){.opt-grid{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:5px;font-size:13px;color:var(--muted);min-width:0}
+.field select,.field input{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
+.field.full{grid-column:1 / -1}
+.hint{font-size:12.5px;color:var(--muted);margin:6px 0 0}
+
+.verdict{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center;border-left:5px solid var(--line)}
+.verdict.good{border-left-color:var(--good)} .verdict.warn{border-left-color:var(--warn)} .verdict.crit{border-left-color:var(--crit)}
+.gauge{width:84px;height:84px;position:relative}
+.gauge svg{width:84px;height:84px;transform:rotate(-90deg)}
+.gauge circle{fill:none;stroke-width:9}
+.gauge .track{stroke:var(--surface-2)}
+.gauge .fill{stroke:var(--muted);stroke-linecap:round;transition:stroke-dashoffset .5s ease}
+.gauge.good .fill{stroke:var(--good)} .gauge.warn .fill{stroke:var(--warn)} .gauge.crit .fill{stroke:var(--crit)}
+.gauge .num{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--mono);font-size:20px;font-weight:500}
+.verdict h2{font-size:20px;font-weight:700}
+.verdict p{margin:4px 0 0;color:var(--muted);font-size:13.5px}
+.verdict .pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.pill{font-family:var(--mono);font-size:11.5px;padding:3px 8px;border-radius:999px;background:var(--surface-2);color:var(--ink)}
+.pill.good{background:var(--good-bg);color:var(--good)} .pill.warn{background:var(--warn-bg);color:var(--warn)} .pill.crit{background:var(--crit-bg);color:var(--crit)}
+
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:8px}
+th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+td code{font-family:var(--mono);font-size:12px;background:var(--surface-2);padding:1px 5px;border-radius:4px}
+.tbl{overflow-x:auto}
+
+ul.signals{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+ul.signals li{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:start;font-size:13.5px}
+ul.signals .sev{width:8px;height:8px;border-radius:50%;margin-top:7px;background:var(--muted)}
+ul.signals .sev.good{background:var(--good)} ul.signals .sev.warn{background:var(--warn)} ul.signals .sev.crit{background:var(--crit)}
+ul.signals .w{font-family:var(--mono);font-size:12px;color:var(--muted);white-space:nowrap}
+ul.signals small{display:block;color:var(--muted);font-size:12.5px}
+
+.empty{color:var(--muted);font-size:13.5px;margin:8px 0 0}
+.map{margin-top:8px;font-size:14px;line-height:1.65;white-space:pre-wrap;word-wrap:break-word}
+.map mark{background:var(--mark);color:inherit;border-radius:3px;padding:0 1px}
+.map mark.strong{background:var(--mark-strong)}
+.map .hid{background:var(--crit);color:#fff;font-family:var(--mono);font-size:10px;padding:0 4px;border-radius:3px;margin:0 1px}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:8px}
+.legend span i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:5px}
+
+.judge{margin-top:8px;font-size:14px}
+.judge blockquote{margin:8px 0 0;padding:10px 12px;border-left:3px solid var(--accent);background:var(--surface-2);border-radius:0 8px 8px 0;font-size:13.5px}
+.judge ul{margin:8px 0 0;padding-left:18px;font-size:13.5px}
+.note{font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px;margin-top:4px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-size:13.5px;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.show{opacity:1}
+.banner{display:none;padding:10px 12px;border-radius:8px;background:var(--warn-bg);color:var(--ink);font-size:13.5px}
+.banner.show{display:block}
+</style>
+
+<div class="wrap">
+<header class="top">
+  <div class="brand">
+    <div class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg></div>
+    <div><h1>HumanCheck</h1><small>Scan for hidden marks, rewrite in your voice, verify before you send.</small></div>
+  </div>
+  <div class="status" id="status"><span class="dot"></span><span id="statusText">connecting…</span></div>
+</header>
+
+<div class="steps" aria-label="Workflow">
+  <div class="step" id="st1"><b>1</b> Scan</div>
+  <div class="step" id="st2"><b>2</b> Clean hidden marks</div>
+  <div class="step" id="st3"><b>3</b> Humanize</div>
+  <div class="step" id="st4"><b>4</b> Verify &amp; send</div>
+</div>
+
+<main>
+  <section class="pane">
+    <div class="card">
+      <h2>Draft <span class="count" id="draftLabel">example text</span></h2>
+      <textarea id="draft" spellcheck="false" aria-label="Draft text"></textarea>
+      <div class="meta"><span id="counts">0 words</span><span id="hiddenCount"></span></div>
+      <div class="toolbar">
+        <button class="btn primary" id="btnScan">Scan</button>
+        <button class="btn" id="btnClean" title="Strip zero-width characters, odd spaces, look-alike letters and typographic fingerprints">Clean hidden marks</button>
+        <button class="btn" id="btnHumanize">Humanize</button>
+        <button class="btn" id="btnJudge" title="Ask Claude for a second opinion on whether this reads as AI-written">Deep check</button>
+        <button class="btn" id="btnCopy">Copy</button>
+        <button class="link" id="btnRestore" hidden>Restore original</button>
+      </div>
+      <div class="banner" id="banner"></div>
+      <details class="opts" id="opts">
+        <summary>Voice &amp; rewrite settings</summary>
+        <div class="opt-grid">
+          <label class="field">Tone
+            <select id="tone">
+              <option value="keep">Keep the draft's tone</option>
+              <option value="direct" selected>Direct business partner</option>
+              <option value="warm">Warm and personal</option>
+              <option value="formal">Formal / legal-safe</option>
+              <option value="casual">Casual text message</option>
+            </select></label>
+          <label class="field">How much to change
+            <select id="depth">
+              <option value="light">Light touch (fix tells only)</option>
+              <option value="full" selected>Full rewrite (same facts, new rhythm)</option>
+            </select></label>
+          <label class="field">Format
+            <select id="format">
+              <option value="auto" selected>Detect (email, memo, post)</option>
+              <option value="email">Email</option>
+              <option value="memo">Memo / letter</option>
+              <option value="post">Social post</option>
+              <option value="text">Text message</option>
+            </select></label>
+          <label class="field">Reader
+            <input id="reader" placeholder="e.g. NVR land acquisition manager" maxlength="80"></label>
+          <label class="field full">A sample of your own writing (optional, the rewrite copies its rhythm)
+            <textarea id="voice" class="small" placeholder="Paste two or three paragraphs you actually wrote: an email, a text, anything."></textarea></label>
+        </div>
+        <p class="hint">Facts, names, numbers and commitments are kept verbatim. Nothing new gets invented.</p>
+      </details>
+    </div>
+  </section>
+
+  <section class="pane">
+    <div class="card verdict" id="verdict">
+      <div class="gauge" id="gauge"><svg viewBox="0 0 84 84"><circle class="track" cx="42" cy="42" r="36"/><circle class="fill" id="gaugeFill" cx="42" cy="42" r="36" stroke-dasharray="226.2" stroke-dashoffset="226.2"/></svg><div class="num" id="gaugeNum">–</div></div>
+      <div>
+        <div class="eyebrow">AI likelihood</div>
+        <h2 id="verdictTitle">Not scanned yet</h2>
+        <p id="verdictText">Paste a draft and press Scan.</p>
+        <div class="pills" id="verdictPills"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Hidden marks <span class="count" id="hidTotal"></span></h2>
+      <div id="hiddenReport" class="empty">Scans for zero-width characters, invisible joiners, unusual spaces, direction controls, variation selectors and look-alike letters from other alphabets. These survive copy and paste and are the easiest way a document gets flagged or traced.</div>
+    </div>
+
+    <div class="card">
+      <h2>Style fingerprints <span class="count" id="styleTotal"></span></h2>
+      <div id="styleReport" class="empty">Curly quotes, em dashes, ellipsis characters and other typography that word processors and AI tools insert but people rarely type.</div>
+    </div>
+
+    <div class="card">
+      <h2>Writing signals <span class="count" id="sigTotal"></span></h2>
+      <div id="signalReport" class="empty">Rhythm, vocabulary and structure patterns that detectors key on. Each one shows how much it moved the score.</div>
+    </div>
+
+    <div class="card">
+      <h2>Claude's read <span class="count" id="judgeMeta"></span></h2>
+      <div id="judgeReport" class="judge empty">Press Deep check for a second opinion with the sentences it would flag.</div>
+    </div>
+
+    <div class="card">
+      <h2>Sentence map</h2>
+      <div class="legend"><span><i style="background:var(--mark)"></i>Reads machine-like</span><span><i style="background:var(--mark-strong)"></i>Strong tell</span><span><i style="background:var(--crit)"></i>Hidden character</span></div>
+      <div class="map" id="map"></div>
+    </div>
+
+    <p class="note">No detector is reliable on its own, including the ones schools and publishers pay for. Treat this as a pre-send screen: clean the hidden marks, make it sound like you, and read it once out loud.</p>
+  </section>
+</main>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* ---------- Character-level scan ---------- */
+const INVISIBLE = {
+  '\u200B':'Zero-width space','\u200C':'Zero-width non-joiner','\u200D':'Zero-width joiner','\u2060':'Word joiner',
+  '\uFEFF':'Byte-order mark','\u00AD':'Soft hyphen','\u180E':'Mongolian vowel separator','\u034F':'Combining grapheme joiner',
+  '\u2061':'Invisible function','\u2062':'Invisible times','\u2063':'Invisible separator','\u2064':'Invisible plus',
+  '\u061C':'Arabic letter mark','\u200E':'Left-to-right mark','\u200F':'Right-to-left mark'
+};
+const ODD_SPACE = {
+  '\u00A0':'Non-breaking space','\u2000':'En quad','\u2001':'Em quad','\u2002':'En space','\u2003':'Em space','\u2004':'Three-per-em space',
+  '\u2005':'Four-per-em space','\u2006':'Six-per-em space','\u2007':'Figure space','\u2008':'Punctuation space','\u2009':'Thin space',
+  '\u200A':'Hair space','\u202F':'Narrow no-break space','\u205F':'Medium math space','\u3000':'Ideographic space',
+  '\u2028':'Line separator','\u2029':'Paragraph separator','\u0085':'Next line'
+};
+const BIDI = {'\u202A':'LRE embedding','\u202B':'RLE embedding','\u202C':'Pop directional','\u202D':'LRO override','\u202E':'RLO override',
+  '\u2066':'LRI isolate','\u2067':'RLI isolate','\u2068':'FSI isolate','\u2069':'Pop isolate'};
+const HOMOGLYPH = {
+  'а':'a','е':'e','о':'o','р':'p','с':'c','х':'x','у':'y','і':'i','ј':'j','ѕ':'s','ԁ':'d','һ':'h','ԛ':'q','ԝ':'w','ɡ':'g','ɩ':'i','ⅼ':'l',
+  'А':'A','В':'B','Е':'E','К':'K','М':'M','Н':'H','О':'O','Р':'P','С':'C','Т':'T','Х':'X','Ѕ':'S','І':'I','Ј':'J',
+  'ο':'o','α':'a','ν':'v','ρ':'p','τ':'t','υ':'u','Α':'A','Β':'B','Ε':'E','Ζ':'Z','Η':'H','Ι':'I','Κ':'K','Μ':'M','Ν':'N','Ο':'O','Ρ':'P','Τ':'T','Υ':'Y','Χ':'X'
+};
+const STYLE = {
+  '\u201C':'Curly double quote','\u201D':'Curly double quote','\u2018':'Curly single quote','\u2019':'Curly apostrophe',
+  '\u2014':'Em dash','\u2013':'En dash','\u2026':'Ellipsis character','\u2022':'Bullet','\u2192':'Arrow','\u2011':'Non-breaking hyphen',
+  '\u2010':'Hyphen (U+2010)','\u2212':'Minus sign','\uFB01':'fi ligature','\uFB02':'fl ligature','\u00B7':'Middle dot','\u2032':'Prime','\u2033':'Double prime'
+};
+const cp = c => 'U+' + c.codePointAt(0).toString(16).toUpperCase().padStart(4,'0');
+
+function scanChars(text){
+  const hidden = {}, style = {}, positions = [];
+  const add = (bucket,key,label,i) => { (bucket[key] ||= {label, count:0, cp:cp(key)}).count++; positions.push(i); };
+  const chars = Array.from(text);
+  let idx = 0;
+  for (let k=0;k<chars.length;k++){
+    const c = chars[k];
+    if (INVISIBLE[c]) add(hidden,c,INVISIBLE[c],idx);
+    else if (ODD_SPACE[c]) add(hidden,c,ODD_SPACE[c],idx);
+    else if (BIDI[c]) add(hidden,c,'Direction control: '+BIDI[c],idx);
+    else if (/[\uFE00-\uFE0F]/.test(c)) add(hidden,c,'Variation selector',idx);
+    else if (c.codePointAt(0)>=0xE0000 && c.codePointAt(0)<=0xE007F) add(hidden,c,'Tag character (invisible payload)',idx);
+    else if (c.codePointAt(0)>=0xE0100 && c.codePointAt(0)<=0xE01EF) add(hidden,c,'Variation selector supplement',idx);
+    else if (HOMOGLYPH[c]) {
+      const prev = chars[k-1]||'', next = chars[k+1]||'';
+      if (/[A-Za-z]/.test(prev) || /[A-Za-z]/.test(next)) add(hidden,c,'Look-alike letter for "'+HOMOGLYPH[c]+'"',idx);
+    }
+    else if (STYLE[c]) (style[c] ||= {label:STYLE[c],count:0,cp:cp(c)}).count++;
+    idx += c.length;
+  }
+  return {hidden, style, positions, hiddenTotal:Object.values(hidden).reduce((a,b)=>a+b.count,0), styleTotal:Object.values(style).reduce((a,b)=>a+b.count,0)};
+}
+
+function cleanText(text, normalizeStyle=true){
+  let out = Array.from(text).map(c=>{
+    if (INVISIBLE[c] || BIDI[c]) return '';
+    if (/[\uFE00-\uFE0F]/.test(c)) return '';
+    const n = c.codePointAt(0);
+    if ((n>=0xE0000&&n<=0xE007F)||(n>=0xE0100&&n<=0xE01EF)) return '';
+    if (c==='\u2028'||c==='\u2029'||c==='\u0085') return '\n';
+    if (ODD_SPACE[c]) return ' ';
+    if (HOMOGLYPH[c]) return HOMOGLYPH[c];
+    return c;
+  }).join('');
+  if (normalizeStyle){
+    out = out.replace(/[\u201C\u201D]/g,'"').replace(/[\u2018\u2019]/g,"'").replace(/\u2026/g,'...')
+      .replace(/\s*\u2014\s*/g,' - ').replace(/(\d)\u2013(\d)/g,'$1-$2').replace(/\u2013/g,'-')
+      .replace(/[\u2011\u2010\u2212]/g,'-').replace(/\uFB01/g,'fi').replace(/\uFB02/g,'fl').replace(/\u00B7/g,'.')
+      .replace(/^\s*\u2022\s?/gm,'- ').replace(/\u2192/g,'->');
+  }
+  return out.replace(/[ \t]+\n/g,'\n').replace(/[ ]{2,}/g,' ');
+}
+
+/* ---------- Writing-signal heuristics ---------- */
+const AI_PHRASES = ['delve','tapestry','leverage','leveraging','robust','crucial','pivotal','landscape','testament to','multifaceted','realm','navigate','navigating','underscore','underscores','foster','fostering','moreover','furthermore','additionally','it is important to note','it\'s important to note','in conclusion','plays a crucial role','plays a vital role','in today\'s fast-paced','at the end of the day','serves as','seamless','seamlessly','streamline','streamlined','unlock','elevate','embark','journey','comprehensive','holistic','game-changer','game changer','cutting-edge','nuanced','intricate','vibrant','bustling','stands as','a wide range of','it is worth noting','worth noting','ultimately','in summary','dive into','deep dive','shed light','harness','harnessing','empower','empowering','ever-evolving','in the realm of','paradigm','synergy','transformative','groundbreaking','meticulous','meticulously','ensure','ensuring','optimal','facilitate','utilize','utilizing','noteworthy','commendable','resonate','resonates','illuminate','encompass','encompasses','myriad','plethora','bolster','underpin','paramount','whilst','overarching','in essence','key takeaway','key takeaways','i hope this email finds you well','i hope this message finds you well','thank you for reaching out','please don\'t hesitate','do not hesitate','look no further','rest assured','feel free to'];
+const TRANSITION_START = /^(however|additionally|moreover|furthermore|ultimately|overall|in conclusion|in summary|importantly|notably|firstly|secondly|thirdly|finally|that said|that being said|in essence)\b/i;
+const CONTRACTION = /\b(i[’']m|i[’']ve|i[’']d|i[’']ll|you[’']re|you[’']ve|you[’']ll|we[’']re|we[’']ve|we[’']ll|they[’']re|they[’']ve|it[’']s|that[’']s|there[’']s|here[’']s|what[’']s|who[’']s|isn[’']t|aren[’']t|wasn[’']t|weren[’']t|don[’']t|doesn[’']t|didn[’']t|can[’']t|couldn[’']t|won[’']t|wouldn[’']t|shouldn[’']t|haven[’']t|hasn[’']t|hadn[’']t|let[’']s|y[’']all|gonna|gotta|kinda)\b/gi;
+const STOCK_OPENER = /^(i hope (this|you)|i wanted to reach out|i am writing to|i'm writing to|thank you for reaching out|i trust this|as per my|per my last)/i;
+
+function sentences(text){
+  const out=[]; const re=/[^.!?\n]+(?:[.!?]+["')\]]*|\n|$)/g; let m;
+  while((m=re.exec(text))){ const s=m[0]; const wc=s.trim().split(/\s+/).length; if(wc>=2) out.push({text:s, start:m.index, end:m.index+s.length, line: !/[.!?]/.test(s) && wc<=4}); }
+  return out; // line: a greeting, sign-off or heading on its own line; excluded from rhythm math
+}
+const words = t => (t.match(/[A-Za-z0-9'’-]+/g)||[]);
+const mean = a => a.length? a.reduce((x,y)=>x+y,0)/a.length : 0;
+const sd = a => { const m=mean(a); return a.length? Math.sqrt(mean(a.map(x=>(x-m)**2))) : 0; };
+
+function analyze(text){
+  const sents = sentences(text), W = words(text), n = W.length;
+  const signals = [], perSentence = sents.map(()=>0);
+  if (n < 25) return {score:null, signals:[{label:'Too short to judge', detail:'Need at least 25 words for rhythm and vocabulary signals.', w:0, sev:'warn'}], sents, perSentence};
+  let score = 0;
+  const push = (label, detail, w, sev) => { signals.push({label, detail, w, sev}); score += w; };
+
+  // 1. Burstiness: variation in sentence length
+  const prose = sents.filter(s=>!s.line);
+  const lens = prose.map(s=>words(s.text).length), cv = mean(lens)? sd(lens)/mean(lens) : 0;
+  if (prose.length >= 4){
+    if (cv < 0.3) push('Flat sentence rhythm', `Sentence lengths barely vary (spread ${Math.round(cv*100)}% of average). People write in bursts; models write metronomes.`, 22, 'crit');
+    else if (cv < 0.45) push('Even sentence rhythm', `Moderate variation (spread ${Math.round(cv*100)}% of average).`, 10, 'warn');
+    else push('Natural sentence rhythm', `Good variation (spread ${Math.round(cv*100)}% of average).`, -6, 'good');
+    const m = mean(lens);
+    sents.forEach((s,i)=>{ if (!s.line && Math.abs(words(s.text).length-m) < Math.max(2, m*0.2)) perSentence[i] += 1; });
+  }
+
+  // 2. AI vocabulary
+  const low = text.toLowerCase(); let hits = 0; const found = new Set();
+  for (const p of AI_PHRASES){ const re = new RegExp('\\b'+p.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\b','g'); const c = (low.match(re)||[]).length; if (c){ hits += c; found.add(p); } }
+  const per100 = hits / n * 100;
+  if (hits){ push('Model vocabulary', `${hits} hit${hits>1?'s':''} (${per100.toFixed(1)} per 100 words): ${[...found].slice(0,8).join(', ')}${found.size>8?'…':''}`, Math.min(32, Math.round(per100*10)+6), per100>2?'crit':'warn'); }
+  else push('No model vocabulary', 'None of the usual filler words (delve, leverage, robust, seamless…).', -4, 'good');
+  sents.forEach((s,i)=>{ const sl=s.text.toLowerCase(); for (const p of found){ if (sl.includes(p)) { perSentence[i] += 2; break; } } });
+
+  // 3. Em dashes
+  const em = (text.match(/\u2014/g)||[]).length;
+  if (em){ const d = em/n*100; push('Em dashes', `${em} em dash${em>1?'es':''}. Heavy em-dash use is the single most recognizable ChatGPT tell.`, d>0.8? 10 : 5, d>0.8?'crit':'warn'); sents.forEach((s,i)=>{ if (/\u2014/.test(s.text)) perSentence[i]+=1; }); }
+
+  // 4. Contractions
+  const contractions = (text.match(CONTRACTION)||[]).length;
+  if (n > 60 && contractions === 0) push('No contractions', 'Not one "it\'s", "don\'t" or "we\'re" in a message this long. Humans contract; models hedge toward formal.', 9, 'warn');
+  else if (contractions >= 2) push('Uses contractions', `${contractions} found. Reads like speech.`, -5, 'good');
+
+  // 5. Transitional sentence openers
+  let trans = 0; sents.forEach((s,i)=>{ if (TRANSITION_START.test(s.text.trim())){ trans++; perSentence[i]+=1; } });
+  if (trans >= 2) push('Signpost openers', `${trans} sentences start with However / Additionally / Ultimately-style transitions.`, Math.min(12, trans*4), 'warn');
+
+  // 6. Tricolons and "not X, but Y"
+  const tri = (text.match(/\b\w+, \w+(?: \w+)?,? and \w+/g)||[]).length;
+  if (tri >= 2) push('Lists of three', `${tri} "X, Y, and Z" constructions. Models love symmetry.`, Math.min(9, tri*3), 'warn');
+  const notBut = (text.match(/\bnot (?:just|only|merely|simply)?\s*\w[^.;]{0,40}?,? but (?:also|rather)?/gi)||[]).length;
+  if (notBut) push('"Not X, but Y" framing', `${notBut} instance${notBut>1?'s':''}.`, Math.min(8, notBut*4), 'warn');
+  sents.forEach((s,i)=>{ if (/\bnot (?:just|only|merely|simply)?\s*\w[^.;]{0,40}?,? but\b/i.test(s.text)) perSentence[i]+=1; });
+
+  // 7. Paragraph uniformity
+  const paras = text.split(/\n\s*\n/).map(p=>words(p).length).filter(x=>x>8);
+  if (paras.length >= 3){ const pcv = sd(paras)/mean(paras); if (pcv < 0.25) push('Uniform paragraphs', `${paras.length} paragraphs of nearly equal length.`, 8, 'warn'); }
+
+  // 8. Markdown scaffolding
+  const bold = (text.match(/\*\*[^*]+\*\*/g)||[]).length, heads = (text.match(/^#{1,4}\s/gm)||[]).length, bullets=(text.match(/^\s*[-*\u2022]\s/gm)||[]).length;
+  if (bold+heads >= 2 || (bullets>=4 && bold>=1)) push('Markdown scaffolding', `${heads} headings, ${bold} bold labels, ${bullets} bullets. Chat-window formatting pasted into prose.`, 8, 'warn');
+
+  // 9. Wrap-up sentence
+  const last = sents[sents.length-1]?.text.trim().toLowerCase()||'';
+  if (/^(in conclusion|overall|ultimately|in summary|to sum up|all in all)/.test(last) || /(let me know if|feel free to reach out|i hope this helps|please don't hesitate)/.test(last)) { push('Stock closing line', 'Ends on a summary or a courtesy formula.', 6, 'warn'); perSentence[sents.length-1]+=2; }
+
+  // 9b. Stock opener
+  const firstProse = prose[0]?.text.trim().replace(/^[’'"“]+/,'')||'';
+  if (STOCK_OPENER.test(firstProse)) { push('Stock opening line', 'Opens on a template courtesy. Nobody who knows the reader starts this way.', 8, 'warn'); perSentence[sents.indexOf(prose[0])] += 2; }
+
+  // 10. Human anchors
+  let human = 0; const numbers = (text.match(/\$?\d[\d,.]*%?/g)||[]).length, firstPerson = (text.match(/\b(I|me|my|we|our|us)\b/g)||[]).length;
+  if (numbers >= 2) human += 5; if (firstPerson >= 3) human += 5;
+  const typos = (text.match(/\b(teh|recieve|definately|seperate|occured|untill|alot|thier)\b/gi)||[]).length + (text.match(/ {2,}\w/g)||[]).length;
+  if (typos) human += 4;
+  const shortFrag = sents.filter(s=>!s.line && words(s.text).length<=4).length; if (shortFrag>=1 && prose.length>=4) human += 4;
+  if (human) push('Human anchors', `Specific numbers, first person, short fragments or small slips: ${human} points off.`, -human, 'good');
+
+  // 11. Vocabulary richness (very high TTR with long text is machine-like polish)
+  if (n >= 120){ const ttr = new Set(W.map(w=>w.toLowerCase())).size / n; if (ttr > 0.72) push('Unusually varied vocabulary', `Type-token ratio ${(ttr*100).toFixed(0)}%. Polished to the point of no repetition.`, 5, 'warn'); }
+
+  score = Math.max(2, Math.min(98, Math.round(score + 18)));
+  return {score, signals: signals.sort((a,b)=>Math.abs(b.w)-Math.abs(a.w)), sents, perSentence, cv, hits};
+}
+
+/* ---------- Prompts shared with the server ---------- */
+const BANNED = 'delve, tapestry, leverage, robust, crucial, pivotal, landscape, testament, multifaceted, realm, navigate, underscore, foster, moreover, furthermore, additionally, seamless, streamline, unlock, elevate, embark, journey, comprehensive, holistic, game-changer, cutting-edge, nuanced, vibrant, harness, empower, ever-evolving, synergy, transformative, meticulous, utilize, facilitate, myriad, plethora, bolster, paramount, "it\'s important to note", "I hope this finds you well", "don\'t hesitate", "feel free to"';
+function humanizePrompt(text, o){
+  const toneMap = {keep:'Keep the tone of the draft.', direct:'Tone: a sharp, direct business partner. Professional but conversational. Opinions stated plainly.', warm:'Tone: warm, personal, unhurried. Like a note to someone you respect.', formal:'Tone: formal and precise. No slang. Suitable for a lender, attorney or county official.', casual:'Tone: casual, like a text to a friend. Short.'};
+  const fmtMap = {auto:'Detect the format (email, memo, post, text) from the draft and keep it.', email:'Format: email. Keep greeting and sign-off if present.', memo:'Format: memo or letter.', post:'Format: social post. Keep it scannable.', text:'Format: text message. Very short.'};
+  return `Rewrite the draft below so it reads like a specific person wrote it, not a language model. The rewrite must pass AI-detection screens that key on rhythm, vocabulary and structure.
+
+Hard rules:
+- Keep every fact, name, number, date, dollar figure, commitment and ask exactly. Do not add claims, examples, or softeners that are not in the draft.
+- Same language as the draft. Length within 20% of the draft (${o.depth==='light'?'light touch: change only what is needed to remove the tells':'full rewrite: reorder and rephrase freely'}).
+- Vary sentence length hard. Mix a few very short sentences (3 to 6 words) with longer ones. No two consecutive sentences of similar length.
+- Use contractions where a person would.
+- No em dashes or en dashes anywhere. Use commas, periods or parentheses. Straight quotes only.
+- Do not use these words or phrases: ${BANNED}.
+- No "not X, but Y" framing. No lists of three for rhythm. No sentence that opens with However, Additionally, Moreover, Furthermore, Ultimately or Overall.
+- No throat-clearing opener and no summary or courtesy formula at the end. End on the last substantive point or the ask.
+- No markdown, no headings, no bold, no bullet points unless the draft is clearly a list.
+- ${toneMap[o.tone]||toneMap.direct}
+- ${fmtMap[o.format]||fmtMap.auto}${o.reader?`\n- The reader is: ${o.reader}. Write to that person.`:''}${o.voice?`\n\nMatch the rhythm, word choice and sentence habits of this sample of the author's own writing (copy the style, never the content):\n<voice_sample>\n${o.voice}\n</voice_sample>`:''}
+
+Output only the rewritten text. No preamble, no explanation, no quotation marks around it.
+
+<draft>
+${text}
+</draft>`;
+}
+function judgePrompt(text){
+  return `You are screening a message before it is sent. Decide how likely it is that a language model wrote the draft below, as a careful human editor would, looking at rhythm, vocabulary, structure, specificity and voice. Be calibrated: polished human writing is not AI, and clumsy writing is not automatically human.
+
+Reply with only a JSON object, no markdown fence, in this shape:
+{"ai_probability": <integer 0-100>, "verdict": "<one sentence, plain English>", "signals": ["<short signal>", ...up to 6], "flagged": ["<exact sentence copied from the draft that reads most machine-written>", ...up to 5]}
+
+<draft>
+${text}
+</draft>`;
+}
+
+/* ---------- Backend adapter: hosted (Claude capability) or self-hosted (/api) ---------- */
+const backend = { kind:'none', sample:null };
+async function connect(){
+  const st = document.getElementById('status'), t = document.getElementById('statusText');
+  try { if (window.claude?.use){ const s = await window.claude.use('sample'); if (s){ backend.kind='sample'; backend.sample=s; st.className='status ok'; t.textContent='Claude connected (hosted)'; return; } } } catch(e){}
+  try { const r = await fetch('/api/health'); if (r.ok){ const j = await r.json(); if (j.ready){ backend.kind='server'; st.className='status ok'; t.textContent='Claude connected ('+(j.model||'server')+')'; return; } else { st.className='status off'; t.textContent='server up, no API key'; return; } } } catch(e){}
+  st.className='status off'; t.textContent='scan only (no Claude connection)';
+}
+async function askClaude(prompt, {json=false, onText}={}){
+  if (backend.kind==='sample'){
+    if (json) return backend.sample.json(prompt, {modelTier:'default'});
+    const r = await backend.sample(prompt, {onText, modelTier:'default', cache:false}); return r.text;
+  }
+  if (backend.kind==='server'){
+    const r = await fetch(json?'/api/judge':'/api/humanize', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({prompt})});
+    if (!r.ok){ const e = await r.json().catch(()=>({})); throw new Error(e.error||('Server error '+r.status)); }
+    const j = await r.json(); return json ? j.result : j.text;
+  }
+  throw new Error('No Claude connection. Deploy the server with an API key, or open the hosted version.');
+}
+
+/* ---------- UI ---------- */
+const $ = id => document.getElementById(id);
+const draft = $('draft');
+let original = null, lastScan = null, judge = null;
+const esc = s => s.replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1800); }
+function setStep(i, state){ const el=$('st'+i); el.classList.remove('done','active'); if(state) el.classList.add(state); }
+function busy(btn, on, label){ btn.disabled=on; if(on){ btn.dataset.label=btn.textContent; btn.innerHTML='<span class="spin"></span>'+label; } else btn.textContent=btn.dataset.label||btn.textContent; }
+
+function updateCounts(){ const t=draft.value; const w=words(t).length; $('counts').textContent=`${w} word${w===1?'':'s'} · ${Array.from(t).length} chars`; }
+
+function renderGauge(score, cls){
+  const g=$('gauge'), f=$('gaugeFill'); g.className='gauge '+cls;
+  f.style.strokeDashoffset = score==null? 226.2 : (226.2*(1-score/100)).toFixed(1);
+  $('gaugeNum').textContent = score==null? '–' : score;
+}
+function band(score){ return score==null?'':(score<35?'good':score<65?'warn':'crit'); }
+
+function runScan(){
+  const text = draft.value; updateCounts();
+  const chars = scanChars(text), a = analyze(text);
+  judge = null; $('judgeReport').className='judge empty'; $('judgeReport').textContent='Press Deep check for a second opinion with the sentences it would flag.'; $('judgeMeta').textContent='';
+  lastScan = {chars, a};
+  // Hidden marks
+  $('hidTotal').textContent = chars.hiddenTotal? chars.hiddenTotal+' found' : 'none';
+  $('hiddenCount').textContent = chars.hiddenTotal? `⚠ ${chars.hiddenTotal} hidden character${chars.hiddenTotal>1?'s':''}` : '';
+  if (chars.hiddenTotal){
+    const rows = Object.values(chars.hidden).sort((x,y)=>y.count-x.count).map(r=>`<tr><td>${esc(r.label)}</td><td><code>${r.cp}</code></td><td class="n">${r.count}</td></tr>`).join('');
+    $('hiddenReport').className='tbl'; $('hiddenReport').innerHTML=`<table><thead><tr><th>Character</th><th>Code</th><th>Count</th></tr></thead><tbody>${rows}</tbody></table><p class="hint">These are invisible in most editors and survive copy and paste. Clean hidden marks removes all of them.</p>`;
+  } else { $('hiddenReport').className='empty'; $('hiddenReport').textContent='Clean. No zero-width characters, odd spaces, direction controls or look-alike letters.'; }
+  // Style
+  $('styleTotal').textContent = chars.styleTotal? chars.styleTotal+' found' : 'none';
+  if (chars.styleTotal){
+    const rows = Object.values(chars.style).sort((x,y)=>y.count-x.count).map(r=>`<tr><td>${esc(r.label)}</td><td><code>${r.cp}</code></td><td class="n">${r.count}</td></tr>`).join('');
+    $('styleReport').className='tbl'; $('styleReport').innerHTML=`<table><thead><tr><th>Character</th><th>Code</th><th>Count</th></tr></thead><tbody>${rows}</tbody></table><p class="hint">Not a watermark, but a fingerprint. Clean hidden marks converts these to plain keyboard characters.</p>`;
+  } else { $('styleReport').className='empty'; $('styleReport').textContent='Plain keyboard typography throughout.'; }
+  // Signals
+  const sig = a.signals; $('sigTotal').textContent = a.score==null? '' : `${sig.filter(s=>s.w>0).length} tells`;
+  $('signalReport').className=''; $('signalReport').innerHTML = `<ul class="signals">${sig.map(s=>`<li><span class="sev ${s.sev}"></span><div>${esc(s.label)}<small>${esc(s.detail)}</small></div><span class="w">${s.w>0?'+':''}${s.w||''}</span></li>`).join('')}</ul>`;
+  setStep(1,'done'); setStep(2, chars.hiddenTotal||chars.styleTotal ? 'active':'done'); setStep(3, a.score!=null && a.score>=35 ? 'active':''); setStep(4,'');
+  renderVerdict();
+  renderMap();
+}
+
+function renderVerdict(){
+  const a = lastScan.a, h = lastScan.chars.hiddenTotal;
+  let score = a.score, src = 'rhythm and vocabulary signals';
+  if (judge && typeof judge.ai_probability==='number'){ score = Math.round(0.4*(a.score??judge.ai_probability) + 0.6*judge.ai_probability); src = 'signals blended with Claude\'s read (60% weight)'; }
+  const cls = band(score); renderGauge(score, cls);
+  const t=$('verdictTitle'), p=$('verdictText'), pills=$('verdictPills'); $('verdict').className='card verdict '+cls;
+  if (score==null){ t.textContent='Too short to score'; p.textContent='Hidden-character scan still ran. Add more text for the writing signals.'; }
+  else if (cls==='good'){ t.textContent= h? 'Reads human, but carries hidden marks' : 'Reads human'; p.textContent=`Low AI likelihood based on ${src}.${h?' Clean the hidden characters before sending.':' Safe to send on this screen.'}`; }
+  else if (cls==='warn'){ t.textContent='Mixed signals'; p.textContent=`Some machine-like patterns based on ${src}. A light rewrite should clear it.`; }
+  else { t.textContent='Likely to be flagged as AI'; p.textContent=`High AI likelihood based on ${src}. Run Humanize, then verify again.`; }
+  pills.innerHTML = [
+    h? `<span class="pill crit">${h} hidden char${h>1?'s':''}</span>` : `<span class="pill good">no hidden chars</span>`,
+    lastScan.chars.styleTotal? `<span class="pill warn">${lastScan.chars.styleTotal} style marks</span>` : '',
+    a.score!=null? `<span class="pill">heuristic ${a.score}</span>` : '',
+    judge? `<span class="pill">Claude ${judge.ai_probability}</span>` : ''
+  ].join('');
+  if (score!=null && cls==='good' && !h) setStep(4,'done');
+}
+
+function renderMap(){
+  const text = draft.value, {sents, perSentence} = lastScan.a, flagged = new Set((judge?.flagged||[]).map(s=>s.trim()));
+  const hiddenPos = new Set(lastScan.chars.positions);
+  let html='', cursor=0;
+  const emit = (seg, start) => { let o=''; let i=start; for (const c of Array.from(seg)){ if (hiddenPos.has(i)) o+=`<span class="hid" title="${esc(INVISIBLE[c]||ODD_SPACE[c]||BIDI[c]||'hidden')}">${cp(c)}</span>`; else o+=esc(c); i+=c.length; } return o; };
+  sents.forEach((s,i)=>{
+    if (s.start>cursor) html += emit(text.slice(cursor,s.start), cursor);
+    const lvl = perSentence[i] + (flagged.has(s.text.trim())?3:0);
+    const body = emit(s.text, s.start);
+    html += lvl>=3? `<mark class="strong">${body}</mark>` : lvl>=2? `<mark>${body}</mark>` : body;
+    cursor = s.end;
+  });
+  if (cursor<text.length) html += emit(text.slice(cursor), cursor);
+  $('map').innerHTML = html || '<span class="empty">Nothing to map.</span>';
+}
+
+async function runJudge(){
+  const text = draft.value.trim(); if (!text) return;
+  if (!lastScan) runScan();
+  const b=$('btnJudge'); busy(b,true,'Reading…'); $('banner').className='banner';
+  try {
+    let raw = await askClaude(judgePrompt(text), {json:true});
+    if (typeof raw==='string'){ const m = raw.match(/\{[\s\S]*\}/); raw = JSON.parse(m?m[0]:raw); }
+    judge = raw; const r=$('judgeReport'); r.className='judge';
+    r.innerHTML = `<blockquote>${esc(judge.verdict||'')}</blockquote>${(judge.signals||[]).length?`<ul>${judge.signals.map(s=>`<li>${esc(String(s))}</li>`).join('')}</ul>`:''}${(judge.flagged||[]).length?`<p class="hint">${judge.flagged.length} sentence${judge.flagged.length>1?'s':''} flagged, highlighted in the map below.</p>`:''}`;
+    $('judgeMeta').textContent = `AI probability ${judge.ai_probability}`;
+    renderVerdict(); renderMap();
+  } catch(e){ showError(e); }
+  busy(b,false);
+}
+
+async function runHumanize(){
+  const text = draft.value.trim(); if (!text) return;
+  const o = {tone:$('tone').value, depth:$('depth').value, format:$('format').value, reader:$('reader').value.trim(), voice:$('voice').value.trim()};
+  const b=$('btnHumanize'); busy(b,true,'Rewriting…'); $('banner').className='banner';
+  const cleaned = cleanText(text, true);
+  if (original==null) original = text;
+  try {
+    let out = await askClaude(humanizePrompt(cleaned, o), {onText: ({text})=>{ draft.value = text; }});
+    out = cleanText(out.trim().replace(/^<rewrite>\s*|\s*<\/rewrite>$/g,''), true);
+    draft.value = out; $('draftLabel').textContent='humanized'; $('btnRestore').hidden=false;
+    setStep(3,'done'); runScan(); setStep(3,'done'); setStep(4,'active');
+    toast('Rewritten and re-scanned');
+    if (backend.kind!=='none') runJudge();
+  } catch(e){ draft.value = original; showError(e); }
+  busy(b,false);
+}
+function showError(e){ const b=$('banner'); b.textContent = (e&&e.message)||String(e); b.className='banner show'; }
+
+$('btnScan').onclick = runScan;
+$('btnJudge').onclick = runJudge;
+$('btnHumanize').onclick = runHumanize;
+$('btnClean').onclick = ()=>{ if (original==null) original = draft.value; const before=draft.value; draft.value = cleanText(before,true); $('btnRestore').hidden=false; $('draftLabel').textContent='cleaned'; runScan(); setStep(2,'done'); toast(before===draft.value?'Nothing to clean':'Hidden marks removed'); };
+$('btnRestore').onclick = ()=>{ if (original!=null){ draft.value=original; original=null; $('btnRestore').hidden=true; $('draftLabel').textContent='your draft'; runScan(); } };
+$('btnCopy').onclick = async ()=>{ try { await navigator.clipboard.writeText(draft.value); toast('Copied'); } catch(e){ draft.select(); toast('Select and copy manually'); } };
+draft.addEventListener('input', ()=>{ updateCounts(); $('draftLabel').textContent = original!=null ? 'edited' : 'your draft'; });
+try { const v = localStorage.getItem('hc.voice'); if (v) $('voice').value = v; } catch(e){}
+$('voice').addEventListener('input', ()=>{ try { localStorage.setItem('hc.voice', $('voice').value); } catch(e){} });
+
+/* Example draft: machine-sounding, with hidden characters planted so the scan has something to show. */
+const EXAMPLE = "Hi Mark,\n\nI hope this email finds you well. I wanted to reach out regarding the Phase 2 lot delivery schedule at Birchwood. In today\u2019s fast-paced development landscape, it is crucial that we leverage every opportunity to streamline our timelines and foster a seamless handoff\u200B to your construction team.\n\nAdditionally, our civil engineer has confirmed that the VDOT entrance permit is on track, and the remaining 42 lots will be ready for bond release by March 15. Furthermore, we are committed to delivering a robust, comprehensive package that not only meets but exceeds your expectations \u2014 ensuring a smooth transition at every stage.\n\nUltimately, this partnership stands as a testament to what we can achieve together. Please don\u2019t hesitate to reach out\u00A0with any questions.\n\nBest regards,\nTerrence";
+draft.value = EXAMPLE; updateCounts(); runScan(); connect();
+</script>
