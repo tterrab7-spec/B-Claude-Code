@@ -3,6 +3,7 @@ import { DIRTBID_REGIONS } from '@dirtbid/underwriting';
 import type { ResolveOptions, ResolvedParcel, Provenance, GeocodeResult } from './types.js';
 import { makeClient, UpstreamError } from './http.js';
 import { geocode } from './adapters/census.js';
+import { geocodeArcgis, geocodeNominatim } from './adapters/geocode-fallbacks.js';
 import { parcelAt } from './adapters/vgin.js';
 import { floodZoneAt } from './adapters/fema.js';
 import { wetlandsNear } from './adapters/nwi.js';
@@ -17,6 +18,27 @@ for (const f of HAMPTON_ROADS_FIPS) VA_REGION_BY_FIPS[f] = 'VA_HR';
 for (const f of ['51059', '51013', '51510', '51107', '51153', '51600', '51610', '51683', '51685']) VA_REGION_BY_FIPS[f] = 'VA_NOVA';
 for (const f of ['51630', '51177', '51179', '51137', '51047', '51033']) VA_REGION_BY_FIPS[f] = 'VA_FRED';
 for (const f of ['51760', '51087', '51041', '51085', '51127', '51570', '51730', '51036', '51075', '51145']) VA_REGION_BY_FIPS[f] = 'VA_RIC';
+
+/** County / independent-city names → FIPS for the localities we care about, so a non-Census geocoder still lands in the right market. */
+const COUNTY_FIPS_BY_NAME: Record<string, string> = {
+  'hampton': '51650', 'hampton city': '51650', 'newport news': '51700', 'newport news city': '51700', 'norfolk': '51710', 'norfolk city': '51710',
+  'virginia beach': '51810', 'virginia beach city': '51810', 'chesapeake': '51550', 'chesapeake city': '51550', 'suffolk': '51800', 'suffolk city': '51800',
+  'portsmouth': '51740', 'portsmouth city': '51740', 'york': '51199', 'york county': '51199', 'james city': '51095', 'james city county': '51095',
+  'isle of wight': '51093', 'isle of wight county': '51093', 'williamsburg': '51830', 'williamsburg city': '51830', 'gloucester': '51073', 'gloucester county': '51073',
+  'mathews': '51115', 'mathews county': '51115', 'poquoson': '51735', 'poquoson city': '51735',
+  'los angeles': '06037', 'los angeles county': '06037',
+  'fairfax': '51059', 'fairfax county': '51059', 'loudoun': '51107', 'loudoun county': '51107', 'prince william': '51153', 'prince william county': '51153', 'arlington': '51013', 'arlington county': '51013',
+  'richmond': '51760', 'richmond city': '51760', 'henrico': '51087', 'henrico county': '51087', 'chesterfield': '51041', 'chesterfield county': '51041', 'hanover': '51085', 'hanover county': '51085',
+};
+export function countyFipsFromName(name: string | undefined, stateFips: string | undefined): string | undefined {
+  if (!name) return undefined;
+  // "City of Suffolk", "Suffolk City", "Suffolk" and "York County" all resolve.
+  const n = name.trim().toLowerCase().replace(/^city of\s+/, '').replace(/\s+(city|county)$/, '');
+  const hit = COUNTY_FIPS_BY_NAME[n] ?? COUNTY_FIPS_BY_NAME[n + ' city'] ?? COUNTY_FIPS_BY_NAME[n + ' county'];
+  if (!hit) return undefined;
+  if (stateFips && !hit.startsWith(stateFips)) return undefined;
+  return hit;
+}
 
 export function marketForFips(countyFips: string | undefined, stateFips: string | undefined): { marketCode: string; dirtbidRegion: string | null; multiplier: number } {
   if (countyFips && HAMPTON_ROADS_FIPS.has(countyFips)) return { marketCode: 'HAMPTON_ROADS_VA', dirtbidRegion: 'VA_HR', multiplier: DIRTBID_REGIONS.VA_HR!.multiplier };
@@ -37,8 +59,12 @@ export async function resolveAddress(address: string, opts: ResolveOptions = {})
   const warnings: string[] = [];
   const g = <T>(s: string, u: string, init?: { method?: string; headers?: Record<string, string>; body?: string }) => getJson<T>(s, u, init);
 
+  // Geocoder chain: Census (authoritative, has FIPS) → Esri World Geocoder (browser-friendly) → Nominatim.
   let geo: GeocodeResult | null = null;
-  try { geo = await geocode(address, g, now); } catch (e) { warnings.push(msg(e)); }
+  for (const fn of [geocode, geocodeArcgis, geocodeNominatim]) {
+    try { geo = await fn(address, g, now); } catch (e) { warnings.push(msg(e)); }
+    if (geo) break;
+  }
   if (!geo) {
     throw new UpstreamError('census_geocoder', `Address could not be geocoded: "${address}"${warnings.length ? ` (${warnings.join('; ')})` : ''}`);
   }
@@ -55,7 +81,7 @@ export async function resolveAddress(address: string, opts: ResolveOptions = {})
   const elevation = settled(elevR, warnings) ?? { samples: [], provenance: unavailable('usgs_3dep', now, 'Elevation service unavailable') };
   const soils = settled(soilsR, warnings) ?? { components: [], classification: 'unknown' as const, hydricLikely: false, provenance: unavailable('usda_ssurgo', now, 'Soils service unavailable') };
 
-  const fips = parcel.fips ?? geo.countyFips;
+  const fips = parcel.fips ?? geo.countyFips ?? countyFipsFromName(geo.countyName, geo.stateFips);
   const [wetR, zoneR] = await Promise.allSettled([
     wetlandsNear(parcel.centroid ?? pt, parcel.polygon, parcel.acres, g, now),
     zoningAt(parcel.centroid ?? pt, fips, { ...DEFAULT_ZONING_LAYERS, ...(opts.zoningLayers ?? {}) }, opts.regridApiKey, g, now),
@@ -123,4 +149,10 @@ function settled<T>(r: PromiseSettledResult<T>, warnings: string[]): T | null {
   warnings.push(msg(r.reason));
   return null;
 }
-const msg = (e: unknown) => (e instanceof Error ? e.message : String(e));
+const msg = (e: unknown) => {
+  const m = e instanceof Error ? e.message : String(e);
+  // "census_geocoder: Failed to fetch" → "Census geocoder unavailable from this browser (Failed to fetch)"
+  const [src, ...rest] = m.split(': ');
+  const names: Record<string, string> = { census_geocoder: 'Census geocoder', arcgis_geocoder: 'Esri geocoder', nominatim: 'OpenStreetMap geocoder', vgin_parcels: 'Virginia parcel layer', fema_nfhl: 'FEMA flood layer', fws_nwi: 'Wetlands inventory', usgs_3dep: 'USGS elevation', usda_ssurgo: 'USDA soils', arcgis_zoning: 'Locality zoning layer', regrid: 'Regrid' };
+  return src && names[src] ? `${names[src]} unavailable (${rest.join(': ') || 'no response'}); ${src === 'fws_nwi' ? 'wetlands left unknown' : src.endsWith('geocoder') ? 'tried the next geocoder' : 'field left unknown'}.` : m;
+};

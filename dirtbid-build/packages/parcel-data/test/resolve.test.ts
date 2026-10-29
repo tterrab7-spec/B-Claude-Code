@@ -77,6 +77,18 @@ describe('resolveAddress (recorded fixtures)', () => {
   });
 });
 
+describe('countyFipsFromName', () => {
+  it('normalizes locality spellings', async () => {
+    const { countyFipsFromName } = await import('../src/index.js');
+    expect(countyFipsFromName('City of Suffolk', '51')).toBe('51800');
+    expect(countyFipsFromName('Suffolk City', '51')).toBe('51800');
+    expect(countyFipsFromName('York County', '51')).toBe('51199');
+    expect(countyFipsFromName('Los Angeles County', '06')).toBe('06037');
+    expect(countyFipsFromName('Hampton', '06')).toBeUndefined();
+    expect(countyFipsFromName('Nowhere', '51')).toBeUndefined();
+  });
+});
+
 describe('marketForFips', () => {
   it('maps Hampton Roads, LA County, other Virginia and elsewhere', () => {
     expect(marketForFips('51650', '51').marketCode).toBe('HAMPTON_ROADS_VA');
@@ -85,5 +97,35 @@ describe('marketForFips', () => {
     expect(marketForFips('51059', '51')).toEqual({ marketCode: 'GENERIC_US', dirtbidRegion: 'VA_NOVA', multiplier: 1.18 });
     expect(marketForFips('51760', '51').dirtbidRegion).toBe('VA_RIC');
     expect(marketForFips('37183', '37')).toEqual({ marketCode: 'GENERIC_US', dirtbidRegion: null, multiplier: 1 });
+  });
+});
+
+describe('geocoder fallbacks', () => {
+  it('falls through to the Esri geocoder when Census is blocked, and still finds the parcel', async () => {
+    const fx = loadFixture('suffolk-godwin');
+    const fb = loadFixture('geocode-fallbacks');
+    const merged = { address: fx.address, recorded: { ...fx.recorded, ...fb.recorded } };
+    const censusKey = Object.keys(fx.recorded).find((k) => k.includes('geocoding.geo.census.gov'))!;
+    delete merged.recorded[censusKey];
+    const f = fetchFromFixture(merged);
+    const r = await resolveAddress(fx.address, { fetch: f, now });
+    expect(r.geocode?.provenance.source).toBe('arcgis_geocoder');
+    expect(r.geocode?.stateFips).toBe('51');
+    expect(r.geocode?.countyName).toBe('City of Suffolk');
+    // The Esri point differs from the Census point, so the recorded parcel query misses; the county name still lands the market.
+    expect(r.region.marketCode).toBe('HAMPTON_ROADS_VA');
+    expect(r.warnings.some((w) => /Census geocoder unavailable/.test(w))).toBe(true);
+  });
+
+  it('uses Nominatim when both Census and Esri fail', async () => {
+    const fx = loadFixture('suffolk-godwin');
+    const fb = loadFixture('geocode-fallbacks');
+    const nomKey = Object.keys(fb.recorded).find((k) => k.includes('nominatim'))!;
+    const merged = { address: fx.address, recorded: { ...fx.recorded, [nomKey]: fb.recorded[nomKey]! } };
+    delete merged.recorded[Object.keys(fx.recorded).find((k) => k.includes('geocoding.geo.census.gov'))!];
+    const r = await resolveAddress(fx.address, { fetch: fetchFromFixture(merged), now });
+    expect(r.geocode?.provenance.source).toBe('nominatim');
+    expect(r.geocode?.stateFips).toBe('51');
+    expect(r.region.marketCode).toBe('HAMPTON_ROADS_VA');
   });
 });

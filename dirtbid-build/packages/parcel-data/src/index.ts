@@ -1,5 +1,5 @@
 export * from './types.js';
-export { resolveAddress, marketForFips } from './resolve.js';
+export { resolveAddress, marketForFips, countyFipsFromName } from './resolve.js';
 export { UpstreamError } from './http.js';
 export { geocode, CENSUS_URL } from './adapters/census.js';
 export { parcelAt, VGIN_URL } from './adapters/vgin.js';
@@ -9,3 +9,4 @@ export { elevationAndSlope, EPQS_URL } from './adapters/usgs.js';
 export { soilsAt, SDA_URL } from './adapters/usda.js';
 export { zoningAt, DEFAULT_ZONING_LAYERS } from './adapters/zoning.js';
 export { ringAreaSqM, pointInRing, centroid, distanceFt } from './geo.js';
+export { geocodeArcgis, geocodeNominatim, ARCGIS_GEOCODE_URL, NOMINATIM_URL } from './adapters/geocode-fallbacks.js';

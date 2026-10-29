@@ -1,0 +1,13 @@
+{
+ "address": "6000 Godwin Blvd, Suffolk, VA 23434",
+ "recorded": {
+  "GET https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates?f=json&singleLine=6000%20Godwin%20Blvd%2C%20Suffolk%2C%20VA%2023434&maxLocations=1&countryCode=USA&outFields=Region%2CRegionAbbr%2CSubregion%2CCity%2CPostal%2CAddr_type": {
+   "status": 200,
+   "body": "{\"spatialReference\":{\"wkid\":4326,\"latestWkid\":4326},\"candidates\":[{\"address\":\"6000 Godwin Blvd, Suffolk, Virginia, 23432\",\"location\":{\"x\":-76.580259554378,\"y\":36.861387883153},\"score\":99.51,\"attributes\":{\"Addr_type\":\"StreetAddress\",\"City\":\"Suffolk\",\"Subregion\":\"City of Suffolk\",\"Region\":\"Virginia\",\"RegionAbbr\":\"VA\",\"Postal\":\"23432\"},\"extent\":{\"xmin\":-76.581259554378,\"ymin\":36.860387883153,\"xmax\":-76.579259554378,\"ymax\":36.862387883153}}]}"
+  },
+  "GET https://nominatim.openstreetmap.org/search?q=6000%20Godwin%20Blvd%2C%20Suffolk%2C%20VA%2023434&format=jsonv2&addressdetails=1&countrycodes=us&limit=1": {
+   "status": 200,
+   "body": "[{\"place_id\":395287621,\"licence\":\"Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright\",\"osm_type\":\"way\",\"osm_id\":1105745551,\"lat\":\"36.8619840\",\"lon\":\"-76.5804590\",\"category\":\"place\",\"type\":\"house\",\"place_rank\":30,\"importance\":9.99999999995449e-06,\"addresstype\":\"place\",\"name\":\"\",\"display_name\":\"6000, Godwin Boulevard, Chuckatuck, Suffolk, Virginia, 23432, United States\",\"address\":{\"house_number\":\"6000\",\"road\":\"Godwin Boulevard\",\"suburb\":\"Chuckatuck\",\"city\":\"Suffolk\",\"state\":\"Virginia\",\"ISO3166-2-lvl4\":\"US-VA\",\"postcode\":\"23432\",\"country\":\"United States\",\"country_code\":\"us\"},\"boundingbox\":[\"36.8619340\",\"36.8620340\",\"-76.5805090\",\"-76.5804090\"]}]"
+  }
+ }
+}
