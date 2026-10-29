@@ -23,5 +23,6 @@ export const GENERIC_US: MarketConfig = {
   hazardScreen: () => ({ result: 'unknown_manual_review', label: 'No hazard screen configured', maxOfferHaircutPct: 0.03, buildCostBumpPct: 0.02, manualReviewRequired: true, note: 'Generic market: 3% offer haircut applied until a local hazard screen is configured.' }),
   permitMonths: { ministerial_expedited: 2, ministerial: 3, administrative_review: 5, discretionary: 9, rezoning: 15 },
   approvalBaseRate: 75,
+  modelSitework: true,
   calibrationNote: 'Uncalibrated national defaults. Add a market config before using for pricing.',
 };

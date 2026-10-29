@@ -116,7 +116,7 @@ export const HAMPTON_ROADS_VA: MarketConfig = {
   },
   defaultArvPerSf: 265,
   assumptions: {
-    hardCostPerSf: 135,
+    hardCostPerSf: 125,
     aduHardCostPerSf: 175,
     softCostPct: 0.10,
     contingencyPct: 0.05,
@@ -141,5 +141,6 @@ export const HAMPTON_ROADS_VA: MarketConfig = {
   hazardScreen,
   permitMonths: { ministerial_expedited: 1, ministerial: 2, administrative_review: 5, discretionary: 8, rezoning: 15 },
   approvalBaseRate: 85,
-  calibrationNote: 'Semi-custom build-on-your-lot basis: $135/sf living hard cost (+10% gross area), soft 10%, contingency 5%, site prep $28k/lot, taps $9.5k/unit, 18% target ROI on total investment, 9% construction debt at 75% LTC, $265/sf default ARV. These are placeholders: calibrate against Canterbury lot deliveries and local builder bids before quoting a landowner.',
+  modelSitework: true,
+  calibrationNote: 'Semi-custom build-on-your-lot basis: $125/sf living hard cost (+10% gross area), soft 10%, contingency 5%, site prep $28k/lot, taps $9.5k/unit, 18% target ROI on total investment, 9% construction debt at 75% LTC, $265/sf default ARV. These are placeholders: calibrate against Canterbury lot deliveries and local builder bids before quoting a landowner.',
 };

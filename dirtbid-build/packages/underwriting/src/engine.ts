@@ -5,6 +5,7 @@ import type {
 import { getMarket } from './markets/index.js';
 import { clamp, fin, medianPricePerSf, proForma, round0, scenarioViable, worsePermitTier } from './math.js';
 import { score } from './scoring.js';
+import { estimateSitework, DIRTBID_REGIONS, type SiteworkEstimate } from './sitework.js';
 
 export const ENGINE_VERSION = '1.0.0';
 
@@ -143,9 +144,44 @@ export function underwrite(input: UnderwritingInput, now: Date = new Date()): Un
   const market = getMarket(input.marketCode);
   if (!market) throw new UnderwritingError(`Unknown market: ${input.marketCode}`, 'marketCode');
 
-  const assumptions = { ...market.assumptions, ...(input.assumptions ?? {}) };
   const rule = findZoningRule(market, input.zoningCode);
   const site = input.site ?? {};
+
+  // Sitework: model it from parcel facts unless the caller supplied a site-prep number
+  // (their own bid, or a DirtBid Land Screening total passed through).
+  let sitework: SiteworkEstimate | null = null;
+  const merged = { ...market.assumptions, ...(input.assumptions ?? {}) };
+  const sw = input.sitework ?? {};
+  const lotsForSitework = input.projectType === 'subdivision' && rule ? Math.max(1, Math.floor(Math.floor(input.lotSizeSf / rule.minLotSf) * 0.75)) : 1;
+  if (sw.dirtbidLandScreeningTotal && sw.dirtbidLandScreeningTotal > 0) {
+    merged.sitePrepPerLot = Math.round(sw.dirtbidLandScreeningTotal / lotsForSitework);
+    merged.utilityConnectionFeesPerUnit = 0; // a Land Screening carries taps and laterals
+    sitework = { ...estimateSitework({ lotSizeSf: input.lotSizeSf, lots: lotsForSitework, regionMultiplier: sw.regionMultiplier ?? (market.state === 'VA' ? DIRTBID_REGIONS.VA_HR!.multiplier : 1) }), source: 'dirtbid_land_screening', total: sw.dirtbidLandScreeningTotal, perLot: merged.sitePrepPerLot, lines: [], byDivision: [], waterfall: [{ label: 'DirtBid Land Screening total', amount: sw.dirtbidLandScreeningTotal }], directCost: sw.dirtbidLandScreeningTotal };
+  } else if (market.modelSitework && input.assumptions?.sitePrepPerLot === undefined) {
+    sitework = estimateSitework({
+      lotSizeSf: input.lotSizeSf,
+      lots: lotsForSitework,
+      treeCoverPct: sw.treeCoverPct,
+      slopePct: site.slopePct,
+      soils: site.soils,
+      hydric: sw.hydric,
+      wetlandsAcres: site.wetlandsAcres,
+      floodZone: site.floodZone,
+      existingStructureSf: input.existingStructureSf,
+      demolitionRequired: input.projectType === 'demo_rebuild' || (input.projectType === 'subdivision' && (input.existingStructureSf ?? 0) > 0),
+      waterMainDistanceFt: sw.waterMainDistanceFt ?? (site.utilities?.water === 'no' ? 600 : undefined),
+      sewerMainDistanceFt: sw.sewerMainDistanceFt ?? (site.utilities?.sewer === 'no' ? 600 : undefined),
+      powerDistanceFt: sw.powerDistanceFt ?? (site.utilities?.power === 'no' ? 600 : undefined),
+      stormwaterRequired: sw.stormwaterRequired,
+      stateRouteFrontage: site.stateRouteFrontage === 'yes',
+      newStreetLf: sw.newStreetLf ?? (input.projectType === 'subdivision' ? Math.round(lotsForSitework * 55) : undefined),
+      regionMultiplier: sw.regionMultiplier ?? (market.state === 'VA' ? DIRTBID_REGIONS.VA_HR!.multiplier : 1),
+    });
+    // The model carries taps, laterals and stormwater, so zero the flat per-unit fee to avoid double counting.
+    merged.sitePrepPerLot = sitework.perLot;
+    merged.utilityConnectionFeesPerUnit = 0;
+  }
+  const assumptions = merged;
   const utilities = utilitiesFrom(input);
   const existingSf = fin(input.existingStructureSf);
   const ctx: OverlayContext = { input, rule, site, utilities, lotSizeSf: input.lotSizeSf, existingSf };
@@ -246,6 +282,7 @@ export function underwrite(input: UnderwritingInput, now: Date = new Date()): Un
     generatedAt: now.toISOString(),
     input,
     assumptions,
+    sitework,
     market: { code: market.code, name: market.name, state: market.state, jurisdiction: market.jurisdiction, zipBand: zipBand ? { zip: zipBand.zip, area: zipBand.area, label: zipBand.label } : null },
     zoning: { recognized: !!rule, rule, baseUnits: units.base, maxUnitsEstimate: Math.max(units.max, ...scenarios.filter((s) => s.viable && s.confidence !== 'low').map((s) => s.units), 0), maxUnitsLabel: units.label },
     overlays,

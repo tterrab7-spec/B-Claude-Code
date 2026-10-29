@@ -161,5 +161,6 @@ export const ALTADENA_CA: MarketConfig = {
   hazardScreen,
   permitMonths: { ministerial_expedited: 2, ministerial: 3, administrative_review: 5, discretionary: 10, rezoning: 18 },
   approvalBaseRate: 88,
+  modelSitework: false,
   calibrationNote: 'Cost constants match the public Altadena offer model ($350/sf hard, $200/sf ADU, 10% soft, 40% ROI, 5%+3% sale costs, $35k demo). Financing and contingency are zeroed to reproduce it; turn them on for a real pro forma.',
 };

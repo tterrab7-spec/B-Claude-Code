@@ -27,8 +27,9 @@ describe('Hampton Roads market', () => {
     expect(s.primaryLivingSf).toBe(2200);
     expect(s.costs.financing).toBeGreaterThan(0);
     expect(s.costs.contingency).toBeGreaterThan(0);
-    expect(s.costs.fees).toBe(9500);
-    expect(s.costs.sitePrep).toBe(28000);
+    expect(s.costs.fees).toBe(0); // taps and laterals are carried inside the modeled sitework
+    expect(s.costs.sitePrep).toBe(r.sitework!.perLot);
+    expect(r.sitework!.byDivision.map((d) => d.division)).toContain('33');
     expect(r.hazards.maxOfferHaircutPct).toBe(0);
     expect(r.scores.approvalProbability).toBeGreaterThanOrEqual(70);
     expect(r.scores.riskLevel).toBe('low');

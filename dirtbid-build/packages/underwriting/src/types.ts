@@ -129,6 +129,20 @@ export interface UnderwritingInput {
   targetHomeSf?: number;
   site?: SiteFlags;
   assumptions?: Partial<CostAssumptions>;
+  /** Parcel facts that drive the sitework estimate (tree cover, utility distances, street length). */
+  sitework?: {
+    treeCoverPct?: number;
+    waterMainDistanceFt?: number;
+    sewerMainDistanceFt?: number;
+    powerDistanceFt?: number;
+    newStreetLf?: number;
+    stormwaterRequired?: boolean;
+    hydric?: boolean;
+    /** DirtBid regional multiplier override (Richmond Metro = 1.00) */
+    regionMultiplier?: number;
+    /** A DirtBid Land Screening total for this parcel; when present it replaces the model */
+    dirtbidLandScreeningTotal?: number;
+  };
 }
 
 export interface ZoningRule {
@@ -261,6 +275,8 @@ export interface UnderwritingResult {
   input: UnderwritingInput;
   /** Market defaults merged with any per-run overrides: the numbers the pro forma actually used */
   assumptions: CostAssumptions;
+  /** CSI-coded sitework estimate that produced assumptions.sitePrepPerLot (null when the caller overrode site prep directly) */
+  sitework: import('./sitework.js').SiteworkEstimate | null;
   market: { code: string; name: string; state: string; jurisdiction: string; zipBand: { zip: string; area: string; label: string } | null };
   zoning: {
     recognized: boolean;
@@ -307,6 +323,7 @@ export interface MarketConfig {
   permitMonths: Record<PermitTier, number>;
   /** Base approval probability for a clean as-of-right project */
   approvalBaseRate: number;
-  /** Extra scenario builders specific to the market (optional) */
+  /** Run the CSI sitework model to derive site prep when the caller does not supply it */
+  modelSitework: boolean;
   calibrationNote: string;
 }

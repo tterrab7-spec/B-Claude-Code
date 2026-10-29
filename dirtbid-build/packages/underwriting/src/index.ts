@@ -5,3 +5,5 @@ export { score } from './scoring.js';
 export { getMarket, listMarkets, registerMarket, ALTADENA_CA, HAMPTON_ROADS_VA, GENERIC_US } from './markets/index.js';
 export { buildReport } from './report.js';
 export type { FeasibilityReport, ReportSection } from './report.js';
+export { estimateSitework, DIRTBID_REGIONS } from './sitework.js';
+export type { SiteworkInput, SiteworkEstimate, SiteworkLine } from './sitework.js';
