@@ -127,13 +127,28 @@ ul.signals small{display:block;color:var(--muted);font-size:12.5px}
 .toast.show{opacity:1}
 .banner{display:none;padding:10px 12px;border-radius:8px;background:var(--warn-bg);color:var(--ink);font-size:13.5px}
 .banner.show{display:block}
+.drop{margin-top:12px;border:1.5px dashed var(--line);border-radius:8px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13.5px;color:var(--muted);transition:border-color .15s,background .15s}
+.drop.over{border-color:var(--accent);background:var(--surface-2)}
+.drop strong{color:var(--ink);font-weight:600}
+.drop input{display:none}
+.files{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:10px}
+.file{display:grid;grid-template-columns:auto 1fr;gap:12px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;min-width:0;align-items:start}
+.file .thumb{width:72px;height:72px;border-radius:6px;object-fit:cover;background:var(--surface-2);display:grid;place-items:center;font-family:var(--mono);font-size:11px;color:var(--muted);overflow:hidden}
+.file .thumb img{width:100%;height:100%;object-fit:cover}
+.file .name{font-weight:600;font-size:13.5px;word-break:break-word}
+.file .sub{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:2px}
+.file ul{margin:6px 0 0;padding-left:16px;font-size:13px}
+.file ul li{margin:2px 0}
+.file .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.file .acts .btn{padding:6px 10px;min-height:30px;font-size:13px}
+.file.good{border-left:4px solid var(--good)} .file.warn{border-left:4px solid var(--warn)} .file.crit{border-left:4px solid var(--crit)}
 </style>
 
 <div class="wrap">
 <header class="top">
   <div class="brand">
     <div class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg></div>
-    <div><h1>HumanCheck</h1><small>Scan for hidden marks, rewrite in your voice, verify before you send.</small></div>
+    <div><h1>HumanCheck</h1><small>Text, documents and images. Scan for hidden marks, rewrite in your voice, verify before you send.</small></div>
   </div>
   <div class="status" id="status"><span class="dot"></span><span id="statusText">connecting…</span></div>
 </header>
@@ -159,6 +174,7 @@ ul.signals small{display:block;color:var(--muted);font-size:12.5px}
         <button class="btn" id="btnCopy">Copy</button>
         <button class="link" id="btnRestore" hidden>Restore original</button>
       </div>
+      <label class="drop" id="drop"><span><strong>Drop a file</strong> or <u>browse</u>. Word, PowerPoint, PDF and text get pulled into the draft. Photos and graphics get a provenance check.</span><span class="pill">.docx .pptx .pdf .txt .md .jpg .png .webp</span><input type="file" id="fileIn" multiple accept=".docx,.pptx,.pdf,.txt,.md,.jpg,.jpeg,.png,.webp,.gif,image/*"></label>
       <div class="banner" id="banner"></div>
       <details class="opts" id="opts">
         <summary>Voice &amp; rewrite settings</summary>
@@ -191,6 +207,11 @@ ul.signals small{display:block;color:var(--muted);font-size:12.5px}
         </div>
         <p class="hint">Facts, names, numbers and commitments are kept verbatim. Nothing new gets invented.</p>
       </details>
+    </div>
+    <div class="card" id="filesCard" hidden>
+      <h2>Files <span class="count" id="filesCount"></span></h2>
+      <ul class="files" id="files"></ul>
+      <p class="hint">Documents: the text is extracted here in your browser and nothing is uploaded until you press Humanize or Deep check. Images: the file's embedded metadata is read for Content Credentials, AI-generator tags and camera data. Invisible pixel watermarks such as Google's SynthID cannot be read from the file.</p>
     </div>
   </section>
 
@@ -237,6 +258,9 @@ ul.signals small{display:block;color:var(--muted);font-size:12.5px}
 </div>
 <div class="toast" id="toast" role="status"></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"></script>
 <script>
 /* ---------- Character-level scan ---------- */
 const INVISIBLE = {
@@ -576,9 +600,145 @@ $('btnHumanize').onclick = runHumanize;
 $('btnClean').onclick = ()=>{ if (original==null) original = draft.value; const before=draft.value; draft.value = cleanText(before,true); $('btnRestore').hidden=false; $('draftLabel').textContent='cleaned'; runScan(); setStep(2,'done'); toast(before===draft.value?'Nothing to clean':'Hidden marks removed'); };
 $('btnRestore').onclick = ()=>{ if (original!=null){ draft.value=original; original=null; $('btnRestore').hidden=true; $('draftLabel').textContent='your draft'; runScan(); } };
 $('btnCopy').onclick = async ()=>{ try { await navigator.clipboard.writeText(draft.value); toast('Copied'); } catch(e){ draft.select(); toast('Select and copy manually'); } };
-draft.addEventListener('input', ()=>{ updateCounts(); $('draftLabel').textContent = original!=null ? 'edited' : 'your draft'; });
+draft.addEventListener('input', ()=>{ draftIsExample=false; updateCounts(); $('draftLabel').textContent = original!=null ? 'edited' : 'your draft'; });
 try { const v = localStorage.getItem('hc.voice'); if (v) $('voice').value = v; } catch(e){}
 $('voice').addEventListener('input', ()=>{ try { localStorage.setItem('hc.voice', $('voice').value); } catch(e){} });
+
+/* ---------- File intake: documents to text, images to provenance ---------- */
+let draftIsExample = true;
+const fileList = $('files'), filesCard = $('filesCard'), drop = $('drop');
+const fmtSize = b => b>1e6? (b/1e6).toFixed(1)+' MB' : Math.round(b/1e3)+' KB';
+const unxml = x => x.replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&apos;/g,"'").replace(/&#x([0-9a-f]+);/gi,(m,h)=>String.fromCodePoint(parseInt(h,16))).replace(/&#(\d+);/g,(m,d)=>String.fromCodePoint(+d)).replace(/&amp;/g,'&');
+function xmlParas(xml, pTag, tTag, extra){
+  const out=[]; const pre = new RegExp('<'+pTag+'(?:\\s[^>]*)?>([\\s\\S]*?)</'+pTag+'>','g'); let m;
+  while((m=pre.exec(xml))){ let body=m[1]; if (extra) body=extra(body);
+    const tre = new RegExp('<'+tTag+'(?:\\s[^>]*)?>([\\s\\S]*?)</'+tTag+'>|<w:tab/>|<w:br/>|<a:br/>','g'); let t, line='';
+    while((t=tre.exec(body))){ if (t[0]==='<w:tab/>') line+='\t'; else if (t[0]==='<w:br/>'||t[0]==='<a:br/>') line+='\n'; else line+=unxml(t[1]); }
+    out.push(line); }
+  return out;
+}
+async function extractDocx(file){
+  const zip = await JSZip.loadAsync(file); const doc = await zip.file('word/document.xml')?.async('string');
+  if (!doc) throw new Error('Not a Word document (no word/document.xml).');
+  const paras = xmlParas(doc,'w:p','w:t');
+  const props = await readProps(zip);
+  return {text: paras.join('\n').replace(/\n{3,}/g,'\n\n').trim(), parts: paras.filter(p=>p.trim()).length+' paragraphs', props};
+}
+async function extractPptx(file){
+  const zip = await JSZip.loadAsync(file);
+  const slides = Object.keys(zip.files).filter(n=>/^ppt\/slides\/slide\d+\.xml$/.test(n)).sort((a,b)=>+a.match(/\d+/)[0]-+b.match(/\d+/)[0]);
+  if (!slides.length) throw new Error('Not a PowerPoint deck (no slides found).');
+  const chunks=[];
+  for (const n of slides){ const i=n.match(/\d+/)[0]; const xml=await zip.file(n).async('string');
+    const paras = xmlParas(xml,'a:p','a:t').filter(p=>p.trim()); chunks.push(`[Slide ${i}]\n${paras.join('\n')}`);
+    const notes = zip.file(`ppt/notesSlides/notesSlide${i}.xml`); if (notes){ const nx=await notes.async('string'); const np=xmlParas(nx,'a:p','a:t').filter(p=>p.trim()&&!/^\d+$/.test(p.trim())); if (np.length) chunks.push(`[Slide ${i} notes]\n${np.join('\n')}`); } }
+  const props = await readProps(zip);
+  return {text: chunks.join('\n\n'), parts: slides.length+' slides', props};
+}
+async function readProps(zip){
+  const out=[]; const core = await zip.file('docProps/core.xml')?.async('string'); const app = await zip.file('docProps/app.xml')?.async('string');
+  const grab=(x,tag)=>{ const m = x && x.match(new RegExp('<'+tag+'[^>]*>([^<]*)</'+tag+'>')); return m? unxml(m[1]).trim() : ''; };
+  const creator=grab(core,'dc:creator'), mod=grab(core,'cp:lastModifiedBy'), appName=grab(app,'Application'), created=grab(core,'dcterms:created');
+  if (creator) out.push('Author: '+creator); if (mod && mod!==creator) out.push('Last modified by: '+mod); if (appName) out.push('Application: '+appName); if (created) out.push('Created: '+created.slice(0,10));
+  const all=(core||'')+(app||''); const ai = all.match(/python-docx|python-pptx|docx4j|ChatGPT|OpenAI|Claude|Anthropic|Gemini|Copilot|Gamma|Canva|Beautiful\.ai|Tome|Pitch\.com|Aspose/i);
+  return {lines:out, flag: ai? 'Generator fingerprint in document properties: '+ai[0] : ''};
+}
+async function extractPdf(file){
+  const lib = window.pdfjsLib; if (!lib) throw new Error('PDF reader did not load.');
+  lib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  const pdf = await lib.getDocument({data: new Uint8Array(await file.arrayBuffer())}).promise; const chunks=[];
+  for (let p=1;p<=pdf.numPages;p++){ const page=await pdf.getPage(p); const tc=await page.getTextContent(); let t=''; for (const it of tc.items){ t += it.str + (it.hasEOL?'\n':' '); } chunks.push(`[Page ${p}]\n${t.replace(/[ \t]+\n/g,'\n').trim()}`); }
+  let props={lines:[],flag:''}; try { const md=await pdf.getMetadata(); const i=md.info||{}; if (i.Author) props.lines.push('Author: '+i.Author); if (i.Creator) props.lines.push('Creator: '+i.Creator); if (i.Producer) props.lines.push('Producer: '+i.Producer); const ai=(i.Creator+' '+i.Producer).match(/ChatGPT|OpenAI|Claude|Anthropic|Gemini|Copilot|Gamma|Canva|reportlab/i); if (ai) props.flag='Generator fingerprint in PDF metadata: '+ai[0]; } catch(e){}
+  return {text: chunks.join('\n\n'), parts: pdf.numPages+' pages', props};
+}
+
+const IMG_MARKS = [
+  {re:/trainedAlgorithmicMedia/i, label:'Declares itself AI-generated (IPTC digitalSourceType = trainedAlgorithmicMedia)', sev:'crit'},
+  {re:/DALL[-·]?E|gpt-image|OpenAI|ChatGPT/i, label:'OpenAI / ChatGPT generator tag', sev:'crit'},
+  {re:/Midjourney/i, label:'Midjourney tag', sev:'crit'},
+  {re:/Stable ?Diffusion|sd-webui|AUTOMATIC1111|ComfyUI|NovelAI|InvokeAI|"prompt"\s*:|Negative prompt:/i, label:'Stable Diffusion toolchain tag (prompt data embedded)', sev:'crit'},
+  {re:/Adobe Firefly|Firefly Image/i, label:'Adobe Firefly tag', sev:'crit'},
+  {re:/Imagen|SynthID|Gemini/i, label:'Google Imagen / Gemini tag', sev:'crit'},
+  {re:/Ideogram|Leonardo\.?Ai|Flux[. ]?1|Black Forest Labs|Grok|xAI|Recraft|Playground ?AI|Krea|Runway|Bing Image Creator|Microsoft Designer|Canva|Gamma\.app|Freepik Pikaso|Meta AI|Emu/i, label:'AI image tool tag', sev:'crit'},
+  {re:/AI[- ]generated|Generated by AI|Made with AI|Generated with/i, label:'"AI generated" label in metadata', sev:'crit'},
+  {re:/c2pa|jumb|contentauth/i, label:'Content Credentials (C2PA) manifest embedded. Open on contentcredentials.org/verify to read who signed it.', sev:'warn'},
+  {re:/Photoshop|Lightroom|GIMP|Affinity|Pixelmator|Capture One/i, label:'Edited in a photo editor', sev:'warn'},
+];
+const CAMERA = /Canon|NIKON|SONY|FUJIFILM|OLYMPUS|Panasonic|Leica|DJI|GoPro|HUAWEI|OnePlus|Xiaomi|motorola|samsung|Google Pixel|iPhone|HASSELBLAD|RICOH|PENTAX/;
+async function inspectImage(file){
+  const buf = new Uint8Array(await file.arrayBuffer()); const ascii = new TextDecoder('latin1').decode(buf);
+  const findings=[]; let sev='';
+  const bump = s => { const order={good:1,warn:2,crit:3}; if ((order[s]||0) > (order[sev]||0)) sev=s; };
+  const seen=new Set();
+  for (const m of IMG_MARKS){ const hit = ascii.match(m.re); if (hit && !seen.has(m.label)){ seen.add(m.label); findings.push({label:m.label+(hit[0].length<40?' ("'+hit[0]+'")':''), sev:m.sev}); bump(m.sev); } }
+  const hasExif = /Exif\0\0/.test(ascii), cam = hasExif && ascii.slice(0,65536).match(CAMERA);
+  if (cam){ findings.push({label:'Camera metadata present ('+cam[0]+'). Consistent with a real photo, though metadata can be copied.', sev:'good'}); bump('good'); }
+  else if (hasExif) findings.push({label:'EXIF block present without a camera make/model.', sev:''});
+  const ct = ascii.match(/xmp:CreatorTool="([^"]{1,80})"|<xmp:CreatorTool>([^<]{1,80})</i); if (ct) findings.push({label:'Creator tool: '+(ct[1]||ct[2]), sev:''});
+  const sw = ascii.match(/Software\0([ -~]{2,60})/); if (sw) findings.push({label:'Software: '+sw[1].trim(), sev:''});
+  if (buf[0]===0x89 && ascii.startsWith('\x89PNG')){ const keys=[]; let off=8; while (off+8<=buf.length){ const len=(buf[off]<<24|buf[off+1]<<16|buf[off+2]<<8|buf[off+3])>>>0; const type=ascii.slice(off+4,off+8); if (type==='tEXt'||type==='iTXt'||type==='zTXt'){ const k=ascii.slice(off+8, off+8+Math.min(len,79)).split('\0')[0]; keys.push(k+(type==='zTXt'?' (compressed)':'')); } if (type==='caBX') keys.push('caBX (C2PA box)'); if (type==='IEND') break; off += 12+len; }
+    if (keys.length) findings.push({label:'PNG text chunks: '+keys.join(', '), sev:''}); }
+  if (!findings.length) findings.push({label:'No metadata at all. Stripped files look like this, and so do screenshots. Nothing in the file says where it came from.', sev:''});
+  if (!sev) sev = findings.some(f=>f.sev==='')? '' : '';
+  return {findings, sev, size:buf.length};
+}
+async function stripImage(file){
+  const img = await createImageBitmap(file); const c=document.createElement('canvas'); c.width=img.width; c.height=img.height; c.getContext('2d').drawImage(img,0,0);
+  const type = file.type==='image/jpeg'? 'image/jpeg' : 'image/png';
+  const blob = await new Promise(r=>c.toBlob(r,type,0.92)); img.close?.();
+  return {blob, name: file.name.replace(/\.[^.]+$/,'')+'-clean.'+(type==='image/jpeg'?'jpg':'png')};
+}
+async function saveBlob(blob, name){
+  try { if (window.claude?.use){ const d = await window.claude.use('downloads'); if (d){ await d.save({filename:name, data:blob}); return 'saved'; } } } catch(e){ if (e && e.code==='cancelled') return 'cancelled'; throw e; }
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); a.remove(); return 'saved';
+}
+
+function fileRow(file){
+  const li=document.createElement('li'); li.className='file';
+  li.innerHTML=`<div class="thumb">${file.name.split('.').pop().toUpperCase().slice(0,5)}</div><div class="body"><div class="name">${esc(file.name)}</div><div class="sub">${fmtSize(file.size)} · reading…</div><ul></ul><div class="acts"></div></div>`;
+  fileList.prepend(li); filesCard.hidden=false; $('filesCount').textContent=fileList.children.length+' file'+(fileList.children.length>1?'s':'');
+  return li;
+}
+async function handleFiles(files){
+  for (const file of files){
+    const li = fileRow(file), sub=li.querySelector('.sub'), ul=li.querySelector('ul'), acts=li.querySelector('.acts');
+    try {
+      const ext = file.name.toLowerCase().split('.').pop();
+      if (file.type.startsWith('image/')){
+        const url=URL.createObjectURL(file); li.querySelector('.thumb').innerHTML=`<img src="${url}" alt="">`;
+        const r = await inspectImage(file); li.classList.add(r.sev||'none');
+        sub.textContent = fmtSize(file.size)+' · '+(r.sev==='crit'?'AI-generation marker found':r.sev==='warn'?'provenance data present':r.sev==='good'?'camera photo metadata':'no provenance data');
+        ul.innerHTML = r.findings.map(f=>`<li>${f.sev?`<span class="pill ${f.sev}" style="margin-right:6px">${f.sev==='crit'?'AI':f.sev==='warn'?'note':'photo'}</span>`:''}${esc(f.label)}</li>`).join('');
+        const b1=document.createElement('button'); b1.className='btn'; b1.textContent='Strip metadata & save'; b1.onclick=async()=>{ busy(b1,true,'Saving…'); try { const {blob,name}=await stripImage(file); const res=await saveBlob(blob,name); toast(res==='saved'?'Clean copy saved':'Save cancelled'); } catch(e){ showError(e); } busy(b1,false); }; acts.appendChild(b1);
+        if (backend.kind==='sample'){ let canImg=false; try { canImg = !!(await backend.sample.limits()).images; } catch(e){}
+          if (canImg){ const b2=document.createElement('button'); b2.className='btn'; b2.textContent='Ask Claude'; b2.onclick=async()=>{ busy(b2,true,'Looking…'); try {
+            const j = await backend.sample.json('Look at this image as a forensic picture editor. Estimate how likely it is to be AI-generated or AI-edited, from visual evidence only (hands, text, textures, lighting, repeating patterns, impossible geometry, over-smooth skin, telltale rendering). Be calibrated: good photography and heavy retouching are not AI. Reply with only a JSON object: {"ai_probability": <0-100 integer>, "verdict": "<one plain sentence>", "signals": ["<short>", ...up to 5]}', {images:[file], modelTier:'default'});
+            const li2=document.createElement('li'); li2.innerHTML=`<span class="pill ${band(j.ai_probability)}" style="margin-right:6px">Claude ${esc(String(j.ai_probability))}</span>${esc(j.verdict||'')}${(j.signals||[]).length?' <small>('+esc(j.signals.join('; '))+')</small>':''}`; ul.appendChild(li2);
+          } catch(e){ showError(e); } busy(b2,false); }; acts.appendChild(b2); } }
+      } else {
+        let r;
+        if (ext==='docx') r = await extractDocx(file); else if (ext==='pptx') r = await extractPptx(file); else if (ext==='pdf') r = await extractPdf(file);
+        else if (['txt','md','rtf','csv','html','htm'].includes(ext) || file.type.startsWith('text/')) r = {text: await file.text(), parts:'plain text', props:{lines:[],flag:''}};
+        else throw new Error('Unsupported file type. Use .docx, .pptx, .pdf, .txt or an image. Legacy .doc and .ppt need to be re-saved first.');
+        const w = words(r.text).length; sub.textContent = `${fmtSize(file.size)} · ${r.parts} · ${w} words`;
+        const chars = scanChars(r.text);
+        const lines = [...(r.props.lines||[])]; if (r.props.flag) lines.unshift(r.props.flag);
+        lines.push(chars.hiddenTotal? `${chars.hiddenTotal} hidden character${chars.hiddenTotal>1?'s':''} in the text` : 'No hidden characters in the text');
+        ul.innerHTML = lines.map((l,i)=>`<li>${(i===0&&r.props.flag)||/hidden character/.test(l)&&chars.hiddenTotal?'<span class="pill crit" style="margin-right:6px">flag</span>':''}${esc(l)}</li>`).join('');
+        li.classList.add(chars.hiddenTotal||r.props.flag?'crit':'good');
+        const b=document.createElement('button'); b.className='btn primary'; b.textContent='Load into draft';
+        const load=()=>{ draft.value=r.text; original=null; draftIsExample=false; $('btnRestore').hidden=true; $('draftLabel').textContent=file.name; runScan(); window.scrollTo({top:0,behavior:'smooth'}); toast('Loaded '+file.name); };
+        b.onclick=load; acts.appendChild(b);
+        if (draftIsExample || !draft.value.trim()) load();
+      }
+    } catch(e){ li.classList.add('crit'); sub.textContent = fmtSize(file.size)+' · could not read'; ul.innerHTML=`<li>${esc(e.message||String(e))}</li>`; }
+  }
+}
+$('fileIn').addEventListener('change', e=>{ handleFiles([...e.target.files]); e.target.value=''; });
+['dragenter','dragover'].forEach(ev=>drop.addEventListener(ev,e=>{ e.preventDefault(); drop.classList.add('over'); }));
+['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{ e.preventDefault(); drop.classList.remove('over'); }));
+drop.addEventListener('drop', e=>{ if (e.dataTransfer?.files?.length) handleFiles([...e.dataTransfer.files]); });
+document.addEventListener('paste', e=>{ const fs=[...(e.clipboardData?.files||[])]; if (fs.length && document.activeElement!==draft){ e.preventDefault(); handleFiles(fs); } });
 
 /* Example draft: machine-sounding, with hidden characters planted so the scan has something to show. */
 const EXAMPLE = "Hi Mark,\n\nI hope this email finds you well. I wanted to reach out regarding the Phase 2 lot delivery schedule at Birchwood. In today\u2019s fast-paced development landscape, it is crucial that we leverage every opportunity to streamline our timelines and foster a seamless handoff\u200B to your construction team.\n\nAdditionally, our civil engineer has confirmed that the VDOT entrance permit is on track, and the remaining 42 lots will be ready for bond release by March 15. Furthermore, we are committed to delivering a robust, comprehensive package that not only meets but exceeds your expectations \u2014 ensuring a smooth transition at every stage.\n\nUltimately, this partnership stands as a testament to what we can achieve together. Please don\u2019t hesitate to reach out\u00A0with any questions.\n\nBest regards,\nTerrence";

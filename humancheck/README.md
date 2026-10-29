@@ -7,7 +7,9 @@ Pre-send screen for anything you wrote with AI help. Four steps on one page:
 3. **Humanize.** Claude rewrites the draft in your tone, optionally matching a sample of your own writing. Facts, names, numbers and commitments are kept verbatim.
 4. **Verify.** Re-scans the rewrite and asks Claude for a second, calibrated opinion with the sentences it would flag. The verdict blends both.
 
-Scanning and cleaning run entirely in the browser. Only Humanize and Deep check call Claude.
+**Files.** Drop in Word (.docx), PowerPoint (.pptx), PDF or text and the text is extracted in the browser, scanned for hidden characters, and loaded into the draft with slide and page markers. Document properties are read for generator fingerprints (python-docx, Gamma, Canva and similar). Drop in an image and its embedded metadata is read for Content Credentials (C2PA), AI-generator tags (OpenAI, Midjourney, Stable Diffusion, Firefly, Imagen and others), prompt data, editing software and camera EXIF. "Strip metadata and save" re-encodes the pixels into a clean file. Invisible pixel watermarks such as SynthID cannot be read from a file and are not detected.
+
+Scanning, cleaning and file extraction run entirely in the browser. Only Humanize, Deep check and Ask Claude (images) call Claude.
 
 ## Run it
 
