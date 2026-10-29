@@ -88,7 +88,9 @@ function buildSpecs(input: UnderwritingInput, market: MarketConfig, rule: Zoning
 
   if (input.projectType === 'demo_rebuild' || input.projectType === 'vacant_land') {
     const demo = input.projectType === 'demo_rebuild';
-    const sf = input.projectType === 'demo_rebuild' ? Math.max(expansion, target) : target;
+    // Size the replacement home to the market, not to a commercial or multifamily building that happens to be on the lot.
+    const residentialScale = existing > 0 && existing <= 6000;
+    const sf = demo && residentialScale ? Math.max(expansion, target) : target;
     specs.push({ key: 'single_home', name: demo ? 'Demolish + New Single-Family' : 'New Single-Family Home', tag: 'BASE CASE', description: `${sf.toLocaleString()} sf new home sized to the ${rule?.label ?? 'district'} and neighborhood comps.`, units: 1, primaryLivingSf: sf, aduSf: 0, demolitionRequired: demo, lots: 1, permitTier: 'ministerial', baseConfidence: 'high', assumptions: [`${sf.toLocaleString()} sf finished`, demo ? `Demolition $${a.demoCost.toLocaleString()}` : 'Vacant lot, site prep included'] });
     if (aduOk) specs.push({ key: 'home_plus_adu', name: 'New Home + ADU', tag: 'VALUE ADD', description: 'Primary home plus a detached ADU for rental income or multigenerational use.', units: 2, primaryLivingSf: sf, aduSf: Math.min(a.maxAduSf, 800), demolitionRequired: demo, lots: 1, permitTier: 'ministerial', baseConfidence: 'moderate', assumptions: [`${Math.min(a.maxAduSf, 800)} sf ADU`] });
     if (isDuplex && rule && rule.minLotAreaPerUnitSf && lot >= 2 * rule.minLotAreaPerUnitSf) specs.push({ key: 'duplex', name: 'Duplex', tag: 'DENSITY', description: 'Two principal units on one lot under the base district.', units: 2, primaryLivingSf: Math.round(Math.min(lot * a.maxDensityFar, 2 * target * 0.8)), aduSf: 0, demolitionRequired: demo, lots: 1, permitTier: 'ministerial', baseConfidence: 'moderate', assumptions: ['2 units', 'Parking and layout to verify'] });
@@ -253,9 +255,15 @@ export function underwrite(input: UnderwritingInput, now: Date = new Date()): Un
     };
   });
 
-  // Recommendation: prefer viable, high-confidence, as-of-right paths; break ties on profit.
-  const rank = (s: Scenario) => (s.viable ? 0 : 100) + (s.confidence === 'high' ? 0 : s.confidence === 'moderate' ? 10 : 25) + (s.permitTier === 'rezoning' ? 30 : s.permitTier === 'discretionary' ? 15 : 0) - Math.min(9, s.profit / 100000);
-  const recommended = [...scenarios].sort((a, b) => rank(a) - rank(b))[0]!;
+  // Recommendation: viable first, then the easiest approval path, then confidence-weighted profit.
+  const tierRank = (t: PermitTier) => ({ ministerial_expedited: 0, ministerial: 0, administrative_review: 1, discretionary: 2, rezoning: 3 }[t]);
+  const confW = (c: Confidence) => (c === 'high' ? 1 : c === 'moderate' ? 0.85 : 0.6);
+  const recommended = [...scenarios].sort((a, b) => {
+    if (a.viable !== b.viable) return a.viable ? -1 : 1;
+    const ta = tierRank(a.permitTier), tb = tierRank(b.permitTier);
+    if (ta !== tb && a.viable) return ta - tb;
+    return b.profit * confW(b.confidence) - a.profit * confW(a.confidence);
+  })[0]!;
   const rationale = recommended.viable
     ? `${recommended.name} is the cleanest underwriting basis: ${recommended.confidence} confidence, ${recommended.permitTier.replace(/_/g, ' ')} approval, ${Math.round(recommended.roi * 100)}% ROI at a $${recommended.maxOffer.toLocaleString()} max offer.`
     : `No scenario clears the ${Math.round(assumptions.targetRoi * 100)}% target return at current assumptions. ${recommended.name} is the least negative; revisit ARV, costs or acquisition basis before proceeding.`;

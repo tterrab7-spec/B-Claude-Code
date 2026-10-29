@@ -10,3 +10,5 @@ export { soilsAt, SDA_URL } from './adapters/usda.js';
 export { zoningAt, DEFAULT_ZONING_LAYERS } from './adapters/zoning.js';
 export { ringAreaSqM, pointInRing, centroid, distanceFt } from './geo.js';
 export { geocodeArcgis, geocodeNominatim, ARCGIS_GEOCODE_URL, NOMINATIM_URL } from './adapters/geocode-fallbacks.js';
+export { assembleParcels } from './assemble.js';
+export type { AssembledSite } from './assemble.js';

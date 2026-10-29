@@ -107,8 +107,8 @@ describe('report presenter', () => {
 });
 
 describe('registry', () => {
-  it('lists three markets', () => {
-    expect(listMarkets().map((m) => m.code).sort()).toEqual(['ALTADENA_CA', 'GENERIC_US', 'HAMPTON_ROADS_VA']);
+  it('lists four markets', () => {
+    expect(listMarkets().map((m) => m.code).sort()).toEqual(['ALTADENA_CA', 'GENERIC_US', 'HAMPTON_ROADS_VA', 'RICHMOND_VA']);
   });
 });
 
@@ -118,5 +118,30 @@ describe('assumptions on the result', () => {
     expect(r.assumptions.targetRoi).toBe(0.2);
     expect(r.assumptions.hardCostPerSf).toBe(HAMPTON_ROADS_VA.assumptions.hardCostPerSf);
     expect(buildReport(r).gauges.valueMaximization.caption).toContain('20% target');
+  });
+});
+
+describe('Richmond market and commercial districts', () => {
+  it('prices a B-3 corridor lot as multifamily with the ground-floor constraint', () => {
+    const r = underwrite({ marketCode: 'RICHMOND_VA', lotSizeSf: 9840, zoningCode: 'B-3', projectType: 'demo_rebuild', existingStructureSf: 2400, zip: '23224', site: { floodZone: 'X', utilities: { water: 'yes', sewer: 'yes', power: 'yes' } } });
+    expect(r.zoning.recognized).toBe(true);
+    expect(r.scenarios.some((s) => s.key === 'max_density')).toBe(true);
+    const md = r.scenarios.find((s) => s.key === 'max_density')!;
+    expect(md.units).toBe(Math.floor(9840 / 800));
+    expect(r.overlays.some((f) => f.id === 'RVA_MIXED_USE_GROUND_FLOOR')).toBe(true);
+    expect(r.sitework).not.toBeNull();
+  });
+  it('treats Newport News C1 as commercial with residential by discretionary approval', () => {
+    const r = underwrite({ marketCode: 'HAMPTON_ROADS_VA', lotSizeSf: 59673, zoningCode: 'C1', projectType: 'demo_rebuild', existingStructureSf: 16430, zip: '23601', site: { floodZone: 'X', utilities: { water: 'yes', sewer: 'yes', power: 'yes' } } });
+    expect(r.zoning.rule?.code).toBe('C-1');
+    expect(r.overlays.some((f) => f.id === 'COMMERCIAL_RESIDENTIAL_APPROVAL')).toBe(true);
+    const md = r.scenarios.find((s) => s.key === 'max_density')!;
+    expect(md.units).toBe(Math.floor(59673 / 1815));
+    expect(md.permitTier).toBe('discretionary');
+    expect(r.scores.approvalProbability).toBeLessThan(70);
+    // a 16,430 sf office does not become a 19,716 sf house
+    const single = r.scenarios.find((s) => s.key === 'single_home')!;
+    expect(single.primaryLivingSf).toBe(2200);
+    expect(r.recommended.key).toBe('max_density');
   });
 });

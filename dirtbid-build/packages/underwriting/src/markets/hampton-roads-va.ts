@@ -22,6 +22,7 @@ export const hamptonRoadsZoning: ZoningRule[] = [
   { code: 'R-40', aliases: ['R40', 'RE', 'R-E', 'RR', 'R-R'], label: 'Rural / Estate Residential, 1 ac lots', minLotSf: 43560, minLotAreaPerUnitSf: 43560, maxBaseUnits: 1, aduAllowed: 'unknown', duplexAllowed: 'no', multifamilyAllowed: 'no', heightRule: '35 ft', setbacks: sb('50 ft', '20 ft', '40 ft'), minLotWidthFt: 125, notes: 'Usually well and septic; soils drive buildability.' },
   { code: 'A-1', aliases: ['A1', 'AG', 'A-2', 'RC', 'RAC'], label: 'Agricultural / Rural Conservation', minLotSf: 87120, minLotAreaPerUnitSf: 87120, maxBaseUnits: 1, aduAllowed: 'unknown', duplexAllowed: 'no', multifamilyAllowed: 'no', heightRule: '35 ft', setbacks: sb('50 ft', '25 ft', '50 ft'), minLotWidthFt: 150, notes: 'Residential subdivision generally requires rezoning; family subdivisions sometimes by right.' },
   { code: 'R-2F', aliases: ['R2F', 'R-D', 'RD', 'R-T', 'RT'], label: 'Two-Family / Townhouse Residential', minLotSf: 6000, minLotAreaPerUnitSf: 3000, maxBaseUnits: 2, aduAllowed: 'unknown', duplexAllowed: 'yes', multifamilyAllowed: 'no', heightRule: '35 ft', setbacks: sb('25 ft', '8 ft', '20 ft'), minLotWidthFt: 60 },
+  { code: 'C-1', aliases: ['C1', 'C-2', 'C2', 'C-3', 'C3', 'B-1', 'B1', 'B-2', 'B2', 'B-3', 'B3', 'B-4', 'B4', 'B-5', 'B5', 'O-1', 'O1', 'O-2', 'O2', 'CB', 'CBD'], label: 'Commercial / Office (residential by conditional use or rezoning)', minLotSf: 10000, minLotAreaPerUnitSf: 1815, maxBaseUnits: null, aduAllowed: 'no', duplexAllowed: 'unknown', multifamilyAllowed: 'yes', heightRule: '35–45 ft', setbacks: sb('25 ft', '10 ft', '20 ft'), maxFar: 0.5, notes: 'Base district is commercial. Residential or mixed-use modeled at 24 du/ac screening density and requires a conditional use permit or rezoning in most Hampton Roads localities.' },
   { code: 'R-M', aliases: ['RM', 'R-3', 'R3', 'R-4', 'R4', 'MF', 'A-12', 'A-18', 'A-24', 'A-36'], label: 'Multifamily Residential', minLotSf: 10000, minLotAreaPerUnitSf: 3630, maxBaseUnits: null, aduAllowed: 'unknown', duplexAllowed: 'yes', multifamilyAllowed: 'yes', heightRule: '45 ft', setbacks: sb('30 ft', '15 ft', '25 ft'), maxFar: 0.6, notes: 'Density screen = lot area / 3,630 sf (12 du/ac). Many districts carry 18–36 du/ac; override per locality.' },
 ];
 
@@ -70,6 +71,10 @@ function entitlement(ctx: OverlayContext): OverlayFlag[] {
   const out: OverlayFlag[] = [];
   const rule = ctx.rule;
   if (!rule) return out;
+  if (rule.code === 'C-1') {
+    out.push({ id: 'COMMERCIAL_RESIDENTIAL_APPROVAL', name: 'Residential use in a commercial district', category: 'entitlement', status: 'yes', reason: `${ctx.input.zoningCode} is a commercial/office district; dwellings or mixed-use need a conditional use permit or rezoning.`, effect: 'Discretionary approval with public hearing; density and parking set by the approval.', treatment: 'constraint', permitTier: 'discretionary', scoreAdjustment: -20, monthsAdded: 5, costAdder: 25000, verifyItem: 'Pre-application with Planning: confirm whether the locality allows residential above ground-floor commercial by right in this district.' });
+    out.push({ id: 'COMMERCIAL_AS_OF_RIGHT_ALTERNATIVE', name: 'Commercial redevelopment as of right', category: 'entitlement', status: 'yes', reason: 'Retail, office, medical and service uses are permitted without a hearing.', effect: 'Not priced by this residential model; carry as the comparison case.', treatment: 'note', scoreAdjustment: 0 });
+  }
   const lots = Math.floor(ctx.lotSizeSf / rule.minLotSf);
   if (ctx.input.projectType === 'subdivision') {
     if (lots >= 2 && rule.code !== 'A-1') {
