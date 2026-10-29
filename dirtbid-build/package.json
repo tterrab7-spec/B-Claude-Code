@@ -1,0 +1,17 @@
+{
+  "name": "dirtbid-build",
+  "private": true,
+  "version": "0.1.0",
+  "description": "DirtBid Build — feasibility, build-on-your-lot programs and builder operations for the DirtBid land platform.",
+  "packageManager": "pnpm@10.28.0",
+  "engines": { "node": ">=20.9" },
+  "scripts": {
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "typecheck": "pnpm -r typecheck",
+    "dev:api": "pnpm --filter @dirtbid/api dev",
+    "dev:web": "pnpm --filter @dirtbid/web dev",
+    "db:migrate": "pnpm --filter @dirtbid/api db:migrate",
+    "db:seed": "pnpm --filter @dirtbid/api db:seed"
+  }
+}

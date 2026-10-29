@@ -1,0 +1,54 @@
+Altadena Redevelopment Calculator
+Altadena Redevelopment
+Offer Calculator
+
+Enter property details below to generate maximum offer prices across three development scenarios.
+
+Property Address
+Lot Size
+sqft
+sqft
+acres
+Current Structure (sqft)
+ARV per sqft ($)
+
+Based on comparable recent sales within a 3-mile radius (last 6 months).
+
+Zoning Code
+
+Look up at LA County Zoning Viewer.
+
+PROJECT TYPE
+
+🔥 Fire Rebuild
+Eaton Fire pathway · no demo cost
+🏚️ Demolition + Rebuild
+Adds $35,000 demo cost
+Site Characteristics (optional)
+Calculate Offers
+Edit with
+
+CONTROLS:
+LABEL::Property Address
+INPUT:address:e.g. 123 Main St, Altadena, CA 91001
+LABEL::Lot Size
+INPUT:lotSize:e.g. 7,500
+BUTTON::sqft
+SELECT::sqftacres
+LABEL::Current Structure (sqft)
+INPUT:currentSqft:e.g. 1,800
+LABEL::ARV per sqft ($)
+INPUT:arvPerSqft:e.g. 650
+LABEL::Zoning Code
+INPUT:zoningCode:e.g. R-1, R-2, C-1
+BUTTON::🔥 Fire RebuildEaton Fire pathway · no demo cost
+BUTTON::🏚️ Demolition + RebuildAdds $35,000 demo cost
+BUTTON::Site Characteristics (optional)
+BUTTON::Calculate Offers
+BUTTON:lovable-badge-close:
+
+REQUESTS:
+GET https://altadena-offer-builder.lovable.app/
+GET https://altadena-offer-builder.lovable.app/~flock.js
+GET https://altadena-offer-builder.lovable.app/__l5e/events.59f10ad6d72ea62d.js
+POST https://altadena-offer-builder.lovable.app/__l5e/trackevents
