@@ -1,0 +1,30 @@
+{
+  "address": "100 Example Ln, Hampton, VA 23666",
+  "note": "Synthetic recording in the parcel-data fixture format: keys are '<METHOD> <url>[ <body>]'. The test loader matches exact keys first, then origin+path. Point -76.3900, 37.0300 (Hampton city, FIPS 51650); parcel is a ~33 m square (~12,000 sf); FEMA zone X; no NWI features; flat 12 ft elevation; well-drained SSURGO component.",
+  "recorded": {
+    "GET https://geocoding.geo.census.gov/geocoder/geographies/onelineaddress": {
+      "status": 200,
+      "body": { "result": { "addressMatches": [ { "matchedAddress": "100 EXAMPLE LN, HAMPTON, VA, 23666", "coordinates": { "x": -76.39, "y": 37.03 }, "addressComponents": { "zip": "23666" }, "geographies": { "Counties": [ { "NAME": "Hampton city", "GEOID": "51650", "STATE": "51", "COUNTY": "650" } ], "Incorporated Places": [ { "NAME": "Hampton city" } ], "Census Tracts": [ { "GEOID": "51650010300" } ] } } ] } }
+    },
+    "GET https://vginmaps.vdem.virginia.gov/arcgis/rest/services/VA_Base_Layers/VA_Parcels/FeatureServer/0/query": {
+      "status": 200,
+      "body": { "features": [ { "attributes": { "FIPS": "51650", "LOCALITY": "Hampton", "PARCELID": "13001234", "PTM_ID": "13001234", "VGIN_QPID": "51650-13001234" }, "geometry": { "rings": [ [ [ -76.390188, 37.02985 ], [ -76.389812, 37.02985 ], [ -76.389812, 37.03015 ], [ -76.390188, 37.03015 ], [ -76.390188, 37.02985 ] ] ] } } ] }
+    },
+    "GET https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/28/query": {
+      "status": 200,
+      "body": { "features": [ { "attributes": { "FLD_ZONE": "X", "ZONE_SUBTY": "AREA OF MINIMAL FLOOD HAZARD", "SFHA_TF": "F", "STATIC_BFE": -9999 } } ] }
+    },
+    "GET https://fwspublicservices.wim.usgs.gov/wetlandsmapservice/rest/services/Wetlands/MapServer/0/query": {
+      "status": 200,
+      "body": { "features": [] }
+    },
+    "GET https://epqs.nationalmap.gov/v1/json": {
+      "status": 200,
+      "body": { "value": "12.04" }
+    },
+    "POST https://sdmdataaccess.sc.egov.usda.gov/Tabular/post.rest": {
+      "status": 200,
+      "body": { "Table": [ [ "mukey", "muname", "compname", "comppct_r", "drainagecl", "hydricrating", "slope_r" ], [ "537652", "Bojac loamy fine sand, 0 to 2 percent slopes", "Bojac", "85", "Well drained", "No", "1" ], [ "537652", "Bojac loamy fine sand, 0 to 2 percent slopes", "Altavista", "10", "Moderately well drained", "No", "1" ] ] }
+    }
+  }
+}

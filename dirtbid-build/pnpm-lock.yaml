@@ -86,6 +86,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@dirtbid/parcel-data':
+        specifier: workspace:*
+        version: link:../../packages/parcel-data
       '@dirtbid/underwriting':
         specifier: workspace:*
         version: link:../../packages/underwriting
