@@ -1,0 +1,110 @@
+<title>DirtBid Build Handoff</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: an engineering handoff memo. One reading column, numbered backlog tables, mono for anything you type. */
+:root{--bg:#f6f1e7;--bg-2:#ece5d6;--fg:#1d1a16;--fg-2:#5a5247;--line:#d6cbb6;--accent:#d1581a;--data:#1f6f78;--data-soft:#d8eaec;--good:#2f7a3d;--warn:#b26a00;--bad:#b3261e;--display:"Archivo",system-ui,sans-serif;--body:"Source Sans 3",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17150f;--bg-2:#201d16;--fg:#efe8da;--fg-2:#b2a894;--line:#3a3428;--accent:#f07a3a;--data:#6fc3cc;--data-soft:#17333a;--good:#6fc48a;--warn:#e3a640;--bad:#ef6f66;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#17150f;--bg-2:#201d16;--fg:#efe8da;--fg-2:#b2a894;--line:#3a3428;--accent:#f07a3a;--data:#6fc3cc;--data-soft:#17333a;--good:#6fc48a;--warn:#e3a640;--bad:#ef6f66;color-scheme:dark}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16.5px;line-height:1.55;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 56px}
+.wrap{max-width:820px;margin:0 auto}h1{font-family:var(--display);font-size:clamp(28px,4.5vw,40px);line-height:1.1;letter-spacing:-.02em;margin:0 0 8px;text-wrap:balance}h2{font-family:var(--display);font-size:21px;margin:36px 0 10px;padding-top:14px;border-top:3px solid var(--fg)}h3{font-family:var(--display);font-size:16px;margin:18px 0 6px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:36px 0 6px}p{margin:8px 0;max-width:70ch}.lede{font-size:19px;color:var(--fg-2)}
+ul{padding-left:20px;max-width:70ch}li{margin:5px 0}code{font-family:var(--mono);font-size:14px;background:var(--bg-2);padding:1px 5px;border-radius:3px}pre{font-family:var(--mono);font-size:13.5px;background:var(--bg-2);border:1px solid var(--line);padding:12px 14px;overflow-x:auto;line-height:1.5}
+.tbl{overflow-x:auto;margin:10px 0;border:1px solid var(--line)}table{border-collapse:collapse;width:100%;font-size:14.5px}th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--fg-2);font-weight:500;background:var(--bg-2)}tr:last-child td{border-bottom:0}
+.pill{display:inline-block;font-family:var(--mono);font-size:11px;padding:2px 8px;border-radius:3px;border:1px solid var(--line);white-space:nowrap}.p0{color:var(--bad);border-color:var(--bad)}.p1{color:var(--warn);border-color:var(--warn)}.p2{color:var(--data);border-color:var(--data)}
+.callout{border-left:4px solid var(--accent);background:var(--bg-2);padding:12px 16px;margin:16px 0;max-width:74ch}.callout p{margin:6px 0}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin:18px 0}.kv div{background:var(--bg);padding:12px 14px}.kv b{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--fg-2);font-weight:500}.kv span{font-family:var(--display);font-size:18px;font-weight:700}
+footer{margin-top:40px;border-top:1px solid var(--line);padding-top:12px;color:var(--fg-2);font-size:13.5px}a{color:var(--data)}
+</style>
+<div class="wrap">
+  <p class="eyebrow">DirtBid Build · engineering handoff · October 30, 2026</p>
+  <h1>Adding land feasibility and build operations to DirtBid</h1>
+  <p class="lede">DirtBid prices the dirt. DirtBid Build answers what the dirt can become, what approvals it needs, what it's worth, and then runs the job. Everything below is built, tested and pushed. This memo says what it is, how it plugs into DirtBid, and what to do first.</p>
+  <div class="kv">
+    <div><b>Repo</b><span>tterrab7-spec/B-Claude-Code</span></div>
+    <div><b>Branch</b><span>claude/nifty-thompson-b5rnim</span></div>
+    <div><b>Folder</b><span>dirtbid-build/</span></div>
+    <div><b>Tests passing</b><span>86</span></div>
+    <div><b>Stack</b><span>Node 22 · Postgres 16</span></div>
+    <div><b>Live data sources</b><span>8</span></div>
+  </div>
+
+  <h2>1. What's in the box</h2>
+  <div class="tbl"><table>
+    <tr><th>Package</th><th>What it does</th><th>Proof</th></tr>
+    <tr><td><code>packages/underwriting</code></td><td>Pure TypeScript engine. Market configs (Hampton Roads, Richmond, Altadena CA, generic), zoning tables, overlay rules (Chesapeake Bay RPA, FEMA, VDOT, HRSD, soils, SB 9, ADU), residual land value pro forma, CSI 01/02/31/32/33 sitework model with markup waterfall, 4% LIHTC bond pro forma, scoring (approval probability, value, risk), sensitivity grid, report presenter. Zero runtime deps. Runs in browser and server.</td><td>29 tests, including exact parity with the BuildOS calculator and the Swansboro Place density check</td></tr>
+    <tr><td><code>packages/parcel-data</code></td><td>Address in, prefilled underwriting input out. Census geocoder with Esri and Nominatim fallbacks, Virginia VGIN parcel polygons, FEMA NFHL, USFWS wetlands, USGS 3DEP slope, USDA SSURGO soils, locality zoning registry, multi-parcel assemblage. Every field carries source and confidence.</td><td>13 tests replaying recorded live responses for Hampton, Virginia Beach and Suffolk</td></tr>
+    <tr><td><code>apps/api</code></td><td>Fastify 5 + Drizzle/Postgres. Magic-link auth, unified lead intake with scoring, feasibility runs (manual and from-address, 24h parcel cache), Stripe orders with the 90-day credit-back, projects with CSI budgets, invoice and change-order state machines, draw assembly and funding, 12-week cash flow with shortfall alerts, investor reports, vendor compliance, bid compare, Claude tool-use assistant with a rules fallback, HMAC-signed outbox to n8n, OpenAPI at /docs.</td><td>38 tests against a real Postgres</td></tr>
+    <tr><td><code>apps/web</code></td><td>React + Vite. Funnel pages, address-first calculator with provenance chips and Site Work card, magic-link login, builder portal (dashboard, budget, invoices, draws, schedule, cash flow, investors, documents, updates, assistant, lead board). Demo mode swaps in an in-memory backend.</td><td>14 tests; 27 screenshots at 1440 and 390; 15-step Playwright click-through of the demo build</td></tr>
+  </table></div>
+  <p>Read first: <code>dirtbid-build/README.md</code>, then <code>docs/API_CONTRACT.md</code> (every route and payload), then <code>docs/CALIBRATION.md</code> (real outcomes the model has been checked against).</p>
+
+  <h2>2. Run it</h2>
+<pre>cd dirtbid-build
+pnpm install
+pnpm --filter @dirtbid/underwriting test
+pnpm --filter @dirtbid/parcel-data test
+cp apps/api/.env.example apps/api/.env       # DATABASE_URL at minimum
+pnpm db:migrate && pnpm db:seed              # Cascade Homes demo portfolio, leads, runs
+pnpm dev:api                                 # http://localhost:4000/docs
+pnpm dev:web                                 # http://localhost:5173
+pnpm --filter @dirtbid/parcel-data live "6000 Godwin Blvd, Suffolk, VA"   # live resolve from the CLI</pre>
+  <p>Or <code>docker compose up</code> from <code>dirtbid-build/</code> for postgres + api + web.</p>
+
+  <h2>3. How it plugs into DirtBid</h2>
+  <p>Three seams, in order of effort.</p>
+  <div class="tbl"><table>
+    <tr><th>Seam</th><th>How</th><th>What DirtBid gains</th></tr>
+    <tr><td>Score every listing</td><td><code>npm i @dirtbid/underwriting @dirtbid/parcel-data</code> from the workspace, then in the listing service call <code>resolveAddress()</code> and <code>underwrite()</code>. Store <code>scores.approvalProbability</code>, <code>scenarios[recommended].maxOffer</code>, <code>sitework.total</code> and <code>zoning.rule.code</code> on the listing.</td><td>Feasibility score, zoning and a max-offer ceiling on every parcel. Ranking and filter fields no other land marketplace has.</td></tr>
+    <tr><td>Hand the Land Screening to Build</td><td>When a Land Screening exists for a parcel, pass its total as <code>input.sitework.dirtbidLandScreeningTotal</code>. The engine uses it instead of its own sitework model and labels the source.</td><td>One sitework number across both products. Build reports say "from your DirtBid Land Screening."</td></tr>
+    <tr><td>Mount the API</td><td>Run <code>apps/api</code> as a service under <code>/v1</code> next to the DirtBid API (ECS/Fargate + RDS or one EC2 with compose). Point <code>N8N_WEBHOOK_URL</code> at an n8n webhook node; events arrive with <code>X-DirtBid-Signature</code>.</td><td>Leads, paid reports, projects, draws, investor reporting and the assistant, with your existing n8n automations driving follow-up.</td></tr>
+  </table></div>
+  <div class="callout"><p><b>Product ladder to encode in Stripe and the site.</b> Soil Report $350 → Land Screening $950 → Build Feasibility $750 (credited to design within 90 days) → Design &amp; Pre-Dev $5,000 → Entitlement from $10,000 → Construction / Owner's Rep (quote). The catalog is seeded in <code>service_catalog</code>; the credit-back logic is already in <code>modules/orders</code>.</p></div>
+
+  <h2>4. Backlog, in order</h2>
+  <div class="tbl"><table>
+    <tr><th></th><th>Item</th><th>Why</th><th>Where</th></tr>
+    <tr><td><span class="pill p0">P0</span></td><td>Deploy API + web behind a DirtBid subdomain (build.dirtbidai.com or dirtbidai.com/build) with Postgres and the env keys in section 5.</td><td>Everything else needs a live URL. The browser demo cannot reach the Census geocoder or wetlands inventory; the server can.</td><td><code>apps/api/README.md</code> deploy notes, <code>docker-compose.yml</code></td></tr>
+    <tr><td><span class="pill p0">P0</span></td><td>Zoning coverage: add Newport News (<code>maps.nnva.gov/gis/rest/services/Operational/Zoning/MapServer/0</code>, field <code>ZONECLASS</code>) and Richmond (<code>services6.arcgis.com/StPsG80YRtvnlCJ8/arcgis/rest/services/Zoning/FeatureServer/0</code>, field <code>Name</code>) to the zoning registry; verify Chesapeake; find Hampton, Norfolk, Virginia Beach, Suffolk, York, James City. Fall back to a Regrid key.</td><td>Zoning is the one field a person still types. Both endpoints above answered live today.</td><td><code>packages/parcel-data/src/adapters/zoning.ts</code> → <code>DEFAULT_ZONING_LAYERS</code></td></tr>
+    <tr><td><span class="pill p0">P0</span></td><td>Locality assessor and utility adapters, starting with Newport News: Parcel (owner, use, assessed land and improvements, last sale, overdue taxes), CurrentLandAssessment, WastewaterGravityMain and Waterline within 150 ft, CBPA, FloodHazard, Wetland, Enterprise Zone. Richmond: Assessor Parcels FeatureServer (<code>services1.arcgis.com/k3vhq11XkBNeeOfM/.../Parcels/FeatureServer/0</code>).</td><td>These turned the J. Clyde Morris and Hull Street reports from screening into something a buyer acts on. Utilities stop being "unknown."</td><td>New adapters in <code>packages/parcel-data/src/adapters/</code>, surfaced as <code>ResolvedParcel.assessment</code> and <code>.utilities</code></td></tr>
+    <tr><td><span class="pill p1">P1</span></td><td>Calibrate Hampton Roads and Richmond constants against Canterbury's closed lots, NVR/Ryan takedown pricing and the Swansboro Place sources-and-uses; add parity tests for each.</td><td>Every report prints "placeholder until calibrated." That line should disappear.</td><td><code>packages/underwriting/src/markets/*.ts</code>, <code>docs/CALIBRATION.md</code></td></tr>
+    <tr><td><span class="pill p1">P1</span></td><td>Wire the 4% LIHTC pro forma into the engine as a scenario (<code>programType: 'lihtc_4pct'</code>) and into the calculator UI; add 9% and market-rate rental (NOI/cap rate) exits.</td><td>Swansboro Place proved the density screen but the land number needed the bond stack. Affordable is Canterbury's book.</td><td><code>packages/underwriting/src/affordable.ts</code> → <code>engine.ts</code> scenarios</td></tr>
+    <tr><td><span class="pill p1">P1</span></td><td>Keep-and-add scenario: existing income property plus development of the vacant remainder.</td><td>The Hull Street base case. Not modeled yet.</td><td><code>engine.ts</code> buildSpecs</td></tr>
+    <tr><td><span class="pill p1">P1</span></td><td>Email (Resend or SES), S3 for documents, Stripe keys, Anthropic key for the assistant. Install <code>@aws-sdk/*</code> if SES/S3.</td><td>All stubbed to console and local disk in dev; drivers exist.</td><td><code>apps/api/src/lib/email.ts</code>, <code>modules/documents</code></td></tr>
+    <tr><td><span class="pill p2">P2</span></td><td>Stripe subscription lifecycle webhooks; scheduled jobs for vendor compliance expiry and report-due events (an n8n cron hitting the existing endpoints is fine).</td><td>Only <code>checkout.session.completed</code> is handled today.</td><td><code>modules/webhooks</code>, <code>modules/vendors</code></td></tr>
+    <tr><td><span class="pill p2">P2</span></td><td>PDF export of reports server-side (the HTML report generator at <code>packages/parcel-data/scripts/site-report.ts</code> is the template).</td><td>Landowners and lenders want a file.</td><td>Playwright is already a dev dep</td></tr>
+    <tr><td><span class="pill p2">P2</span></td><td>Sitework model review against DirtBid's cost library: unit costs, disturbance heuristics, the 37% markup stack.</td><td>Feasibility-grade today; should converge with DirtBid's bid-grade numbers.</td><td><code>packages/underwriting/src/sitework.ts</code></td></tr>
+  </table></div>
+
+  <h2>5. Environment</h2>
+  <div class="tbl"><table>
+    <tr><th>Variable</th><th>Purpose</th><th>Required</th></tr>
+    <tr><td><code>DATABASE_URL</code></td><td>Postgres 16</td><td>yes</td></tr>
+    <tr><td><code>JWT_SECRET</code>, <code>WEB_URL</code></td><td>Sessions, CORS, magic-link targets</td><td>yes</td></tr>
+    <tr><td><code>N8N_WEBHOOK_URL</code>, <code>WEBHOOK_SECRET</code></td><td>Signed outbox events</td><td>for automations</td></tr>
+    <tr><td><code>STRIPE_SECRET_KEY</code>, <code>STRIPE_WEBHOOK_SECRET</code></td><td>Checkout and reconciliation</td><td>for paid reports</td></tr>
+    <tr><td><code>ANTHROPIC_API_KEY</code></td><td>Assistant tool-use mode (rules fallback without it)</td><td>optional</td></tr>
+    <tr><td><code>EMAIL_DRIVER</code> + <code>RESEND_API_KEY</code> or SES creds</td><td>Magic links, report delivery, investor reports</td><td>for production</td></tr>
+    <tr><td><code>REGRID_API_KEY</code></td><td>Zoning where no locality layer is configured</td><td>optional</td></tr>
+    <tr><td><code>PARCEL_TIMEOUT_MS</code>, <code>PARCEL_CACHE_TTL_HOURS</code></td><td>Resolver limits, default 12000 and 24</td><td>optional</td></tr>
+  </table></div>
+  <p>Full list with comments in <code>apps/api/.env.example</code>.</p>
+
+  <h2>6. Known limits to be honest about</h2>
+  <ul>
+    <li>Browser-only mode cannot reach the Census geocoder or the wetlands inventory (no CORS). The resolver falls through to Esri and marks wetlands unknown. Server-side has no gap.</li>
+    <li>Zoning resolves only where a locality layer is configured or a Regrid key is set. Today that is Chesapeake (unverified); Newport News and Richmond endpoints are confirmed and listed in P0.</li>
+    <li>Utilities are always "unknown" from the generic resolver until the locality utility adapters in P0 land.</li>
+    <li>Cost constants are placeholders. The engine is right about structure (Swansboro Place: 91 screened, 90 built); the dollars need Canterbury's data.</li>
+    <li>Geocoders interpolate along the street centerline, so parcel matching uses an envelope and nearest-polygon fallback. A locality address-point layer (Newport News has one) is the precise fix.</li>
+  </ul>
+
+  <h2>7. Reference material</h2>
+  <ul>
+    <li>Teardown of buildosdev.com and the build report: <a href="https://claude.ai/artifact/WiHNczfFNz1D58uNmo83w8">claude.ai/artifact/WiHNczfFNz1D58uNmo83w8</a></li>
+    <li>Feasibility test build (engine in the browser): <a href="https://claude.ai/artifact/5ZqTMpZKY71iJmVhpK7Zj5">claude.ai/artifact/5ZqTMpZKY71iJmVhpK7Zj5</a></li>
+    <li>Full product demo with in-memory backend: <a href="https://claude.ai/artifact/C8eUTwacuEN9PACDMTPDzZ">claude.ai/artifact/C8eUTwacuEN9PACDMTPDzZ</a></li>
+    <li>Worked reports: <a href="https://claude.ai/artifact/P1RQutfTUX5cRbBEy1JPb9">Newport News, J. Clyde Morris</a> and <a href="https://claude.ai/artifact/TE9RHPR3mQ7UuZFjmuVjzF">Richmond, Swansboro Place</a></li>
+  </ul>
+  <footer>Everything referenced is on the branch above with passing tests. Questions on intent go to the author; questions on code go to the README and the contract.</footer>
+</div>
