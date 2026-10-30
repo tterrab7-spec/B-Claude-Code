@@ -176,7 +176,8 @@ export function underwrite(input: UnderwritingInput, now: Date = new Date()): Un
       powerDistanceFt: sw.powerDistanceFt ?? (site.utilities?.power === 'no' ? 600 : undefined),
       stormwaterRequired: sw.stormwaterRequired,
       stateRouteFrontage: site.stateRouteFrontage === 'yes',
-      newStreetLf: sw.newStreetLf ?? (input.projectType === 'subdivision' ? Math.round(lotsForSitework * 55) : undefined),
+      // Street length scales with lot frontage: ~16 LF per 1,600 sf row lot, ~40 LF per 10,000 sf lot on a double-loaded street.
+      newStreetLf: sw.newStreetLf ?? (input.projectType === 'subdivision' ? Math.round(lotsForSitework * Math.max(20, Math.sqrt(rule?.minLotSf ?? 10000) * 0.8) / 2) : undefined),
       regionMultiplier: sw.regionMultiplier ?? (market.state === 'VA' ? DIRTBID_REGIONS.VA_HR!.multiplier : 1),
     });
     // The model carries taps, laterals and stormwater, so zero the flat per-unit fee to avoid double counting.
