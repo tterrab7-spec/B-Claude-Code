@@ -83,21 +83,57 @@ tr:last-child td{border-bottom:none}
 @media (max-width:720px){.sources{columns:1}.facts{grid-template-columns:1fr}.facts dt{padding-top:6px}}
 @media (prefers-reduced-motion:no-preference){.card{transition:border-color .15s}.card:hover{border-color:var(--accent)}}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.contact{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;background:var(--surface-2);padding:10px 12px;font-size:13.5px}
+.contact dt{font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding-top:2px}
+.contact dd{margin:0}
+.card.lead{grid-column:1 / -1}
+.card.lead .body{grid-template-columns:1.2fr 1fr;align-items:start}
+@media (max-width:760px){.card.lead .body{grid-template-columns:1fr}}
+@media print{
+  @page{size:Letter;margin:0.5in}
+  :root{--bg:#fff;--surface:#fff;--surface-2:#eef1f5;--ink:#152033;--muted:#5a6578;--line:#cfd6e0;--accent:#0d5fb8;--accent-soft:#e3eefb}
+  body{font-size:11.5px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .wrap{max-width:none;padding-block:0;padding-left:0;padding-right:0}
+  h1{font-size:26px}h2{font-size:17px}h3{font-size:13.5px}
+  .lede{font-size:12.5px}
+  section{break-inside:auto;margin-bottom:18px}
+  .card,.kpi,.step,.callout,.note{break-inside:avoid}
+  .cards{grid-template-columns:repeat(2,1fr);gap:10px}
+  .card.lead{grid-column:1 / -1}
+  .card .body{font-size:11px}.facts{font-size:10.5px}
+  .tablewrap{overflow:visible;border:none}
+  table{min-width:0;font-size:9px;table-layout:fixed;width:100%}
+  th,td{padding:4px 4px;overflow-wrap:anywhere}
+  th{position:static;font-size:8px;letter-spacing:.02em}
+  td.num{white-space:normal}
+  th:nth-child(1){width:3%}th:nth-child(2){width:26%}th:nth-child(3){width:8%}th:nth-child(4){width:9%}th:nth-child(5){width:13%}th:nth-child(6){width:11%}
+  th:nth-child(7),th:nth-child(8),th:nth-child(9),th:nth-child(10),th:nth-child(11){width:3.6%}th:nth-child(12){width:4%}th:nth-child(13){width:8%}
+  .tier{font-size:8px;padding:1px 4px;letter-spacing:0}
+  .city{white-space:normal;font-size:8.5px}
+  .mapsec{break-before:page;break-inside:avoid}
+  .mapbox{break-inside:avoid}
+  .legend{font-size:10px}
+  a{color:var(--ink);text-decoration:none}
+  .foot a::after{content:""}
+  .sources{columns:2;font-size:9.5px}
+  .sources a::after{content:" (" attr(href) ")";color:var(--muted);word-break:break-all}
+  .pb{break-before:page}
+}
 </style>
 
 <div class="wrap">
 <header>
   <div class="eyebrow">Site screen · Newport News &amp; Hampton, Virginia · Prepared 30 Oct 2026</div>
   <h1>Virginia Natural Gas Peninsula Headquarters: 8-acre-plus land options</h1>
-  <p class="lede">Twenty-one parcels and tracts that clear the 8-acre floor, ranked by how well they fit a corporate headquarters for a regulated gas utility: by-right office or industrial zoning, public ownership or a motivated seller, interstate access, and a site the EDA will actually sell you. Preferred target is 10 acres; everything here is 8 or more, or can be carved from a larger tract.</p>
-  <div class="meta"><span>Screen basis: EDA fact sheets, council actions, listing records, VEDP site data</span><span>Parcel-level GIS not pulled (see method note)</span></div>
+  <p class="lede">Twenty-seven parcels and tracts that clear the 8-acre floor, ranked by how well they fit a corporate headquarters for a regulated gas utility: by-right office or industrial zoning, public ownership or a motivated seller, interstate access, and a site the owner will actually sell you. Preferred target is 10 acres; everything here is 8 or more, or can be carved from a larger tract. Includes a dedicated pass on company-held land that is not on the market, led by the CHKD tract at City Center.</p>
+  <div class="meta"><span>Screen basis: EDA fact sheets, council actions, listing records, VEDP site data, owner leadership pages</span><span>Parcel-level GIS not pulled (see method note)</span></div>
 </header>
 
 <section>
   <div class="grid kpis">
-    <div class="kpi"><div class="n">21</div><div class="l">Sites screened at 8 ac or more</div></div>
-    <div class="kpi"><div class="n">5</div><div class="l">Tier 1: pursue now</div></div>
-    <div class="kpi"><div class="n">14</div><div class="l">Publicly controlled (City, EDA, IDA, HRHA, Airport, NASA, State)</div></div>
+    <div class="kpi"><div class="n">27</div><div class="l">Sites screened at 8 ac or more</div></div>
+    <div class="kpi"><div class="n">6</div><div class="l">Tier 1: pursue now</div></div>
+    <div class="kpi"><div class="n">14 / 13</div><div class="l">Publicly controlled / company- or institution-held</div></div>
     <div class="kpi"><div class="n">$95K–105K</div><div class="l">Per acre, Hampton Roads Center North (city flyer, undated)</div></div>
   </div>
 </section>
@@ -138,12 +174,18 @@ tr:last-child td{border-bottom:none}
       <tr><td class="num">19</td><td>Coliseum Central Site 2, 1000 block Coliseum Dr</td><td class="city">Hampton</td><td class="num">20.16</td><td>City of Hampton (likely under contract to Excel Development)</td><td>C-2</td><td class="num">3</td><td class="num">2</td><td class="num">0</td><td class="num">3</td><td class="num">3</td><td class="num"><b>11</b></td><td><span class="tier t3">Tier 3</span></td></tr>
       <tr><td class="num">20</td><td>Fort Monroe (Fort Monroe Authority buildings and parcels)</td><td class="city">Hampton</td><td class="num">565 (lease)</td><td>Commonwealth of Virginia</td><td>Historic district; long-term lease</td><td class="num">1</td><td class="num">1</td><td class="num">1</td><td class="num">2</td><td class="num">1</td><td class="num"><b>6</b></td><td><span class="tier t3">Tier 3</span></td></tr>
       <tr><td class="num">21</td><td>Two unplaced 13-acre listings (ZIP 23603 at $400K; 13.06 ac at $700K)</td><td class="city">Newport News</td><td class="num">13 / 13.06</td><td>Private</td><td>Unknown</td><td class="num">3</td><td class="num">—</td><td class="num">2</td><td class="num">—</td><td class="num">—</td><td class="num">n/a</td><td><span class="tier t3">Verify</span></td></tr>
+      <tr><td class="num">22</td><td>CHKD Oyster Point campus, unbuilt land at Rock Landing Dr &amp; City Center Blvd (company-held, not marketed)</td><td class="city">Newport News</td><td class="num">~12–15 (your estimate; confirm via GIS)</td><td>Children's Hospital of The King's Daughters</td><td>C-4 Oyster Point Business District (verify)</td><td class="num">3</td><td class="num">3</td><td class="num">1</td><td class="num">3</td><td class="num">3</td><td class="num"><b>13</b></td><td><span class="tier t1">Tier 1</span></td></tr>
+      <tr><td class="num">23</td><td>895 City Center Blvd, improved parcel adjoining the CHKD land (company-held)</td><td class="city">Newport News</td><td class="num">8.19</td><td>Private; Hamner Development leases the building</td><td>C-4</td><td class="num">2</td><td class="num">3</td><td class="num">1</td><td class="num">3</td><td class="num">2</td><td class="num"><b>11</b></td><td><span class="tier t2">Tier 2</span></td></tr>
+      <tr><td class="num">24</td><td>4030 W. Mercury Blvd, recently sold redevelopment tract (company-held)</td><td class="city">Hampton</td><td class="num">19.56</td><td>Private; new owner (sold via Motleys, $6.5M ask)</td><td>C-1 / C-2</td><td class="num">3</td><td class="num">2</td><td class="num">1</td><td class="num">2</td><td class="num">2</td><td class="num"><b>10</b></td><td><span class="tier t2">Tier 2</span></td></tr>
+      <tr><td class="num">25</td><td>Canon Virginia campus, 12000 Canon Blvd (company-held)</td><td class="city">Newport News</td><td class="num">165 total</td><td>Canon Virginia, Inc.</td><td>Industrial / C-4 edge (verify)</td><td class="num">1</td><td class="num">3</td><td class="num">0</td><td class="num">2</td><td class="num">2</td><td class="num"><b>8</b></td><td><span class="tier t3">Tier 3</span></td></tr>
+      <tr><td class="num">26</td><td>Mariners' Museum Park, Warwick Blvd and J. Clyde Morris Blvd frontage (institution-held)</td><td class="city">Newport News</td><td class="num">550 total</td><td>The Mariners' Museum and Park</td><td>Park / conservation</td><td class="num">1</td><td class="num">0</td><td class="num">0</td><td class="num">2</td><td class="num">1</td><td class="num"><b>4</b></td><td><span class="tier t3">Tier 3</span></td></tr>
+      <tr><td class="num">27</td><td>Hampton University Real Estate Foundation holdings, downtown and Settlers Landing corridor (institution-held)</td><td class="city">Hampton</td><td class="num">Unknown</td><td>Hampton University Real Estate Foundation</td><td>DT / C mixed</td><td class="num">—</td><td class="num">2</td><td class="num">1</td><td class="num">2</td><td class="num">—</td><td class="num">n/a</td><td><span class="tier t3">Verify</span></td></tr>
     </tbody>
   </table>
   </div>
 </section>
 
-<section>
+<section class="mapsec">
   <h2>Where they sit</h2>
   <div class="mapbox">
     <svg id="map" viewBox="0 0 900 760" role="img" aria-label="Schematic map of Newport News and Hampton with candidate sites plotted by approximate coordinates"></svg>
@@ -151,7 +193,72 @@ tr:last-child td{border-bottom:none}
   </div>
 </section>
 
-<section>
+<section class="pb">
+  <h2>Company-held land: the CHKD tract and others not on the market</h2>
+  <p style="color:var(--muted);margin-bottom:12px;max-width:80ch">Land a company or institution bought for its own expansion and never built on. None of it is listed, so the play is a direct conversation with the owner. Expect a slower yes and a cleaner site than anything the EDA is marketing.</p>
+  <div class="grid cards">
+
+    <article class="card t1 lead"><div class="stripe"></div>
+      <div class="head"><div class="row"><h3>22 · CHKD land at Rock Landing Dr &amp; City Center Blvd</h3><span class="tier t1">Newport News</span></div><div class="eyebrow">Children's Hospital of The King's Daughters · Oyster Point campus, 11783 Rock Landing Dr · one block east of Jefferson Ave</div></div>
+      <div class="body">
+        <div style="display:grid;gap:10px">
+          <dl class="facts"><dt>Acres</dt><dd>Roughly 12 to 15 unbuilt acres by your estimate. Public records I could reach do not state the parcel size; confirm with the city parcel viewer before the call.</dd>
+          <dt>Owner</dt><dd>CHKD (Children's Health System, Norfolk). The campus opened with a 43,000 SF Health &amp; Surgery Center as phase 1 of a five-phase master plan; a hydrotherapy wing (2005) and an ambulatory surgery addition followed. Phases 4 and 5 were never built, which is why the land sits idle.</dd>
+          <dt>Zoning</dt><dd>C-4 Oyster Point Business District, the same designation as the City Center Expansion Area next door. Office HQ is a by-right use (verify on the parcel).</dd>
+          <dt>Why it fits</dt><dd>City Center address, I-64 at J. Clyde Morris two minutes away, Class A neighbors, utilities in the street. Pair it with the adjoining 8.19 acres at 895 City Center Blvd (site 23) and you are above 20 acres with one owner conversation and one broker call.</dd></dl>
+          <p>CHKD has no public plan to expand in Newport News and just committed its capital to Norfolk (new cardiovascular ICU, Olney Road construction through mid-2026). A hospital system holding non-core land through a capital cycle is a seller at the right number, and a long-term ground lease is a credible fallback that keeps the asset on their books.</p>
+        </div>
+        <div style="display:grid;gap:10px">
+          <dl class="contact">
+            <dt>Call first</dt><dd><b>Jason Mueller</b>, Vice President, Facilities and Support Services. His portfolio explicitly includes Real Estate, Construction and Facilities for every CHKD location (over 2 million SF). Architecture degree, Ohio State; MBA, UMGC.</dd>
+            <dt>Reach</dt><dd>CHKD main switchboard, 757-668-7000, ask for the Facilities and Support Services office. Profile: chkd.org, About Us, Leadership and Key Staff. No verified direct line or email found; CHKD addresses follow first.last@chkd.org, so the format is likely but unconfirmed.</dd>
+            <dt>Backups</dt><dd><b>Kathy Abshire</b>, Senior Vice President of Finance and CFO (a land sale clears through her). <b>Tara Estabrooks</b>, VP Strategic Planning and Business Development (title per third-party directories; verify). <b>Amy Sampson</b>, President and CEO since Dec 2022, for a principal-to-principal approach.</dd>
+            <dt>Note</dt><dd>Older directories still list Tamika Harris in Mueller's role. She has moved on; do not open with her name.</dd>
+          </dl>
+          <p style="font-size:13px;color:var(--muted)">Opening line that works: a regulated utility HQ is a credit tenant and a quiet neighbor to a pediatric surgery center. Lead with the ground-lease option, then let them ask about a sale.</p>
+        </div>
+      </div>
+      <div class="foot"><span>Verify acreage and parcel ID on the Newport News parcel viewer before the call</span><a href="https://www.google.com/maps/search/11783+Rock+Landing+Dr+Newport+News+VA" target="_blank" rel="noopener">Open in Maps</a></div>
+    </article>
+
+    <article class="card t2"><div class="stripe"></div>
+      <div class="head"><div class="row"><h3>23 · 895 City Center Blvd</h3><span class="tier t2">Newport News</span></div><div class="eyebrow">Adjoins the CHKD land · parcel 174.00-03-11</div></div>
+      <div class="body"><dl class="facts"><dt>Acres</dt><dd>8.19, zoned C-4, with a medical office building on part of it (Suite 302 marketed by Hamner Development).</dd><dt>Owner</dt><dd>Private; Hamner Development Company handles leasing (Alan Meetze, 757-871-3738). Owner of record to confirm.</dd></dl>
+      <p>On its own it is a thin 8 acres with a building in the way. Combined with the CHKD land it turns a good site into a campus. Ask Hamner whether the owner would sell the land under and around the building.</p></div>
+      <div class="foot"><span>Hamner Development Company</span><a href="https://www.google.com/maps/search/895+City+Center+Blvd+Newport+News+VA" target="_blank" rel="noopener">Open in Maps</a></div>
+    </article>
+
+    <article class="card t2"><div class="stripe"></div>
+      <div class="head"><div class="row"><h3>24 · 4030 W. Mercury Blvd</h3><span class="tier t2">Hampton</span></div><div class="eyebrow">About a mile from I-64 · marketed by Motleys at $6.5M, now marked sold</div></div>
+      <div class="body"><dl class="facts"><dt>Acres</dt><dd>19.56</dd><dt>Zoning</dt><dd>C-1 and C-2; pitched for office, medical, multifamily and retail.</dd><dt>Owner</dt><dd>New private owner; buyer and closing date not published.</dd></dl>
+      <p>A buyer who just paid up for 20 commercial acres either has a plan or wants a partner. Either way, a credit-tenant HQ on 10 to 12 of those acres is the best thing that could happen to their pro forma. Motleys will know who bought it.</p></div>
+      <div class="foot"><span>Motleys Asset Disposition Group</span><a href="https://www.google.com/maps/search/4030+W+Mercury+Blvd+Hampton+VA" target="_blank" rel="noopener">Open in Maps</a></div>
+    </article>
+
+    <article class="card t3"><div class="stripe"></div>
+      <div class="head"><div class="row"><h3>25 · Canon Virginia campus</h3><span class="tier t3">Newport News</span></div><div class="eyebrow">12000 Canon Blvd · 165 acres · Oyster Point</div></div>
+      <div class="body"><p>Canon's 165-acre campus is heavily landscaped and under-built for its size, and headcount has fallen from about 2,300 in the 1990s to roughly 1,000 after 2024 layoffs. No surplus has been declared. A corporate real estate inquiry to Canon U.S.A. about the Canon Blvd frontage is a long shot with a big payoff: it is the closest large private tract to City Center.</p></div>
+      <div class="foot"><span>Canon U.S.A. corporate real estate (Melville, NY)</span><a href="https://www.google.com/maps/search/12000+Canon+Blvd+Newport+News+VA" target="_blank" rel="noopener">Open in Maps</a></div>
+    </article>
+
+    <article class="card t3"><div class="stripe"></div>
+      <div class="head"><div class="row"><h3>26 · Mariners' Museum Park</h3><span class="tier t3">Newport News</span></div><div class="eyebrow">550 acres around Mariners' Lake · Warwick Blvd and J. Clyde Morris Blvd</div></div>
+      <div class="body"><p>Private nonprofit land with precedent: Riverside's flagship hospital sits on acreage acquired from the Museum in 1959. The Museum guards the park closely, so treat this as a relationship conversation, not a listing. Edge parcels along J. Clyde Morris are the only realistic ask.</p></div>
+      <div class="foot"><span>The Mariners' Museum and Park, President and CEO</span><a href="https://www.google.com/maps/search/Mariners+Museum+Newport+News+VA" target="_blank" rel="noopener">Open in Maps</a></div>
+    </article>
+
+    <article class="card t3"><div class="stripe"></div>
+      <div class="head"><div class="row"><h3>27 · Hampton University Real Estate Foundation</h3><span class="tier t3">Hampton</span></div><div class="eyebrow">Harbour Centre, Hampton Harbor, Settlers Landing corridor, W. County St</div></div>
+      <div class="body"><p>The Foundation manages all of the University's commercial and residential holdings and runs acquisition and development. Acreage of any vacant land is not published. Your alumni relationship is the asset here; a utility HQ beside campus is the kind of anchor HBCUs have courted elsewhere.</p></div>
+      <div class="foot"><span>Hampton University Real Estate Foundation</span><a href="https://home.hamptonu.edu/realestate/" target="_blank" rel="noopener">Foundation page</a></div>
+    </article>
+  </div>
+  <div class="callout" style="margin-top:14px">
+    <p><strong>Checked and ruled out.</strong> Liebherr used its 28 spare acres on Chestnut Ave for the 2020 campus expansion. Bon Secours is building a $200M tower on its Mary Immaculate campus (groundbreaking May 2026), so its Denbigh land is spoken for. Riverside's only recent Peninsula land buy is the 5.1-acre Brentwood Shopping Center at 10500 Jefferson Ave, too small. Huntington Ingalls' recent land moves are in Norfolk and South Carolina. The former Virginia School for the Deaf and Blind site in Hampton went to NorthPoint for warehouses, with the city keeping 10 acres of pines. Sentara shows no idle Peninsula acreage in public records.</p>
+  </div>
+</section>
+
+<section class="pb">
   <h2>Tier 1: pursue now</h2>
   <div class="grid cards">
 
@@ -289,6 +396,7 @@ tr:last-child td{border-bottom:none}
 <section>
   <h2>Monday morning</h2>
   <div class="steps">
+    <div class="step"><div><b>CHKD: Jason Mueller, VP Facilities and Support Services, via 757-668-7000.</b> Ask whether CHKD would entertain a ground lease or sale of the unbuilt Rock Landing Dr acreage for a corporate headquarters. Before the call, pull the parcel ID and acreage from the Newport News parcel viewer and check who owns 895 City Center Blvd next door.</div></div>
     <div class="step"><div><b>Hampton Economic Development, 757-727-6237.</b> Ask for every EDA-held tract of 10 acres or more in Hampton Roads Center North with current per-acre pricing, and the disposition plan for the Red Roof Inn and Quality Inn parcels at Coliseum Dr and Mercury Blvd.</div></div>
     <div class="step"><div><b>Newport News Department of Development.</b> Request the EDGE Summit site book and ask whether a 10 to 15 acre employment-anchor carve-out of the City Center Expansion Area is on the table. Same call covers Oriana Road.</div></div>
     <div class="step"><div><b>Three private calls.</b> JLL on 400 Butler Farm Rd (ask for a sale, not a lease). W.M. Jordan on Tech Center pads and deal structure. Costco real estate on the Ferguson remainder at Jefferson and Bland.</div></div>
@@ -342,6 +450,16 @@ tr:last-child td{border-bottom:none}
     <li><a href="https://www.cityfeet.com/cont/listing/2300-aluminum-ave-hampton-va-23661/cs36949279" target="_blank" rel="noopener">CityFeet: 2300 Aluminum Ave, Copeland Industrial Park</a></li>
     <li><a href="https://virginiabusiness.com/blog/tag/fort-monroe-authority/" target="_blank" rel="noopener">Virginia Business: Fort Monroe Authority coverage</a></li>
     <li><a href="https://dev.va811.com/events/2020-02-20" target="_blank" rel="noopener">Virginia 811 (2020): VNG Newport News, 746 Diligence Dr</a></li>
+    <li><a href="https://www.chkd.org/about-us/who-we-are/leadership-and-key-staff/jason-mueller/" target="_blank" rel="noopener">CHKD: Jason Mueller, VP Facilities and Support Services (oversees Real Estate)</a></li>
+    <li><a href="https://www.chkd.org/about-us/who-we-are/leadership-and-key-staff/" target="_blank" rel="noopener">CHKD: Leadership and Key Staff</a></li>
+    <li><a href="https://www.smandf.com/portfolio/portfolio-gallery/chkd-health-surgery-center" target="_blank" rel="noopener">Speight Marshall Francis: CHKD Health &amp; Surgery Center, five-phase master plan</a></li>
+    <li><a href="https://www.loopnet.com/property/895-city-center-blvd-newport-news-va-23606/51700-174000311/" target="_blank" rel="noopener">LoopNet parcel record: 895 City Center Blvd, 8.19 ac, C-4</a></li>
+    <li><a href="https://www.motleys.com/for-sale/detail/for-sale-19.56-acres-4030-west-mercury-blvd.-hampton-va-23666" target="_blank" rel="noopener">Motleys: 4030 W. Mercury Blvd, 19.56 ac, sold</a></li>
+    <li><a href="https://oysterpointer.net/canon-virginia-inc-forging-the-path/" target="_blank" rel="noopener">Oyster Pointer: Canon Virginia, 165-acre campus</a></li>
+    <li><a href="https://home.hamptonu.edu/realestate/" target="_blank" rel="noopener">Hampton University Real Estate Foundation</a></li>
+    <li><a href="https://en.wikipedia.org/wiki/Mariners'_Museum_and_Park" target="_blank" rel="noopener">Mariners' Museum and Park, 550-acre park</a></li>
+    <li><a href="https://www.whro.org/health/2026-05-12/bon-secours-breaks-ground-on-200-million-hospital-expansion-in-newport-news" target="_blank" rel="noopener">WHRO: Bon Secours $200M Mary Immaculate expansion</a></li>
+    <li><a href="https://www.hampton.gov/4147/Timeline-of-the-Property" target="_blank" rel="noopener">City of Hampton: Virginia School site timeline (NorthPoint purchase)</a></li>
   </ul>
 </section>
 </div>
@@ -381,7 +499,8 @@ tr:last-child td{border-bottom:none}
   var sites=[
    [1,37.0755,-76.399,1,'HRC North',-2,-10],[2,37.072,-76.478,1,'City Center Exp.',8,14],[3,37.0425,-76.3915,1,'Red Roof / Quality Inn',8,-6],[4,37.0565,-76.3995,1,'400 Butler Farm',8,14],[5,37.0895,-76.4875,1,'Tech Center',-80,-8],
    [6,37.138,-76.542,2,'Oriana Rd',8,4],[7,37.0295,-76.3475,2,'Harbor Square',8,16],[8,37.197,-76.572,2,'Carleton',8,4],[9,37.115,-76.502,2,'Ferguson remainder',8,4],[10,36.983,-76.417,2,'Chase Site',8,4],[11,37.168,-76.56,2,'Oakland IP',8,4],[12,37.185,-76.585,2,'Dozier Rd',-70,4],
-   [13,37.126,-76.498,3,'Air Commerce Park',8,14],[14,37.093,-76.3835,3,'',0,0],[15,37.0885,-76.399,3,'Langley R&D Park',8,4],[16,37.014,-76.377,3,'Copeland IP',8,4],[17,37.059,-76.412,3,'1033 Big Bethel',-100,4],[18,36.99,-76.413,3,'2700 Parish',8,14],[19,37.034,-76.388,3,'',0,0],[20,37.0045,-76.3085,3,'Fort Monroe',-78,4]
+   [13,37.126,-76.498,3,'Air Commerce Park',8,14],[14,37.093,-76.3835,3,'',0,0],[15,37.0885,-76.399,3,'Langley R&D Park',8,4],[16,37.014,-76.377,3,'Copeland IP',8,4],[17,37.059,-76.412,3,'1033 Big Bethel',-100,4],[18,36.99,-76.413,3,'2700 Parish',8,14],[19,37.034,-76.388,3,'',0,0],[20,37.0045,-76.3085,3,'Fort Monroe',-78,4],
+   [22,37.0745,-76.4885,1,'CHKD land',8,18],[23,37.0765,-76.4925,2,'895 City Center',-112,-10],[24,37.047,-76.432,2,'4030 W Mercury',8,4],[25,37.085,-76.470,3,'Canon',8,4],[26,37.055,-76.485,3,"Mariners' Museum",-120,14],[27,37.021,-76.335,3,'Hampton U.',8,16]
   ];
   var cols={1:v('--t1'),2:v('--t2'),3:v('--t3')};
   sites.forEach(function(s){var x=X(s[2]),y=Y(s[1]);var g=el('g',{});
