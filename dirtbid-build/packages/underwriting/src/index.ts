@@ -7,3 +7,5 @@ export { buildReport } from './report.js';
 export type { FeasibilityReport, ReportSection } from './report.js';
 export { estimateSitework, DIRTBID_REGIONS } from './sitework.js';
 export type { SiteworkInput, SiteworkEstimate, SiteworkLine } from './sitework.js';
+export { lihtcProForma, RICHMOND_60AMI_2026 } from './affordable.js';
+export type { LihtcUnitMix, LihtcAssumptions, LihtcResult } from './affordable.js';

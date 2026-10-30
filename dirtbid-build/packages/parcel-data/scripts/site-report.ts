@@ -3,7 +3,7 @@
    config: { title, addresses[], resolvedFile (json map from resolve-many), overrides: Partial<UnderwritingInput>, facts: {label,value,source}[], narrative: {headline, context[], notes[]}, comps?: [{address, price, sf, date}] } */
 import { readFileSync, writeFileSync } from 'node:fs';
 import { assembleParcels, type ResolvedParcel } from '../src/index.js';
-import { underwrite, buildReport, type UnderwritingInput, type UnderwritingResult } from '@dirtbid/underwriting';
+import { underwrite, buildReport, lihtcProForma, RICHMOND_60AMI_2026, type UnderwritingInput, type UnderwritingResult, type LihtcResult } from '@dirtbid/underwriting';
 
 const [cfgPath, outPath] = process.argv.slice(2);
 const cfg = JSON.parse(readFileSync(cfgPath!, 'utf8'));
@@ -29,6 +29,21 @@ const gauge = (v: number) => { const c = Math.PI * 44, off = c * (1 - v / 100); 
 const provRows = cfg.parcelRows ? (cfg.parcelRows as string[][]).map((c) => `<tr>${c.map((v, i) => `<td class="${i === 2 || i === 5 ? 'n' : i === 1 ? 'mono' : ''}">${esc(v)}</td>`).join('')}</tr>`).join('') : resolved.map((x) => `<tr><td>${esc(x.geocode?.matchedAddress ?? x.query)}</td><td class="mono">${esc(x.parcel.parcelId ?? '—')}${x.parcel.taxMapId ? `<br><small>${esc(x.parcel.taxMapId)}</small>` : ''}</td><td class="n">${x.parcel.lotSizeSf ? x.parcel.lotSizeSf.toLocaleString() : '—'}</td><td>${esc(x.flood.zone ?? '—')}</td><td>${esc(x.soils.mapUnit ?? '—')}</td><td class="n">${x.elevation.centerFt ?? '—'} ft · ${x.elevation.slopePct ?? '—'}%</td></tr>`).join('');
 const sources = [...new Set(resolved.flatMap((x) => [x.geocode?.provenance, x.parcel.provenance, x.flood.provenance, x.wetlands.provenance, x.elevation.provenance, x.soils.provenance, x.zoning.provenance].filter(Boolean).map((p) => p!.source)))].filter((s) => s !== 'unavailable' && s !== 'heuristic');
 const srcNames: Record<string, string> = { census_geocoder: 'U.S. Census Geocoder', vgin_parcels: 'Virginia VGIN statewide parcels', fema_nfhl: 'FEMA National Flood Hazard Layer', fws_nwi: 'USFWS National Wetlands Inventory', usgs_3dep: 'USGS 3DEP elevation', usda_ssurgo: 'USDA SSURGO soils', arcgis_zoning: 'Locality zoning layer', arcgis_geocoder: 'Esri World Geocoder', nominatim: 'OpenStreetMap' };
+let lihtc: LihtcResult | null = null;
+if (cfg.lihtc) {
+  const L = cfg.lihtc as { mix: { studios?: number; oneBr: number; twoBr: number; threeBr: number }; landPaid: number; assumptions?: Record<string, unknown>; actual?: { label: string; value: string }[] };
+  lihtc = lihtcProForma(L.mix, L.landPaid, r.sitework?.total ?? 0, { ...RICHMOND_60AMI_2026, ...(L.assumptions ?? {}) } as typeof RICHMOND_60AMI_2026);
+}
+const lihtcHtml = lihtc && cfg.lihtc ? (() => { const L = cfg.lihtc; const x = lihtc!; const row = (k: string, v: number) => `<tr><td>${esc(k)}</td><td class="n">${usd(v)}</td><td class="n">${usd(v / x.units)}</td></tr>`; return `
+  <h2>What was actually built: 4% bond deal</h2>
+  <p>${esc(L.narrative ?? '')}</p>
+  <div class="facts">${((L.actual ?? []) as { label: string; value: string }[]).map((f) => `<div><b>${esc(f.label)}</b><span>${esc(f.value)}</span></div>`).join('')}</div>
+  <div class="cards">
+    <section class="card"><h3>Operations at ${esc(L.amiLabel ?? '60% AMI')}</h3><div class="tbl"><table><tr><th>Line</th><th class="n">Annual</th><th class="n">Per unit</th></tr>${row('Gross potential rent (net of utility allowance)', x.grossPotentialRent)}${row('Effective gross income', x.effectiveGrossIncome)}${row('Operating expenses, taxes, reserves', x.operatingExpenses)}${row('Net operating income', x.noi)}${row('Debt service', x.annualDebtService)}</table></div><p class="muted">DSCR ${x.dscr} · ${x.netRentableSf.toLocaleString()} net rentable sf · ${x.grossBuildingSf.toLocaleString()} gross sf</p></section>
+    <section class="card"><h3>Sources</h3><div class="tbl"><table><tr><th>Source</th><th class="n">Amount</th><th class="n">Per unit</th></tr>${row('Permanent loan (bond)', x.sources.permLoan)}${row('4% LIHTC equity', x.sources.lihtcEquity)}${row('Deferred developer fee', x.sources.deferredFee)}<tr><td><b>Soft gap to fill</b></td><td class="n ${x.sources.gap > 0 ? 'bad' : 'good'}"><b>${usd(x.sources.gap)}</b></td><td class="n">${usd(x.gapPerUnit)}</td></tr>${row('Total', x.sources.total)}</table></div><p class="muted">Credits: ${usd(x.annualCredits)}/yr on ${usd(x.boostedBasis)} boosted basis at $${RICHMOND_60AMI_2026.creditPrice}/credit</p></section>
+    <section class="card"><h3>Uses</h3><div class="tbl"><table><tr><th>Use</th><th class="n">Amount</th><th class="n">Per unit</th></tr>${row('Land', x.uses.land)}${row('Hard cost', x.uses.hard)}${row('Parking', x.uses.parking)}${row('Site work', x.uses.sitework)}${row('Soft costs', x.uses.soft)}${row('Contingency', x.uses.contingency)}${row('Construction interest', x.uses.constructionInterest)}${row('Developer fee', x.uses.developerFee)}${row('Reserves', x.uses.reserves)}${row('Total development cost', x.uses.total)}</table></div></section>
+  </div>
+  <ul class="plain muted">${x.notes.map((n) => `<li>${esc(n)}</li>`).join('')}</ul>`; })() : '';
 const html = `<title>${esc(cfg.title)}</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -104,6 +119,7 @@ footer{margin-top:40px;border-top:1px solid var(--line);padding-top:12px;color:v
   <section class="card wide"><ul class="chk">${r.checklist.map((c) => `<li><span class="pill ${c.priority === 'high' ? 'bad' : c.priority === 'medium' ? 'warn' : ''}">${c.priority}</span><b>${esc(c.item)}</b><p>${esc(c.why)} <small>(${esc(c.owner)})</small></p></li>`).join('')}</ul></section>
   ${cfg.narrative.notes?.length ? `<h2>6. Analyst notes</h2><ul class="plain">${(cfg.narrative.notes as string[]).map((n) => `<li>${esc(n)}</li>`).join('')}</ul>` : ''}
 
+  ${lihtcHtml}
   <h2>Sources and method</h2>
   <p>Parcel geometry, flood, soils and elevation were pulled live from ${sources.map((s) => srcNames[s] ?? s).join(', ')}. ${esc(cfg.narrative.sources ?? '')}</p>
   <ul class="disc">${r.disclaimers.map((d) => `<li>${esc(d)}</li>`).join('')}</ul>
