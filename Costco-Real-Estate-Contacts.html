@@ -1,0 +1,247 @@
+<title>Costco Real Estate Contacts</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a brief, a scoring matrix, a schematic corridor map, then tiered site cards; one 1100px column, cool neutrals with a flame-blue accent. */
+:root{
+  --bg:#f4f6f9; --surface:#ffffff; --surface-2:#eaeef4; --ink:#152033; --muted:#5a6578; --line:#d7dde6;
+  --accent:#0d5fb8; --accent-soft:#e3eefb; --flame:#e07b1a;
+  --t1:#0d5fb8; --t2:#2a8f6b; --t3:#8a93a3;
+  --good:#1f8a4c; --warn:#b8800a; --bad:#b3403a;
+  --display:"Archivo",system-ui,"Segoe UI",sans-serif;
+  --body:"Source Sans 3","Source Sans Pro",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0e141e; --surface:#161e2b; --surface-2:#1e2838; --ink:#e6ebf3; --muted:#9aa6b8; --line:#2a3546;
+  --accent:#63a6f2; --accent-soft:#1a2a40; --flame:#f0a050;
+  --t1:#63a6f2; --t2:#4fbf93; --t3:#8d97a8; --good:#4cc07a; --warn:#e2aa3a; --bad:#e06a62; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#0e141e; --surface:#161e2b; --surface-2:#1e2838; --ink:#e6ebf3; --muted:#9aa6b8; --line:#2a3546;
+  --accent:#63a6f2; --accent-soft:#1a2a40; --flame:#f0a050;
+  --t1:#63a6f2; --t2:#4fbf93; --t3:#8d97a8; --good:#4cc07a; --warn:#e2aa3a; --bad:#e06a62; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;margin:0}
+.wrap{max-width:1100px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.15}
+h1{font-size:clamp(28px,4vw,40px);font-weight:700;letter-spacing:-.01em}
+h2{font-size:22px;font-weight:600;margin-bottom:12px}
+h3{font-size:17px;font-weight:600}
+p{margin:0}
+a{color:var(--accent)}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+header{display:grid;gap:14px;padding-bottom:24px;border-bottom:1px solid var(--line);margin-bottom:28px}
+.lede{max-width:70ch;font-size:17px;color:var(--ink)}
+.meta{display:flex;flex-wrap:wrap;gap:8px 20px;font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+section{margin-bottom:36px}
+.grid{display:grid;gap:14px}
+.kpis{grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+.kpi{background:var(--surface);border:1px solid var(--line);padding:14px 16px}
+.kpi .n{font-family:var(--display);font-size:28px;font-weight:600;font-variant-numeric:tabular-nums}
+.kpi .l{font-size:13px;color:var(--muted)}
+.note{background:var(--accent-soft);border-left:3px solid var(--accent);padding:14px 16px;max-width:none}
+.note strong{font-family:var(--display)}
+.callout{border:1px solid var(--line);background:var(--surface);padding:16px 18px;display:grid;gap:8px}
+.callout.flame{border-left:3px solid var(--flame)}
+ul{margin:0;padding-left:20px}
+li{margin:4px 0}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:860px;font-size:14px}
+th,td{padding:9px 10px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+th{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500;background:var(--surface-2);position:sticky;top:0}
+td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+tr:last-child td{border-bottom:none}
+.tier{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.06em;padding:2px 7px;border-radius:3px;color:#fff;white-space:nowrap}
+.tier.t1{background:var(--t1)}.tier.t2{background:var(--t2)}.tier.t3{background:var(--t3)}
+.dots{font-family:var(--mono);letter-spacing:.1em;white-space:nowrap}
+.dots .on{color:var(--accent)}.dots .off{color:var(--line)}
+.city{font-family:var(--mono);font-size:11.5px;color:var(--muted);white-space:nowrap}
+.cards{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.card{background:var(--surface);border:1px solid var(--line);display:grid;grid-template-rows:auto 1fr auto;min-width:0}
+.card .head{padding:14px 16px 10px;border-bottom:1px solid var(--line);display:grid;gap:6px}
+.card .head .row{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
+.card .body{padding:12px 16px;display:grid;gap:10px;font-size:14.5px}
+.card .foot{padding:10px 16px 14px;border-top:1px dashed var(--line);font-size:13px;color:var(--muted);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.facts{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:13.5px}
+.facts dt{font-family:var(--mono);font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding-top:2px}
+.facts dd{margin:0}
+.flag{color:var(--warn);font-weight:600}
+.verify{font-family:var(--mono);font-size:11.5px;color:var(--warn)}
+.stripe{height:4px}
+.t1 .stripe{background:var(--t1)}.t2 .stripe{background:var(--t2)}.t3 .stripe{background:var(--t3)}
+.mapbox{background:var(--surface);border:1px solid var(--line);padding:12px}
+.mapbox svg{width:100%;height:auto;display:block}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:var(--muted);padding:8px 4px 0}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle}
+.steps{counter-reset:s;display:grid;gap:10px}
+.step{display:grid;grid-template-columns:34px 1fr;gap:12px;background:var(--surface);border:1px solid var(--line);padding:12px 14px}
+.step::before{counter-increment:s;content:counter(s);font-family:var(--display);font-weight:700;font-size:20px;color:var(--accent);line-height:1}
+.step b{font-family:var(--display);font-weight:600}
+.sources{columns:2;column-gap:28px;font-size:13px}
+.sources li{break-inside:avoid;margin:0 0 6px}
+@media (max-width:720px){.sources{columns:1}.facts{grid-template-columns:1fr}.facts dt{padding-top:6px}}
+@media (prefers-reduced-motion:no-preference){.card{transition:border-color .15s}.card:hover{border-color:var(--accent)}}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.contact{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;background:var(--surface-2);padding:10px 12px;font-size:13.5px}
+.contact dt{font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding-top:2px}
+.contact dd{margin:0}
+.card.lead{grid-column:1 / -1}
+.card.lead .body{grid-template-columns:1.2fr 1fr;align-items:start}
+@media (max-width:760px){.card.lead .body{grid-template-columns:1fr}}
+@media print{
+  @page{size:Letter;margin:0.5in}
+  :root{--bg:#fff;--surface:#fff;--surface-2:#eef1f5;--ink:#152033;--muted:#5a6578;--line:#cfd6e0;--accent:#0d5fb8;--accent-soft:#e3eefb}
+  body{font-size:11.5px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .wrap{max-width:none;padding-block:0;padding-left:0;padding-right:0}
+  h1{font-size:26px}h2{font-size:17px}h3{font-size:13.5px}
+  .lede{font-size:12.5px}
+  section{break-inside:auto;margin-bottom:18px}
+  .card,.kpi,.step,.callout,.note{break-inside:avoid}
+  .cards{grid-template-columns:repeat(2,1fr);gap:10px}
+  .card.lead{grid-column:1 / -1}
+  .card .body{font-size:11px}.facts{font-size:10.5px}
+  .tablewrap{overflow:visible;border:none}
+  table{min-width:0;font-size:9px;table-layout:fixed;width:100%}
+  th,td{padding:4px 4px;overflow-wrap:anywhere}
+  th{position:static;font-size:8px;letter-spacing:.02em}
+  td.num{white-space:normal}
+  th:nth-child(1){width:3%}th:nth-child(2){width:26%}th:nth-child(3){width:8%}th:nth-child(4){width:9%}th:nth-child(5){width:13%}th:nth-child(6){width:11%}
+  th:nth-child(7),th:nth-child(8),th:nth-child(9),th:nth-child(10),th:nth-child(11){width:3.6%}th:nth-child(12){width:4%}th:nth-child(13){width:8%}
+  .tier{font-size:8px;padding:1px 4px;letter-spacing:0}
+  .city{white-space:normal;font-size:8.5px}
+  .mapsec{break-before:page;break-inside:avoid}
+  .mapbox{break-inside:avoid}
+  .legend{font-size:10px}
+  a{color:var(--ink);text-decoration:none}
+  .foot a::after{content:""}
+  .sources{columns:2;font-size:9.5px}
+  .sources a::after{content:" (" attr(href) ")";color:var(--muted);word-break:break-all}
+  .pb{break-before:page}
+}
+</style>
+<div class="wrap">
+<header>
+  <div class="eyebrow">Contact brief · prepared 9 Nov 2026 · for the Jefferson Ave and Bland Blvd remainder (about 12 acres)</div>
+  <h1>Reaching Costco about the Newport News remainder</h1>
+  <p class="lede">Renee Rutherford is the right starting point, but she is not the only door. This brief gives her title, base and public record, the Costco corporate and regional chain above her, Costco's exclusive outside broker for the Southeast, and the local players who actually carried the Newport News approvals. Direct lines marked "verify" come from third-party directories.</p>
+  <div class="meta"><span>Costco closed on 32.37 acres at 12470, 12490 and 12500 Jefferson Ave on 31 Jul 2025 for $28M</span><span>Store opens November 2026; about 12 acres in two parcels to be sold off</span></div>
+</header>
+
+<section>
+  <div class="callout flame">
+    <h2>What the record says about the 12 acres</h2>
+    <p>The conditional use permit (CU-2025-0003, Planning Commission 9-0 on 21 May 2025, City Council 10 Jun 2025) covers a 20.23-acre parcel. The staff report says Costco would buy all 32.37 acres from Ferguson, record a boundary line adjustment splitting the land into three parcels, build on the largest, and that "two remaining parcels (about 12 acres) will be held for future sale." News coverage put it plainly: "the remaining land will be split into two parcels, which the wholesale giant eventually will sell off." The Newport News EDA waived its repurchase rights on the Ferguson land and signed a $3.25M participation agreement with Costco for road and transit improvements at Jefferson and Bland. So the 12 acres are Costco's to sell, the city already expects a sale, and the EDA has a direct line into Costco from the agreement.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Renee Rutherford</h2>
+  <div class="grid cards">
+    <article class="card t1 lead"><div class="stripe"></div>
+      <div class="head"><div class="row"><h3>Director of Real Estate Development, Eastern Division, Costco Wholesale</h3><span class="tier t1">Call first</span></div><div class="eyebrow">Based in Reston, Virginia · works from Costco's Northeast Region office in Sterling · in the role since about 2006 per directories</div></div>
+      <div class="body">
+        <div style="display:grid;gap:10px">
+          <dl class="facts">
+            <dt>Title</dt><dd>Costco's own staff and most coverage: Director of Real Estate Development, Eastern Division. One June 2026 report called her assistant vice president for real estate development; treat that as unconfirmed.</dd>
+            <dt>Press record</dt><dd>Every public appearance I can find is the Asheville, NC store at Enka Commerce Park. August 2025 neighborhood meeting ("This is the first part of a long approval process"). December 2025, declined to comment on the Economic Development Coalition's opposition. February 2026, Costco withdrew; she did not return the Asheville Watchdog's call. September 2026, emailed that Costco was "working to open this store as quickly as possible" and credited the mayor. October 13, 2026, told Asheville City Council groundbreaking would be summer 2027 and opening spring 2028.</dd>
+            <dt>Newport News</dt><dd>She does not appear in any Newport News coverage, hearing summary or city release. Costco's Newport News approvals were carried by local counsel (below), and the Chesapeake Greenbrier Costco approved in June 2026 was carried by the landowner's agent, not Costco staff. That is normal for Costco in Hampton Roads: the division director stays off the podium unless a site is contested.</dd>
+            <dt>Why her</dt><dd>She is the division-level decision maker for new units in the East and the person a surplus-land question lands with before it goes to Issaquah.</dd>
+          </dl>
+        </div>
+        <div style="display:grid;gap:10px">
+          <dl class="contact">
+            <dt>Office</dt><dd>Costco Wholesale, Northeast Region office, 45940 Horseshoe Dr, Suite 150, Sterling, VA 20166. <b>703-406-6800</b>, fax 703-406-6994 (verify). Ask for Real Estate Development, Eastern Division.</dd>
+            <dt>Email</dt><dd>Directories show r***@costco.com. Costco's pattern is first initial plus last name in roughly 90 percent of addresses, so <b>rrutherford@costco.com</b> is probable, unverified.</dd>
+            <dt>LinkedIn</dt><dd>linkedin.com/in/renee-rutherford-618062a (Costco Wholesale, Director of Real Estate). InMail works for this profile type.</dd>
+            <dt>HQ switchboard</dt><dd>Costco Wholesale Corporation, 999 Lake Dr, Issaquah, WA 98027. <b>425-313-8100</b>. Use only if Sterling does not pick up.</dd>
+          </dl>
+          <p style="font-size:13px;color:var(--muted)">Opening that fits: you represent a regulated utility looking at 10 to 12 acres for a headquarters next to the new Newport News warehouse, you know the CUP left two parcels for future sale, and you would like to be first in line when Costco is ready to move them.</p>
+        </div>
+      </div>
+      <div class="foot"><span>Sources: Asheville Watchdog, BPR, Mountain Xpress, Hendersonville.com, ZoomInfo and Salesflow directory records</span><a href="https://www.bpr.org/2026-10-14/asheville-city-council-gives-the-green-light-costco-store-to-open-in-2028" target="_blank" rel="noopener">BPR, Oct 2026</a></div>
+    </article>
+  </div>
+</section>
+
+<section>
+  <h2>The rest of the Costco real estate chain</h2>
+  <div class="grid cards">
+    <article class="card t2"><div class="stripe"></div>
+      <div class="head"><div class="row"><h3>David Messner</h3><span class="tier t2">Corporate</span></div><div class="eyebrow">Senior Vice President, Real Estate Development · Issaquah</div></div>
+      <div class="body"><p>Runs all of Costco real estate; listed on the investor relations executive page and current as of February 2026. Dispositions above a threshold clear through him. Reach through the Issaquah switchboard, 425-313-8100. Escalation door, not the first call.</p></div>
+      <div class="foot"><span>Source: investor.costco.com executive officers</span><a href="https://investor.costco.com/index.php/executive-officers" target="_blank" rel="noopener">Costco IR</a></div>
+    </article>
+    <article class="card t2"><div class="stripe"></div>
+      <div class="head"><div class="row"><h3>Erich Brann</h3><span class="tier t2">East</span></div><div class="eyebrow">Director of Real Estate and Development · presented the Bel Air, MD store (July 2024)</div></div>
+      <div class="body"><p>A second East Coast real estate director who does go to the podium. If Rutherford's desk is Carolinas-heavy, Brann may own Maryland and Virginia. Ask the Sterling office which of them covers Hampton Roads.</p></div>
+      <div class="foot"><span>Source: WMAR, Harford County agenda</span><a href="https://www.wmar2news.com/local/plans-for-bel-air-costco-get-sent-back-for-revision" target="_blank" rel="noopener">WMAR</a></div>
+    </article>
+    <article class="card t2"><div class="stripe"></div>
+      <div class="head"><div class="row"><h3>Peter Kahn</h3><span class="tier t2">Corporate</span></div><div class="eyebrow">Assistant Vice President, Real Estate Development (directory listing)</div></div>
+      <div class="body"><p>Sits between the division directors and Messner. Name only; no verified contact beyond the Issaquah switchboard.</p></div>
+      <div class="foot"><span>Source: Comparably directory</span><span class="verify">Verify</span></div>
+    </article>
+  </div>
+</section>
+
+<section>
+  <h2>Costco's outside broker and the Newport News locals</h2>
+  <div class="grid cards">
+    <article class="card t1"><div class="stripe"></div>
+      <div class="head"><div class="row"><h3>Northwest Atlantic Partners</h3><span class="tier t1">Costco's exclusive broker</span></div><div class="eyebrow">Costco's exclusive real estate broker for North America · HQ Bellevue, WA, 425-777-2186 · northwestatlantic.com</div></div>
+      <div class="body"><dl class="contact"><dt>Jim Ostrowski</dt><dd>Vice President, based in Sterling, Virginia. His profile says he "manages and directs new unit expansion for Costco Wholesale throughout the southeastern United States." The firm's published addresses use first name at northwestatlantic.com (brian@northwestatlantic.com for the Illinois managing broker), so jim@northwestatlantic.com is probable, unverified. No direct line published; the Bellevue number routes.</dd></dl>
+      <p>Northwest Atlantic assembles Costco's sites and negotiates its transactions. If Costco lists the Jefferson Ave remainder through anyone, Ostrowski either handles it or picks the local broker who does. He sits in the same Sterling building as Rutherford's office. This is the second call.</p></div>
+      <div class="foot"><span>Sources: Commercial Observer interview with Messner; Northwest Atlantic site; LinkedIn</span><a href="https://northwestatlantic.com/" target="_blank" rel="noopener">northwestatlantic.com</a></div>
+    </article>
+    <article class="card t2"><div class="stripe"></div>
+      <div class="head"><div class="row"><h3>Lindsey A. Carney</h3><span class="tier t2">Costco's Newport News counsel</span></div><div class="eyebrow">Carney Patterson Meade, PLC · 12350 Jefferson Ave, Suite 370, Newport News, VA 23602</div></div>
+      <div class="body"><p>Presented the Costco CUP to the Planning Commission on 21 May 2025 and handled the fueling station conditions. 757-223-4535 (VPAP lobbyist record, verify). She drafted or reviewed the boundary line adjustment that creates the two sale parcels, so she knows their exact shape and timing. Worth a professional call; she may also be the one Costco hands the disposition to locally.</p></div>
+      <div class="foot"><span>Sources: Newport News Daily, Citizen Portal hearing summaries, Super Lawyers, VPAP</span><a href="https://www.newportnewsdaily.com/p/newport-news-city-council-to-review-proposed-costco-gas-station" target="_blank" rel="noopener">Newport News Daily</a></div>
+    </article>
+    <article class="card t2"><div class="stripe"></div>
+      <div class="head"><div class="row"><h3>Newport News EDA</h3><span class="tier t2">Counterparty to Costco</span></div><div class="eyebrow">Florence Kingston, Director of Development · Derek Perry, Assistant Director</div></div>
+      <div class="body"><p>The EDA waived its repurchase rights on the Ferguson land and signed the $3.25M participation agreement with Costco. The city has a signed agreement, a named Costco signatory, and an interest in seeing the 12 acres become an employment anchor rather than retail pads. Ask Kingston who signed for Costco and whether the EDA has heard Costco's timing on the remainder.</p></div>
+      <div class="foot"><span>Sources: WAVY, Newport News EDA 2025 annual report</span><a href="https://newportnewsva.com/about/2025-annual-report/" target="_blank" rel="noopener">EDA annual report</a></div>
+    </article>
+  </div>
+</section>
+
+<section>
+  <h2>Order of calls</h2>
+  <div class="steps">
+    <div class="step"><div><b>Sterling office, 703-406-6800, ask for Renee Rutherford, Real Estate Development, Eastern Division.</b> Same day, LinkedIn InMail and an email to rrutherford@costco.com. Name the parcels, the CUP, and the utility tenant.</div></div>
+    <div class="step"><div><b>Jim Ostrowski, Northwest Atlantic Partners, Sterling.</b> Costco's own broker for the Southeast. Ask whether the Newport News remainder will be marketed and by whom.</div></div>
+    <div class="step"><div><b>Florence Kingston, Newport News Development.</b> Who signed the participation agreement for Costco, and what has Costco said about the remainder since the store topped out.</div></div>
+    <div class="step"><div><b>Lindsey Carney, Carney Patterson Meade.</b> Status of the boundary line adjustment and the configuration of the two sale parcels.</div></div>
+    <div class="step"><div><b>Timing.</b> Costco said "eventually." Expect them to hold until the store opens in November 2026 and the BLA is recorded. A letter of interest on file before then puts you first when they decide.</div></div>
+  </div>
+</section>
+
+<section>
+  <h2>Sources</h2>
+  <ul class="sources">
+    <li><a href="https://avlwatchdog.org/costco-officials-plans-for-enka-site-will-be-submitted-to-city-of-asheville-in-2-to-4-weeks/" target="_blank" rel="noopener">Asheville Watchdog: Costco officials on Enka plans (Rutherford)</a></li>
+    <li><a href="https://www.bpr.org/2025-12-10/proposed-costco-location-in-enka-opposed-by-economic-development-coalition" target="_blank" rel="noopener">BPR, Dec 2025: Rutherford declines comment on EDC opposition</a></li>
+    <li><a href="https://www.bpr.org/growth-development/2026-02-19/costco-withdraws-application-for-highly-anticipated-asheville-location" target="_blank" rel="noopener">BPR, Feb 2026: Costco withdraws Asheville application</a></li>
+    <li><a href="https://www.hendersonville.com/news/2026/09/costco-resubmits-asheville-store-plans-october-2026/" target="_blank" rel="noopener">Hendersonville.com, Sept 2026: Costco resubmits (Rutherford email)</a></li>
+    <li><a href="https://www.bpr.org/2026-10-14/asheville-city-council-gives-the-green-light-costco-store-to-open-in-2028" target="_blank" rel="noopener">BPR, Oct 2026: Council approval, Rutherford on timeline</a></li>
+    <li><a href="https://www.zoominfo.com/p/Renee-Rutherford/4159606759" target="_blank" rel="noopener">ZoomInfo: Renee Rutherford, Costco (title, masked email)</a></li>
+    <li><a href="https://salesflow.io/contact/renee-rutherford-director-of-real-estate-development-eastern-division/" target="_blank" rel="noopener">Salesflow directory: Director of Real Estate Development, Eastern Division</a></li>
+    <li><a href="https://www.chamberofcommerce.com/united-states/virginia/sterling/corporate-office/26877336-costco-regional-office" target="_blank" rel="noopener">Costco Regional Office, 45940 Horseshoe Dr, Sterling VA, 703-406-6800</a></li>
+    <li><a href="https://corporateofficeheadquarters.com/costco-corporate-office-headquarters-hq/" target="_blank" rel="noopener">Costco HQ switchboard, 425-313-8100</a></li>
+    <li><a href="https://investor.costco.com/index.php/executive-officers" target="_blank" rel="noopener">Costco investor relations: executive officers (David Messner)</a></li>
+    <li><a href="https://commercialobserver.com/2022/02/dave-messner-costco-real-estate-sites-locations/" target="_blank" rel="noopener">Commercial Observer: Messner on Costco real estate and its exclusive broker</a></li>
+    <li><a href="https://northwestatlantic.com/" target="_blank" rel="noopener">Northwest Atlantic Partners</a></li>
+    <li><a href="https://www.linkedin.com/in/jim-ostrowski-a9168b11/" target="_blank" rel="noopener">LinkedIn: Jim Ostrowski, VP, Northwest Atlantic Partners, Sterling VA</a></li>
+    <li><a href="https://www.wmar2news.com/local/plans-for-bel-air-costco-get-sent-back-for-revision" target="_blank" rel="noopener">WMAR: Erich Brann, Costco director of real estate and development, Bel Air</a></li>
+    <li><a href="https://citizenportal.ai/articles/6745841/virginia/newport-news-independent-city/planning-commission-recommends-costco-site-and-memberonly-fueling-station-at-jefferson-avenue" target="_blank" rel="noopener">Citizen Portal: Newport News Planning Commission, 21 May 2025 (20.23 ac CUP, 12 ac held for future sale)</a></li>
+    <li><a href="https://news.yahoo.com/newport-news-city-council-gives-003700700.html" target="_blank" rel="noopener">Daily Press via Yahoo: Council approves Costco relocation; remainder to be sold off</a></li>
+    <li><a href="https://www.wavy.com/news/local-news/newport-news/costco-expands-in-newport-news-moving-to-former-ferguson-hq/" target="_blank" rel="noopener">WAVY: Costco buys former Ferguson HQ, 32 acres, $28M</a></li>
+    <li><a href="https://newportnewsva.com/about/2025-annual-report/" target="_blank" rel="noopener">Newport News EDA 2025 annual report ($3.25M Costco participation agreement)</a></li>
+    <li><a href="https://profiles.superlawyers.com/virginia/newport-news/lawyer/lindsey-a-carney/8763e43c-13f9-4faf-89ae-8c501cba6d7f.html" target="_blank" rel="noopener">Super Lawyers: Lindsey A. Carney, Carney Patterson Meade</a></li>
+    <li><a href="https://www.vpap.org/lobbying/lobbyist/236872" target="_blank" rel="noopener">VPAP: Lindsey A. Carney (phone)</a></li>
+    <li><a href="https://www.cityofchesapeake.net/DocumentCenter/View/31975/d__pln-use-2025-048-Greenbrier-Costco-2026-06-16-CC-Pkg-1" target="_blank" rel="noopener">City of Chesapeake: Greenbrier Costco PLN-USE-2025-048 council package</a></li>
+  </ul>
+</section>
+</div>
