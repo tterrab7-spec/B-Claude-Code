@@ -139,7 +139,7 @@ tr:last-child td{border-bottom:none}
 .fit.y{background:var(--good)}.fit.p{background:var(--warn)}.fit.n{background:var(--bad)}
 .sig{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:10px}
 .sig div{border-top:1px solid var(--ink);padding-top:6px;font-size:13px;color:var(--muted)}
-@media print{.spec{grid-template-columns:repeat(3,1fr);gap:6px}.spec .v{font-size:11px}.spec div{padding:6px 8px}.site{break-before:page}}
+@media print{table.survey th:nth-child(n){width:auto}table.survey{table-layout:auto}table.survey th:nth-child(1){width:3%}table.survey th:nth-child(2){width:24%}.spec{grid-template-columns:repeat(3,1fr);gap:6px}.spec .v{font-size:11px}.spec div{padding:6px 8px}.site{break-before:page}}
 </style>
 <div class="wrap">
 <header>
