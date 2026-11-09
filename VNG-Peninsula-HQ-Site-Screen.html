@@ -92,32 +92,41 @@ tr:last-child td{border-bottom:none}
 @media print{
   @page{size:Letter;margin:0.5in}
   :root{--bg:#fff;--surface:#fff;--surface-2:#eef1f5;--ink:#152033;--muted:#5a6578;--line:#cfd6e0;--accent:#0d5fb8;--accent-soft:#e3eefb}
-  body{font-size:11.5px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{font-size:11px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .wrap{max-width:none;padding-block:0;padding-left:0;padding-right:0}
-  h1{font-size:26px}h2{font-size:17px}h3{font-size:13.5px}
-  .lede{font-size:12.5px}
-  section{break-inside:auto;margin-bottom:18px}
-  .card,.kpi,.step,.callout,.note{break-inside:avoid}
-  .cards{grid-template-columns:repeat(2,1fr);gap:10px}
-  .card.lead{grid-column:1 / -1}
-  .card .body{font-size:11px}.facts{font-size:10.5px}
+  header{margin-bottom:16px;padding-bottom:14px}
+  h1{font-size:24px}h2{font-size:16px;margin-bottom:8px;break-after:avoid}h3{font-size:13px}
+  .lede{font-size:12px}
+  section{margin-bottom:16px;break-inside:auto}
+  .kpis{grid-template-columns:repeat(4,1fr);gap:8px}
+  .kpi,.step,.callout,.note{break-inside:avoid}
+  .kpi .n{font-size:20px}
+  .cards{grid-template-columns:repeat(2,1fr);gap:8px}
+  .card{break-inside:avoid}
+  .card.lead{grid-column:1 / -1;break-inside:auto}
+  .card.lead .head{break-after:avoid}
+  .card .body{font-size:10.5px;padding:8px 12px;gap:6px}.facts{font-size:10px}.contact{font-size:10px;padding:6px 8px}
+  .card .head{padding:8px 12px 6px}.card .foot{padding:6px 12px 8px;font-size:10px}
   .tablewrap{overflow:visible;border:none}
   table{min-width:0;font-size:9px;table-layout:fixed;width:100%}
   th,td{padding:4px 4px;overflow-wrap:anywhere}
   th{position:static;font-size:8px;letter-spacing:.02em}
   td.num{white-space:normal}
+  tr{break-inside:avoid}
   th:nth-child(1){width:3%}th:nth-child(2){width:24%}th:nth-child(3){width:7%}th:nth-child(4){width:6%}th:nth-child(5){width:8%}th:nth-child(6){width:11%}th:nth-child(7){width:10%}
   th:nth-child(8),th:nth-child(9),th:nth-child(10),th:nth-child(11),th:nth-child(12),th:nth-child(13){width:3.4%}th:nth-child(14){width:4%}th:nth-child(15){width:6.5%}th:nth-child(16){width:3.5%}
   .tier{font-size:8px;padding:1px 4px;letter-spacing:0}
   .city{white-space:normal;font-size:8.5px}
-  .mapsec{break-before:page;break-inside:avoid}
-  .mapbox{break-inside:avoid}
-  .legend{font-size:10px}
+  .mapsec{break-before:auto;break-inside:avoid}
+  .mapbox{padding:8px}
+  .mapbox svg{max-height:4.6in;width:auto;margin:0 auto}
+  .legend{font-size:9.5px}
+  .steps{gap:6px}.step{padding:8px 10px}
+  .pb{break-before:auto}
+  .part{break-before:page;break-after:avoid;margin-bottom:10px}
   a{color:var(--ink);text-decoration:none}
-  .foot a::after{content:""}
-  .sources{columns:2;font-size:9.5px}
+  .sources{columns:2;font-size:9px}
   .sources a::after{content:" (" attr(href) ")";color:var(--muted);word-break:break-all}
-  .pb{break-before:page}
 }
 </style>
 <div class="wrap">
@@ -261,7 +270,7 @@ tr:last-child td{border-bottom:none}
 </section>
 
 
-<section class="pb">
+<section class="part">
   <div class="eyebrow">Part 2 · Owner contacts</div>
   <h2>CHKD: who has represented them, and who to call</h2>
   <p style="color:var(--muted);max-width:80ch">Brokerages and advisors on record with Children's Hospital of The King's Daughters since 2015, for use in the 591 City Center Blvd approach. Prepared 9 Nov 2026.</p>
@@ -375,7 +384,7 @@ tr:last-child td{border-bottom:none}
 </section>
 
 
-<section class="pb">
+<section class="part">
   <div class="eyebrow">Part 3 · Owner contacts</div>
   <h2>Costco: reaching the owner of the Jefferson Ave remainder</h2>
   <p style="color:var(--muted);max-width:80ch">Renee Rutherford, the Costco real estate chain above her, Costco's exclusive outside broker, and the Newport News locals who carried the approvals. Prepared 9 Nov 2026.</p>
