@@ -1,0 +1,262 @@
+<title>CHKD Brokerage Relationships</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a brief, a scoring matrix, a schematic corridor map, then tiered site cards; one 1100px column, cool neutrals with a flame-blue accent. */
+:root{
+  --bg:#f4f6f9; --surface:#ffffff; --surface-2:#eaeef4; --ink:#152033; --muted:#5a6578; --line:#d7dde6;
+  --accent:#0d5fb8; --accent-soft:#e3eefb; --flame:#e07b1a;
+  --t1:#0d5fb8; --t2:#2a8f6b; --t3:#8a93a3;
+  --good:#1f8a4c; --warn:#b8800a; --bad:#b3403a;
+  --display:"Archivo",system-ui,"Segoe UI",sans-serif;
+  --body:"Source Sans 3","Source Sans Pro",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0e141e; --surface:#161e2b; --surface-2:#1e2838; --ink:#e6ebf3; --muted:#9aa6b8; --line:#2a3546;
+  --accent:#63a6f2; --accent-soft:#1a2a40; --flame:#f0a050;
+  --t1:#63a6f2; --t2:#4fbf93; --t3:#8d97a8; --good:#4cc07a; --warn:#e2aa3a; --bad:#e06a62; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#0e141e; --surface:#161e2b; --surface-2:#1e2838; --ink:#e6ebf3; --muted:#9aa6b8; --line:#2a3546;
+  --accent:#63a6f2; --accent-soft:#1a2a40; --flame:#f0a050;
+  --t1:#63a6f2; --t2:#4fbf93; --t3:#8d97a8; --good:#4cc07a; --warn:#e2aa3a; --bad:#e06a62; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;margin:0}
+.wrap{max-width:1100px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.15}
+h1{font-size:clamp(28px,4vw,40px);font-weight:700;letter-spacing:-.01em}
+h2{font-size:22px;font-weight:600;margin-bottom:12px}
+h3{font-size:17px;font-weight:600}
+p{margin:0}
+a{color:var(--accent)}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+header{display:grid;gap:14px;padding-bottom:24px;border-bottom:1px solid var(--line);margin-bottom:28px}
+.lede{max-width:70ch;font-size:17px;color:var(--ink)}
+.meta{display:flex;flex-wrap:wrap;gap:8px 20px;font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+section{margin-bottom:36px}
+.grid{display:grid;gap:14px}
+.kpis{grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+.kpi{background:var(--surface);border:1px solid var(--line);padding:14px 16px}
+.kpi .n{font-family:var(--display);font-size:28px;font-weight:600;font-variant-numeric:tabular-nums}
+.kpi .l{font-size:13px;color:var(--muted)}
+.note{background:var(--accent-soft);border-left:3px solid var(--accent);padding:14px 16px;max-width:none}
+.note strong{font-family:var(--display)}
+.callout{border:1px solid var(--line);background:var(--surface);padding:16px 18px;display:grid;gap:8px}
+.callout.flame{border-left:3px solid var(--flame)}
+ul{margin:0;padding-left:20px}
+li{margin:4px 0}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:860px;font-size:14px}
+th,td{padding:9px 10px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+th{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500;background:var(--surface-2);position:sticky;top:0}
+td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+tr:last-child td{border-bottom:none}
+.tier{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.06em;padding:2px 7px;border-radius:3px;color:#fff;white-space:nowrap}
+.tier.t1{background:var(--t1)}.tier.t2{background:var(--t2)}.tier.t3{background:var(--t3)}
+.dots{font-family:var(--mono);letter-spacing:.1em;white-space:nowrap}
+.dots .on{color:var(--accent)}.dots .off{color:var(--line)}
+.city{font-family:var(--mono);font-size:11.5px;color:var(--muted);white-space:nowrap}
+.cards{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.card{background:var(--surface);border:1px solid var(--line);display:grid;grid-template-rows:auto 1fr auto;min-width:0}
+.card .head{padding:14px 16px 10px;border-bottom:1px solid var(--line);display:grid;gap:6px}
+.card .head .row{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
+.card .body{padding:12px 16px;display:grid;gap:10px;font-size:14.5px}
+.card .foot{padding:10px 16px 14px;border-top:1px dashed var(--line);font-size:13px;color:var(--muted);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.facts{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:13.5px}
+.facts dt{font-family:var(--mono);font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding-top:2px}
+.facts dd{margin:0}
+.flag{color:var(--warn);font-weight:600}
+.verify{font-family:var(--mono);font-size:11.5px;color:var(--warn)}
+.stripe{height:4px}
+.t1 .stripe{background:var(--t1)}.t2 .stripe{background:var(--t2)}.t3 .stripe{background:var(--t3)}
+.mapbox{background:var(--surface);border:1px solid var(--line);padding:12px}
+.mapbox svg{width:100%;height:auto;display:block}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:var(--muted);padding:8px 4px 0}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle}
+.steps{counter-reset:s;display:grid;gap:10px}
+.step{display:grid;grid-template-columns:34px 1fr;gap:12px;background:var(--surface);border:1px solid var(--line);padding:12px 14px}
+.step::before{counter-increment:s;content:counter(s);font-family:var(--display);font-weight:700;font-size:20px;color:var(--accent);line-height:1}
+.step b{font-family:var(--display);font-weight:600}
+.sources{columns:2;column-gap:28px;font-size:13px}
+.sources li{break-inside:avoid;margin:0 0 6px}
+@media (max-width:720px){.sources{columns:1}.facts{grid-template-columns:1fr}.facts dt{padding-top:6px}}
+@media (prefers-reduced-motion:no-preference){.card{transition:border-color .15s}.card:hover{border-color:var(--accent)}}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.contact{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;background:var(--surface-2);padding:10px 12px;font-size:13.5px}
+.contact dt{font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding-top:2px}
+.contact dd{margin:0}
+.card.lead{grid-column:1 / -1}
+.card.lead .body{grid-template-columns:1.2fr 1fr;align-items:start}
+@media (max-width:760px){.card.lead .body{grid-template-columns:1fr}}
+@media print{
+  @page{size:Letter;margin:0.5in}
+  :root{--bg:#fff;--surface:#fff;--surface-2:#eef1f5;--ink:#152033;--muted:#5a6578;--line:#cfd6e0;--accent:#0d5fb8;--accent-soft:#e3eefb}
+  body{font-size:11.5px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .wrap{max-width:none;padding-block:0;padding-left:0;padding-right:0}
+  h1{font-size:26px}h2{font-size:17px}h3{font-size:13.5px}
+  .lede{font-size:12.5px}
+  section{break-inside:auto;margin-bottom:18px}
+  .card,.kpi,.step,.callout,.note{break-inside:avoid}
+  .cards{grid-template-columns:repeat(2,1fr);gap:10px}
+  .card.lead{grid-column:1 / -1}
+  .card .body{font-size:11px}.facts{font-size:10.5px}
+  .tablewrap{overflow:visible;border:none}
+  table{min-width:0;font-size:9px;table-layout:fixed;width:100%}
+  th,td{padding:4px 4px;overflow-wrap:anywhere}
+  th{position:static;font-size:8px;letter-spacing:.02em}
+  td.num{white-space:normal}
+  th:nth-child(1){width:3%}th:nth-child(2){width:26%}th:nth-child(3){width:8%}th:nth-child(4){width:9%}th:nth-child(5){width:13%}th:nth-child(6){width:11%}
+  th:nth-child(7),th:nth-child(8),th:nth-child(9),th:nth-child(10),th:nth-child(11){width:3.6%}th:nth-child(12){width:4%}th:nth-child(13){width:8%}
+  .tier{font-size:8px;padding:1px 4px;letter-spacing:0}
+  .city{white-space:normal;font-size:8.5px}
+  .mapsec{break-before:page;break-inside:avoid}
+  .mapbox{break-inside:avoid}
+  .legend{font-size:10px}
+  a{color:var(--ink);text-decoration:none}
+  .foot a::after{content:""}
+  .sources{columns:2;font-size:9.5px}
+  .sources a::after{content:" (" attr(href) ")";color:var(--muted);word-break:break-all}
+  .pb{break-before:page}
+}
+</style>
+<div class="wrap">
+<header>
+  <div class="eyebrow">Contact sheet · prepared 9 Nov 2026 · for the 591 City Center Blvd approach</div>
+  <h1>Who has sat at the table with CHKD on real estate</h1>
+  <p class="lede">Five brokerages and one developer show up in the public record on Children's Hospital of The King's Daughters transactions since 2015. Two of them have represented CHKD directly. The rest sat across the table or lease to CHKD as landlord agents, which still means they know the account and the people who sign. Contacts below are from firm press releases, listing brochures and broker directories; direct lines marked "verify" come from third-party directories.</p>
+  <div class="meta"><span>Deals reviewed: 2020 Norfolk Southern tower purchase, CHKD Thrift leases 2015–2026, former CHKD Imaging Center listing, Tech Center and Landstown buildings, Harbour View and Butler Farm health centers</span></div>
+</header>
+
+<section>
+  <div class="callout flame">
+    <h2>How to use this</h2>
+    <p>Lead with Divaris. Gerald Divaris, Michael Divaris and Jason Oliver represented the TowneBank and CHKD joint venture when it bought the Norfolk Southern headquarters tower in June 2020, and Divaris still manages and leases that building for the venture. That is a buyer-side relationship with CHKD's finance and legal leadership, the same people who control 591 City Center Blvd. Tell Divaris you have a credit-tenant utility headquarters for CHKD's 14.93 vacant acres and let them carry it to Kathy Abshire. A broker with a fee on the other side of the table is a motivated intermediary, and it gets you a warm introduction instead of a cold call.</p>
+    <p>Second call is Chris Zarpas at S.L. Nusbaum, who is marketing the former CHKD Imaging Center at 6170 Cleveland St in Norfolk right now. Whether CHKD or a landlord owns that building, he is the broker currently touching CHKD-vacated real estate, and Nusbaum has represented CHKD Thrift as tenant.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Represented CHKD directly</h2>
+  <div class="grid cards">
+    <article class="card t1 lead"><div class="stripe"></div>
+      <div class="head"><div class="row"><h3>1 · Divaris Real Estate, Inc.</h3><span class="tier t1">Buyer side</span></div><div class="eyebrow">4525 Main St, Suite 900, Virginia Beach, VA 23462 · main 757-497-2113 · divaris.com</div></div>
+      <div class="body">
+        <div style="display:grid;gap:10px">
+          <dl class="facts">
+            <dt>CHKD work</dt><dd>Represented TowneBank and CHKD (buying as McKinnon Tower LLC) in the June 2020 purchase of the Norfolk Southern headquarters, the 310,745 SF Arnold B. McKinnon Building, reported at about $30M plus an $8.5M garage. Divaris has leased and managed the building since 2009 and kept the assignment after the sale. CHKD occupies part of the renovated tower.</dd>
+            <dt>Also</dt><dd>Landlord agent at Lightfoot Marketplace in Williamsburg, where CHKD Pediatric Medical Center anchors (George Fox), and at Fairfield Shopping Center, where CHKD Thrift is a tenant.</dd>
+            <dt>Why first</dt><dd>Only brokerage in the public record that has negotiated a major acquisition on CHKD's behalf. They know who at CHKD says yes on real estate.</dd>
+          </dl>
+        </div>
+        <div style="display:grid;gap:10px">
+          <dl class="contact">
+            <dt>Michael Divaris, SIOR</dt><dd>President. On the 2020 CHKD deal. 757-497-2113 (main; directory lists it as his line).</dd>
+            <dt>Gerald Divaris</dt><dd>Chairman. On the 2020 CHKD deal. Reach via main line.</dd>
+            <dt>Jason Oliver</dt><dd>Vice President, Investment Sales. On the 2020 CHKD deal. No published direct line; via main.</dd>
+            <dt>Krista Costa</dt><dd>Executive Vice President, office leasing, investment sales and corporate services. 757-497-2113, mobile 757-333-4356 (verify). Useful door if the principals are slow.</dd>
+            <dt>Email</dt><dd>Directories disagree between first-initial-last and first.last at divaris.com. Call first.</dd>
+          </dl>
+        </div>
+      </div>
+      <div class="foot"><span>Sources: Divaris and Commercial Property Executive releases on the 2020 sale; Divaris leasing announcements</span><a href="https://www.divaris.com/townebank-and-chkd-buy-norfolk-southern-building-in-downtown-norfolk/" target="_blank" rel="noopener">Divaris release</a></div>
+    </article>
+
+    <article class="card t1 lead"><div class="stripe"></div>
+      <div class="head"><div class="row"><h3>2 · S.L. Nusbaum Realty Co.</h3><span class="tier t1">Tenant side, active listing</span></div><div class="eyebrow">440 Monticello Ave, Suite 1700, Norfolk, VA 23510 · main 757-627-8611 · slnusbaum.com</div></div>
+      <div class="body">
+        <div style="display:grid;gap:10px">
+          <dl class="facts">
+            <dt>CHKD work</dt><dd>Represented CHKD Thrift Store as tenant in its 13,171 SF lease at Suffolk Plaza in November 2015 (Murray Rosenbach and Michael Gurley). Currently the listing broker on the former CHKD Imaging Center, 6170 Cleveland St, Norfolk, a 6,272 SF purpose-built imaging building on 0.86 acres offered at $17.75/SF NNN. Owner of record not confirmed from here.</dd>
+            <dt>Also</dt><dd>Landlord agent on CHKD Thrift renewals at Thomas Corner, Norfolk (Lindsay Bangel 2025; Maggie Spillane and Murray Rosenbach 2022; Rosenbach 2017) and Suffolk Plaza (Chris Hucke 2015, 2026).</dd>
+            <dt>Why second</dt><dd>The firm touching CHKD-vacated space today, with a decade of CHKD retail leases behind it.</dd>
+          </dl>
+        </div>
+        <div style="display:grid;gap:10px">
+          <dl class="contact">
+            <dt>Christopher M. Zarpas</dt><dd>Listing broker, former CHKD Imaging Center. Office 757-640-5437, cell 757-237-7500, czarpas@slnusbaum.com (from his marketing flyer).</dd>
+            <dt>Murray Rosenbach</dt><dd>Represented CHKD Thrift as tenant (2015). 757-640-2229 (verify). Email pattern is first-initial-last at slnusbaum.com, so mrosenbach@slnusbaum.com is probable, unverified.</dd>
+            <dt>Michael Gurley</dt><dd>Co-represented CHKD Thrift (2015). Not in current firm directories; may have left.</dd>
+          </dl>
+        </div>
+      </div>
+      <div class="foot"><span>Sources: S.L. Nusbaum monthly transaction releases 2015–2026; 6170 Cleveland St listing flyer</span><a href="https://www.crexi.com/lease/properties/1171188/virginia-former-chkd-imaging-center" target="_blank" rel="noopener">Imaging Center listing</a></div>
+    </article>
+  </div>
+</section>
+
+<section>
+  <h2>Across the table from CHKD, or CHKD's landlord agent</h2>
+  <div class="grid cards">
+    <article class="card t2"><div class="stripe"></div>
+      <div class="head"><div class="row"><h3>3 · Cushman &amp; Wakefield | Thalhimer</h3><span class="tier t2">Seller side, 2020</span></div><div class="eyebrow">222 Central Park Ave, Suite 1500, Virginia Beach, 757-499-2900 · One BayPort Way, Suite 100, Newport News, 757-873-2900</div></div>
+      <div class="body"><dl class="facts"><dt>CHKD work</dt><dd>Represented Norfolk Southern, the seller, when TowneBank and CHKD bought the headquarters tower in 2020. Landlord agent on CHKD Thrift's 5,000 SF renewals at Hilltop Square, Virginia Beach (Connie Jordan Nielsen, Dean Martin).</dd></dl>
+      <dl class="contact"><dt>Rob Wright</dt><dd>Senior Vice President. Ran the 2020 sale. 757-499-2896, rob.wright@thalhimer.com.</dd><dt>Geoff Poston, SIOR, CCIM</dt><dd>Senior Vice President, Managing Broker. Assisted on the 2020 sale. 757-213-4161, mobile 757-650-8437, geoff.poston@thalhimer.com.</dd><dt>Andy Dallas</dt><dd>Peninsula office specialist, Newport News. 757-873-3661. Relevant for City Center comps, not CHKD history.</dd></dl>
+      <p>Wright negotiated against CHKD's team for months. He knows how they move and what they paid. Worth a call for intelligence even if Divaris carries the deal.</p></div>
+      <div class="foot"><span>Sources: Thalhimer release on the sale; Thalhimer bios</span><a href="https://thalhimer.com/marketwatch/our-blog/sale-completed-for-norfolk-southern-hq-building-388308/" target="_blank" rel="noopener">Thalhimer release</a></div>
+    </article>
+
+    <article class="card t2"><div class="stripe"></div>
+      <div class="head"><div class="row"><h3>4 · CBRE | Hampton Roads</h3><span class="tier t2">Landlord agent, Suffolk</span></div><div class="eyebrow">150 Granby St, Suite 150, Norfolk, VA 23510 · 757-364-6500</div></div>
+      <div class="body"><dl class="facts"><dt>CHKD work</dt><dd>Leases and manages Harbour View Professional Center in Suffolk for Harbour View Associates LLC. CHKD's Health Center at Harbour View is at 5832 and 5834 Harbour View Blvd; tenancy inside that specific park is not confirmed from here.</dd></dl>
+      <dl class="contact"><dt>Donald Crigger</dt><dd>Executive Vice President, tenant representation including medical office. 757-490-3300 (verify).</dd></dl>
+      <p>Weakest CHKD link on the list. Include only if the Suffolk tenancy checks out.</p></div>
+      <div class="foot"><span>Source: Virginia Business on the Harbour View assignment</span><a href="https://virginiabusiness.com/cbrehampton-roads-to-lease-and-manage-suffolk-medical-building/" target="_blank" rel="noopener">Virginia Business</a></div>
+    </article>
+
+    <article class="card t2"><div class="stripe"></div>
+      <div class="head"><div class="row"><h3>5 · Colliers | Virginia</h3><span class="tier t2">Landlord agent, Hampton</span></div><div class="eyebrow">Parkway Medical Center, 501 Butler Farm Rd, Hampton</div></div>
+      <div class="body"><dl class="facts"><dt>CHKD work</dt><dd>Leases Parkway Medical Center in Hampton Roads Center, marketed as adjacent to CHKD Health Center at Butler Farm. The brochure lists a Colliers Senior Vice President, Healthcare Services, as contact; the name did not survive the search snippet. No direct CHKD representation found.</dd></dl>
+      <p>Colliers has a dedicated healthcare practice in Hampton Roads and will know CHKD's Peninsula footprint. Pull the brochure for the name.</p></div>
+      <div class="foot"><span>Source: Colliers Parkway Medical Center listing</span><a href="https://www.colliers.com/en/properties/parkway-medical-center/usa-501-butler-farm-road-hampton-virginia-23666/usa1056536" target="_blank" rel="noopener">Colliers listing</a></div>
+    </article>
+  </div>
+</section>
+
+<section>
+  <h2>Development partner, not a brokerage</h2>
+  <div class="grid cards">
+    <article class="card t3 lead"><div class="stripe"></div>
+      <div class="head"><div class="row"><h3>6 · W.M. Jordan Company and W.M. Jordan Development</h3><span class="tier t3">Builder and landlord</span></div><div class="eyebrow">Newport News · wmjordan.com</div></div>
+      <div class="body">
+        <div style="display:grid;gap:10px"><dl class="facts"><dt>CHKD work</dt><dd>Construction manager on the $224M Children's Pavilion in Norfolk (363,915 SF), the 66,267 SF CHKD Health Center at Landstown in Virginia Beach, and the TowneBank Tower renovation. Developer and original landlord of the Tech Center building at 680 Oyster Point Rd in Newport News, which CHKD leased after a bank tenant left and which a medical office REIT bought in 2019.</dd></dl></div>
+        <div style="display:grid;gap:10px"><p>Not a broker, but the single most trusted real estate counterparty CHKD has, and headquartered in Newport News a mile from 591 City Center Blvd. If a build-to-suit or joint venture structure ever enters the CHKD conversation, Jordan is who CHKD will call. Timmons has worked alongside them on Tech Center, so you have a warm path to their development group without a cold call.</p></div>
+      </div>
+      <div class="foot"><span>Sources: W.M. Jordan project pages</span><a href="https://wmjordan.com/projects/chkd-medical-office-building-at-tech-center/" target="_blank" rel="noopener">Tech Center project page</a></div>
+    </article>
+  </div>
+</section>
+
+<section>
+  <h2>Checked, no CHKD link found</h2>
+  <div class="callout">
+    <p><b>Harvey Lindsay Commercial Real Estate</b> (999 Waterside Dr, Suite 1400, Norfolk, 757-640-8700) shows no CHKD transaction in the public record. It was the local partner on the $64M City Center at Oyster Point portfolio sale in 2016, which makes it a City Center expert, not a CHKD relationship. <b>JLL</b> shows nothing on CHKD in Hampton Roads. <b>The broker on CHKD's November 2016 purchase of 591 City Center Blvd</b> is not in any press release or listing archive I can reach; the seller and any brokerage credit will be on the recorded deed and settlement statement, which Timmons or a title company can pull in a day. If that broker is still active, they are the one person who knows what CHKD planned for the site.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Sources</h2>
+  <ul class="sources">
+    <li><a href="https://www.divaris.com/townebank-and-chkd-buy-norfolk-southern-building-in-downtown-norfolk/" target="_blank" rel="noopener">Divaris: TowneBank and CHKD buy Norfolk Southern building (Gerald Divaris, Michael Divaris, Jason Oliver represented buyer)</a></li>
+    <li><a href="https://www.commercialsearch.com/news/norfolk-southern-sells-hq-to-townebank-jv/" target="_blank" rel="noopener">Commercial Property Executive: Norfolk Southern sells HQ to TowneBank JV</a></li>
+    <li><a href="https://www.virginiabusiness.com/article/townebank-and-chkd-buy-norfolk-southern-tower/" target="_blank" rel="noopener">Virginia Business: TowneBank and CHKD buy Norfolk Southern Tower for $30M</a></li>
+    <li><a href="https://thalhimer.com/marketwatch/our-blog/sale-completed-for-norfolk-southern-hq-building-388308/" target="_blank" rel="noopener">Thalhimer: sale completed for Norfolk Southern HQ (Rob Wright, Geoff Poston for seller)</a></li>
+    <li><a href="https://www.townebank.com/about-towne/news-room/2020/townebank-chkd/" target="_blank" rel="noopener">TowneBank: TowneBank and CHKD purchase building</a></li>
+    <li><a href="https://slnusbaum.com/newsroom/s-l-nusbaum-realty-co-announces-12-million-in-sales-and-lease-volume-for-november-2015/" target="_blank" rel="noopener">S.L. Nusbaum, Nov 2015: CHKD Thrift Suffolk Plaza lease (Rosenbach and Gurley for tenant)</a></li>
+    <li><a href="https://slnusbaum.com/newsroom/s-l-nusbaum-realty-co-announces-21-million-in-completed-transactions-for-may-2026/" target="_blank" rel="noopener">S.L. Nusbaum, May 2026: CHKD Thrift Suffolk Plaza renewal (Chris Hucke)</a></li>
+    <li><a href="https://slnusbaum.com/newsroom/s-l-nusbaum-realty-co-announces-32-million-in-completed-transactions-for-may-2025/" target="_blank" rel="noopener">S.L. Nusbaum, May 2025: CHKD Thrift Thomas Corner renewal (Lindsay Bangel)</a></li>
+    <li><a href="https://www.crexi.com/lease/properties/1171188/virginia-former-chkd-imaging-center" target="_blank" rel="noopener">Crexi: former CHKD Imaging Center, 6170 Cleveland St (S.L. Nusbaum, Christopher Zarpas)</a></li>
+    <li><a href="https://www.citybiz.co/article/859589/hampton-roads-leases-completed-by-cushman-wakefield-thalhimer-108/" target="_blank" rel="noopener">Citybiz: Thalhimer Hampton Roads leases, CHKD Thrift Hilltop Square (Nielsen, Martin for landlord)</a></li>
+    <li><a href="https://www.divaris.com/divaris-real-estates-hampton-roads-office-completes-seven-transactions-totaling-47277-square-feet/" target="_blank" rel="noopener">Divaris: Lightfoot Marketplace transactions (CHKD Pediatric Medical Center anchor)</a></li>
+    <li><a href="https://virginiabusiness.com/cbrehampton-roads-to-lease-and-manage-suffolk-medical-building/" target="_blank" rel="noopener">Virginia Business: CBRE Hampton Roads to lease and manage Harbour View Professional Center</a></li>
+    <li><a href="https://www.colliers.com/en/properties/parkway-medical-center/usa-501-butler-farm-road-hampton-virginia-23666/usa1056536" target="_blank" rel="noopener">Colliers: Parkway Medical Center, 501 Butler Farm Rd</a></li>
+    <li><a href="https://wmjordan.com/projects/chkd-medical-office-building-at-tech-center/" target="_blank" rel="noopener">W.M. Jordan: CHKD building at Tech Center</a></li>
+    <li><a href="https://wmjordan.com/projects/chkd-landstown-center-way-medical-office-building/" target="_blank" rel="noopener">W.M. Jordan: CHKD Landstown medical office building</a></li>
+    <li><a href="https://wmjordan.com/case-studies/chkd-childrens-pavilion/" target="_blank" rel="noopener">W.M. Jordan: CHKD Children's Pavilion</a></li>
+    <li><a href="https://rebusinessonline.com/savills-studley-brokers-64m-sale-of-city-center-at-oyster-point-in-newport-news/" target="_blank" rel="noopener">REBusiness: $64M City Center sale (Harvey Lindsay local partner)</a></li>
+    <li><a href="https://www.cushmanwakefield.com/en/united-states/people/rob-wright" target="_blank" rel="noopener">Cushman &amp; Wakefield: Rob Wright</a></li>
+    <li><a href="https://www.cushmanwakefield.com/en/united-states/people/geoffrey-poston-ccim" target="_blank" rel="noopener">Cushman &amp; Wakefield: Geoff Poston</a></li>
+    <li><a href="https://www.cbre.com/offices/corporate/norfolk" target="_blank" rel="noopener">CBRE Norfolk office</a></li>
+  </ul>
+</section>
+</div>
