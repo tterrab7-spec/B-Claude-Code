@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sterling Tax Pipeline Engine</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Libre+Franklin:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: an operator console. Summary strip, then plays, then the approval queue as the working surface, calendar and log below. */
+:root{
+  --bg:#f6f5f2; --surface:#ffffff; --fg:#1c1f26; --muted:#5b6170; --line:#d9d8d2; --tint:#efe6dd;
+  --accent:#9a4a1c; --accent-ink:#ffffff; --good:#2f6b3a; --warn:#9a6b00; --bad:#9b2c2c; --info:#2b5c8a;
+  --display:"Bricolage Grotesque","Helvetica Neue",Arial,sans-serif;
+  --body:"Libre Franklin",Georgia,serif;
+  --mono:"JetBrains Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#15171c; --surface:#1d2026; --fg:#ebe9e3; --muted:#a2a7b3; --line:#343841; --tint:#2a2420;
+  --accent:#d9854f; --accent-ink:#15171c; --good:#7cc287; --warn:#e0b64a; --bad:#e07a7a; --info:#7fb0dd; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#15171c; --surface:#1d2026; --fg:#ebe9e3; --muted:#a2a7b3; --line:#343841; --tint:#2a2420;
+  --accent:#d9854f; --accent-ink:#15171c; --good:#7cc287; --warn:#e0b64a; --bad:#e07a7a; --info:#7fb0dd; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 64px}
+.wrap{max-width:1040px;margin:0 auto}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;line-height:1.1;margin:0}
+h1{font-size:clamp(1.7rem,4vw,2.4rem);font-weight:800;letter-spacing:-.02em}
+h2{font-size:1.25rem;font-weight:700;margin-top:40px;padding-top:16px;border-top:2px solid var(--fg)}
+h3{font-size:1rem;font-weight:700}
+p{max-width:70ch;margin:10px 0}
+.eyebrow{font-family:var(--mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:0 0 8px}
+header{padding-top:36px}
+.meta{font-family:var(--mono);font-size:.75rem;color:var(--muted);margin-top:10px}
+.strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:22px 0}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:12px 14px;min-width:0}
+.tile .k{font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.tile .v{font-family:var(--display);font-size:1.6rem;font-weight:700;line-height:1.1;margin-top:4px;font-variant-numeric:tabular-nums}
+.tile .d{font-size:.82rem;color:var(--muted)}
+.plays{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:12px;margin-top:16px}
+.play{background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--accent);border-radius:4px;padding:14px 16px;min-width:0;display:flex;flex-direction:column;gap:8px}
+.play .n{font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;color:var(--muted)}
+.play .count{font-family:var(--mono);font-size:.8rem;color:var(--muted)}
+.play .count b{color:var(--fg);font-weight:600}
+.play ul{margin:0;padding-left:18px;font-size:.88rem}
+.play li{margin:3px 0}
+.play .lbl{font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+.draft{background:var(--tint);border-radius:4px;padding:10px 12px;font-size:.86rem;white-space:pre-wrap}
+.toggle{display:flex;align-items:center;gap:8px;margin-top:auto;padding-top:6px}
+.toggle button{font-family:var(--mono);font-size:.7rem;letter-spacing:.06em;padding:5px 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer}
+.toggle button.on{background:var(--good);color:#fff;border-color:var(--good)}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:14px 0}
+.toolbar select,.toolbar input{font:inherit;font-size:.88rem;padding:6px 10px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--fg)}
+.counts{font-family:var(--mono);font-size:.74rem;color:var(--muted);margin-left:auto;font-variant-numeric:tabular-nums}
+.queue{display:grid;gap:10px}
+.lead{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:12px 14px;display:grid;grid-template-columns:52px 1fr auto;gap:12px;align-items:start;min-width:0}
+.lead.approved{border-left:5px solid var(--good)}
+.lead.rejected{border-left:5px solid var(--bad);opacity:.7}
+.lead.pending{border-left:5px solid var(--line)}
+.score{font-family:var(--display);font-weight:800;font-size:1.5rem;text-align:center;line-height:1;padding-top:4px;font-variant-numeric:tabular-nums}
+.score small{display:block;font-family:var(--mono);font-size:.6rem;letter-spacing:.08em;color:var(--muted);font-weight:400;margin-top:4px}
+.who{min-width:0}
+.who .name{font-weight:600}
+.who .title{color:var(--muted);font-size:.9rem}
+.who .org{font-size:.92rem}
+.who .why{font-size:.88rem;margin-top:6px;max-width:70ch}
+.pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.pill{display:inline-block;font-family:var(--mono);font-size:.64rem;letter-spacing:.06em;padding:2px 8px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
+.pill.good{color:var(--good)} .pill.warn{color:var(--warn)} .pill.bad{color:var(--bad)} .pill.info{color:var(--info)} .pill.acc{color:var(--accent)} .pill.mute{color:var(--muted)}
+.acts{display:flex;flex-direction:column;gap:6px;min-width:96px}
+.acts button{font:inherit;font-size:.82rem;padding:7px 10px;border-radius:4px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer}
+.acts button.ok{background:var(--good);border-color:var(--good);color:#fff}
+.acts button.no{color:var(--bad);border-color:var(--bad)}
+.acts button.undo{font-size:.74rem;color:var(--muted)}
+.acts button:disabled{opacity:.5;cursor:default}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.notice{background:var(--tint);border-left:5px solid var(--accent);padding:10px 14px;border-radius:0 4px 4px 0;font-size:.9rem;margin:14px 0}
+.notice.err{border-left-color:var(--bad)}
+.tablewrap{overflow-x:auto;margin:14px 0;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.86rem}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;background:var(--bg)}
+tr:last-child td{border-bottom:0}
+td.mono{font-family:var(--mono);font-size:.8rem;white-space:nowrap}
+.log{font-family:var(--mono);font-size:.78rem;display:grid;gap:4px;margin-top:12px}
+.log div{display:grid;grid-template-columns:150px 1fr;gap:12px;padding:6px 0;border-bottom:1px solid var(--line)}
+.log .t{color:var(--muted);white-space:nowrap}
+.empty{color:var(--muted);font-style:italic;padding:16px;border:1px dashed var(--line);border-radius:6px}
+.howto{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:12px}
+.howto div{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:12px 14px;font-size:.88rem}
+.howto b{font-family:var(--display);display:block;margin-bottom:4px}
+@media (max-width:560px){.lead{grid-template-columns:44px 1fr}.acts{grid-column:1/-1;flex-direction:row;flex-wrap:wrap}.log div{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <p class="eyebrow">Live test · Sterling Tax Management · Virginia commercial property tax appeals</p>
+  <h1>Sterling Tax Pipeline Engine</h1>
+  <p>Three plays find the people who feel a commercial assessment before the owner does. Claude scores each lead and writes why it fits. You approve or reject here. Claude enriches the approved ones, drafts the first touch in your voice, and enrolls them once a sending mailbox is linked.</p>
+  <p class="meta">Operator: Barrett Franklin · Data: Apollo, Virginia assessor calendars · Engine runs in Claude</p>
+</header>
+
+<div class="strip" id="strip">
+  <div class="tile"><div class="k">Matches found</div><div class="v" id="t-matches">5,351</div><div class="d">across three plays, Virginia only</div></div>
+  <div class="tile"><div class="k">In queue</div><div class="v" id="t-queue">–</div><div class="d">scored, awaiting your call</div></div>
+  <div class="tile"><div class="k">Approved</div><div class="v" id="t-approved">–</div><div class="d">Claude enriches and drafts</div></div>
+  <div class="tile"><div class="k">Rejected</div><div class="v" id="t-rejected">–</div><div class="d">trains the scoring</div></div>
+  <div class="tile"><div class="k">Apollo credits</div><div class="v">2,440</div><div class="d">left this cycle, resets 8 Dec</div></div>
+</div>
+
+<div class="notice" id="dbnotice" hidden></div>
+
+<h2>The plays</h2>
+<p>A play is a saved definition: who, where, which signal, and the first touch. Pause a play and Claude stops pulling new leads for it. The first touch never pitches. It names the signal and asks one question.</p>
+<div class="plays" id="plays"></div>
+
+<h2>Approval queue</h2>
+<div class="toolbar">
+  <label for="f-play" class="eyebrow" style="margin:0">Play</label>
+  <select id="f-play"><option value="all">All plays</option><option value="p1">CRE property managers and brokers</option><option value="p2">CPAs and tax directors</option><option value="p3">Owners, developers, asset managers</option></select>
+  <label for="f-status" class="eyebrow" style="margin:0">Show</label>
+  <select id="f-status"><option value="pending">Pending</option><option value="approved">Approved</option><option value="rejected">Rejected</option><option value="all">Everything</option></select>
+  <span class="counts" id="counts"></span>
+</div>
+<div class="queue" id="queue"><div class="empty">Loading the queue…</div></div>
+
+<h2>The signal of record: when the notice lands</h2>
+<p>Virginia assesses locally and every locality runs its own calendar. The notice date is the trigger. A property manager who gets a 12 percent increase in the mail has 30 to 60 days to act, and almost none of them have an appraiser lined up. Sterling's pitch window is the 60 days before the notice, which for most of Virginia is right now through January.</p>
+<div class="tablewrap"><table>
+<tr><th>Locality</th><th>Notices mailed</th><th>First appeal due</th><th>Board of Equalization / Review due</th><th>Source</th></tr>
+<tr><td>Chesterfield County</td><td class="mono">by Feb 1</td><td class="mono">Mar 15</td><td class="mono">Apr 15</td><td>County site</td></tr>
+<tr><td>Henrico County</td><td class="mono">February</td><td class="mono">Apr 1</td><td class="mono">per notice</td><td>County site</td></tr>
+<tr><td>Arlington County</td><td class="mono">January</td><td class="mono">Mar 2 (2026)</td><td class="mono">Apr 15 (2026)</td><td>County site</td></tr>
+<tr><td>Virginia Beach</td><td class="mono">early March</td><td class="mono">on the notice</td><td class="mono">~Jul 1</td><td>Third party, verify</td></tr>
+<tr><td>Chesapeake</td><td class="mono">by Mar 1</td><td class="mono">on the notice</td><td class="mono">verify</td><td>Third party, verify</td></tr>
+<tr><td>Norfolk</td><td class="mono">by Apr 1</td><td class="mono">May 8 (2026)</td><td class="mono">Jun 1 (2026)</td><td>City site</td></tr>
+<tr><td>Hampton</td><td class="mono">Jan / Feb</td><td class="mono">30 days from notice</td><td class="mono">60 days from notice</td><td>City site</td></tr>
+<tr><td>Fairfax County</td><td class="mono">Feb / Mar</td><td class="mono">Apr (admin)</td><td class="mono">Jun 1 (2026)</td><td>County site</td></tr>
+<tr><td>Prince William County</td><td class="mono">March</td><td class="mono">Jun 1 (2026)</td><td class="mono">Jul 1 (2026)</td><td>County site</td></tr>
+<tr><td>City of Richmond</td><td class="mono">conflicting</td><td class="mono">30 to 60 days from notice</td><td class="mono">Nov 30 (one source)</td><td>Unverified, check assessor</td></tr>
+</table></div>
+<p class="note" style="font-size:.86rem;color:var(--muted)">Newport News, Suffolk, Portsmouth and Loudoun are not yet in the table. Claude adds localities as plays expand. Dates marked 2026 are last cycle and will shift a few days.</p>
+
+<h2>What happens when you approve</h2>
+<div class="howto">
+  <div><b>1. Enrich</b>Claude reveals the work email and direct dial on Apollo. One credit each, charged only for approved leads.</div>
+  <div><b>2. Draft</b>The play's first touch is personalized to the lead: their locality's notice date, their portfolio type, the one question.</div>
+  <div><b>3. You see it</b>Drafts come back to you in chat before anything sends. Edit or kill any of them.</div>
+  <div><b>4. Send and watch</b>Once a Sterling sending mailbox is linked in Apollo, approved leads enroll in the sequence. Replies come back here within the hour.</div>
+</div>
+<p>Rejections matter as much as approvals. Each one tells Claude which titles, firms and property types to stop surfacing. Ten rejections in a row on residential property managers and that filter tightens on the next pull.</p>
+
+<h2>Run log</h2>
+<div class="log" id="log"><div class="empty">No runs logged yet.</div></div>
+</div>
+
+<script>
+(function(){
+  const $=s=>document.querySelector(s);
+  const state={db:null,leads:[],decisions:{},plays:{},log:[],busy:{}};
+  const PLAY_META={
+    p1:{n:"PLAY 1",title:"CRE property managers and leasing brokers",count:"3,805",who:"Property managers, directors of property management, leasing SVPs and principal brokers at commercial firms headquartered in Virginia, 1 to 1,000 staff.",why:"They see the tax bill in the operating statement and the vacancy on the rent roll. A manager with a half-empty office building knows the income approach does not support the assessment before anyone else does.",signals:["Assessment notice lands in their locality (calendar below)","Property listed for lease more than 180 days","Managed asset sold below assessed value in the last 12 months","Firm added managed square footage or a new third-party management contract"],draft:"{{first_name}}, quick one about the {{locality}} notices that land {{notice_month}}.\n\nWhen a managed building is sitting under-leased or carrying deferred maintenance, the income approach rarely supports the number on the notice, and the appeal window is 30 to 60 days.\n\nDo you have assets in the portfolio where occupancy or condition does not match last year's assessment?\n\nBarrett Franklin\nSterling Tax Management"},
+    p2:{n:"PLAY 2",title:"CPAs and tax directors with real estate clients",count:"345",who:"Tax partners, tax directors and principals at Virginia accounting firms of 11 to 500 staff. Scored up when the firm has a real estate or construction practice.",why:"The CPA sees the real estate tax line on every client's return and gets the call when it jumps. They cannot do the appraisal work. They refer it. One CPA relationship is ten owners.",signals:["Firm lists a real estate or construction industry practice","Firm's clients are concentrated in a locality with a reassessment this cycle","Partner posts or speaks on real estate cost segregation or property tax","Firm is hiring real estate tax staff"],draft:"{{first_name}}, a question for your real estate clients rather than for you.\n\n{{locality}} assessment notices go out {{notice_month}}. When a client's commercial assessment jumps and the building is under-leased or in rough shape, the appeal is winnable but the window is short, and most owners call their CPA first.\n\nDo you have a referral path for that today, or do those calls end with the client paying the bill?\n\nBarrett Franklin\nSterling Tax Management"},
+    p3:{n:"PLAY 3",title:"Owners, developers and asset managers",count:"1,201",who:"Owners, presidents, CFOs, controllers and directors of asset management at Virginia real estate development, investment and multifamily firms, 1 to 500 staff.",why:"The owner pays the bill and signs the appeal. They know which assets are under-leased or in disrepair. They rarely know the deadline until it has passed.",signals:["Assessment notice lands in a locality where they hold assets","Portfolio includes office or retail with reported vacancy","Recent acquisition below assessed value (tax basis reset argument)","Deferred capital projects or code enforcement activity on an asset"],draft:"{{first_name}}, {{locality}} mails assessment notices {{notice_month}}, and the appeal window closes 30 to 60 days later.\n\nFor an under-leased or deferred-maintenance asset, the income approach usually supports a lower number than the notice, but only if the file is ready before the notice lands.\n\nIs there an asset in the {{company}} portfolio where occupancy or condition does not match the current assessment?\n\nBarrett Franklin\nSterling Tax Management"}
+  };
+  const STATUS_LABEL={approved:"Approved",rejected:"Rejected",pending:"Pending"};
+
+  function renderPlays(){
+    const el=$("#plays"); el.innerHTML="";
+    for(const id of ["p1","p2","p3"]){
+      const m=PLAY_META[id]; const p=state.plays[id]||{}; const on=p.status!=="paused";
+      const d=document.createElement("div"); d.className="play";
+      d.innerHTML=`<div class="n">${m.n}</div><h3>${m.title}</h3>
+        <div class="count"><b>${m.count}</b> matches in Apollo today</div>
+        <div class="lbl">Who</div><div style="font-size:.88rem">${m.who}</div>
+        <div class="lbl">Why they buy</div><div style="font-size:.88rem">${m.why}</div>
+        <div class="lbl">Signals Claude watches</div><ul>${m.signals.map(s=>`<li>${s}</li>`).join("")}</ul>
+        <div class="lbl">First touch</div><div class="draft">${m.draft}</div>
+        <div class="toggle"><button type="button" id="tg-${id}" class="${on?"on":""}" aria-pressed="${on}">${on?"Running":"Paused"}</button><span style="font-size:.8rem;color:var(--muted)">${on?"Claude pulls new leads for this play":"No new leads pulled"}</span></div>`;
+      el.appendChild(d);
+      d.querySelector("#tg-"+id).addEventListener("click",()=>togglePlay(id,on));
+    }
+  }
+  async function togglePlay(id,wasOn){
+    if(!state.db) return flash("Sign in as the owner to change a play.",true);
+    const cur=state.plays[id]||{};
+    try{ await state.db.doc("plays/"+id).set(Object.assign({},cur,{status:wasOn?"paused":"running",updatedAt:new Date().toISOString()})); }
+    catch(e){ flash("Could not save the play change: "+(e&&e.message||e),true); }
+  }
+  function decisionOf(id){ const d=state.decisions[id]; return d&&d.decision||"pending"; }
+  function renderQueue(){
+    const fp=$("#f-play").value, fs=$("#f-status").value;
+    const all=state.leads.slice().sort((a,b)=>(b.score||0)-(a.score||0)||(a.org||"").localeCompare(b.org||""));
+    const tot={pending:0,approved:0,rejected:0};
+    all.forEach(l=>{tot[decisionOf(l.id)]++;});
+    $("#t-queue").textContent=tot.pending; $("#t-approved").textContent=tot.approved; $("#t-rejected").textContent=tot.rejected;
+    const rows=all.filter(l=>(fp==="all"||l.play===fp)&&(fs==="all"||decisionOf(l.id)===fs));
+    $("#counts").textContent=`${rows.length} shown · ${tot.pending} pending · ${tot.approved} approved · ${tot.rejected} rejected`;
+    const q=$("#queue"); q.innerHTML="";
+    if(!state.leads.length){ q.innerHTML='<div class="empty">The queue is empty. Claude fills it on the next play run.</div>'; return; }
+    if(!rows.length){ q.innerHTML='<div class="empty">Nothing matches this filter.</div>'; return; }
+    for(const l of rows){
+      const st=decisionOf(l.id); const busy=!!state.busy[l.id];
+      const card=document.createElement("div"); card.className="lead "+st;
+      const pills=[`<span class="pill acc">${PLAY_META[l.play]?PLAY_META[l.play].n:l.play}</span>`,
+        l.hasEmail?'<span class="pill good">email on file</span>':'<span class="pill warn">no email, phone route</span>',
+        l.region?`<span class="pill info">${l.region}</span>`:"",
+        l.flag?`<span class="pill bad">${l.flag}</span>`:""].join("");
+      card.innerHTML=`<div class="score">${l.score}<small>of 5</small></div>
+        <div class="who"><div class="name">${l.first} ${l.last||""}</div><div class="title">${l.title}</div><div class="org">${l.org}</div>
+        <div class="why">${l.why}</div><div class="pills">${pills}</div></div>
+        <div class="acts">${st==="pending"?`<button type="button" class="ok" data-a="approved" ${busy?"disabled":""}>Approve</button><button type="button" class="no" data-a="rejected" ${busy?"disabled":""}>Reject</button>`:`<span class="pill ${st==="approved"?"good":"bad"}">${STATUS_LABEL[st]}</span><button type="button" class="undo" data-a="pending" ${busy?"disabled":""}>Undo</button>`}</div>`;
+      card.querySelectorAll("button[data-a]").forEach(b=>b.addEventListener("click",()=>decide(l.id,b.dataset.a)));
+      q.appendChild(card);
+    }
+  }
+  async function decide(id,decision){
+    if(!state.db) return flash("Sign in as the owner to approve or reject.",true);
+    state.busy[id]=true; renderQueue();
+    try{
+      const ref=state.db.doc("decisions/"+id);
+      if(decision==="pending") await ref.delete();
+      else await ref.set({decision,at:new Date().toISOString(),by:"owner"});
+    }catch(e){ flash("Could not save that decision: "+(e&&e.message||e),true); }
+    finally{ delete state.busy[id]; renderQueue(); }
+  }
+  function renderLog(){
+    const el=$("#log"); if(!state.log.length){ el.innerHTML='<div class="empty">No runs logged yet.</div>'; return; }
+    el.innerHTML=state.log.slice().sort((a,b)=>(b.at||"").localeCompare(a.at||"")).map(e=>`<div><span class="t">${(e.at||"").replace("T"," ").slice(0,16)}</span><span>${e.text||""}</span></div>`).join("");
+  }
+  function flash(msg,err){ const n=$("#dbnotice"); n.textContent=msg; n.className="notice"+(err?" err":""); n.hidden=false; }
+
+  $("#f-play").addEventListener("change",renderQueue);
+  $("#f-status").addEventListener("change",renderQueue);
+  renderPlays(); renderQueue();
+
+  (async()=>{
+    let db=null;
+    try{ db=window.claude&&window.claude.use?await window.claude.use("db"):null; }catch(e){ db=null; }
+    if(!db){ flash("Live data is not available in this view. Open the page signed in as its owner to see the queue and record decisions."); return; }
+    state.db=db;
+    let gotLeads=false;
+    const timer=setTimeout(()=>{ if(!gotLeads) flash("The queue has not answered yet. Give it a moment, or it may be out of date."); },10000);
+    db.collection("leads").onSnapshot(s=>{ gotLeads=true; clearTimeout(timer); $("#dbnotice").hidden=true; state.leads=s.docs.filter(d=>d.exists).map(d=>Object.assign({id:d.id},d.data())); renderQueue(); },e=>{ clearTimeout(timer); flash("Could not load the queue: "+e.message,true); });
+    db.collection("decisions").onSnapshot(s=>{ state.decisions={}; s.docs.forEach(d=>{ if(d.exists) state.decisions[d.id]=d.data(); }); renderQueue(); },e=>flash("Could not load decisions: "+e.message,true));
+    db.collection("plays").onSnapshot(s=>{ state.plays={}; s.docs.forEach(d=>{ if(d.exists) state.plays[d.id]=d.data(); }); renderPlays(); },e=>flash("Could not load plays: "+e.message,true));
+    db.collection("log").onSnapshot(s=>{ state.log=s.docs.filter(d=>d.exists).map(d=>d.data()); renderLog(); },e=>flash("Could not load the run log: "+e.message,true));
+  })();
+})();
+</script>
+</body>
+</html>
