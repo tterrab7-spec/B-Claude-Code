@@ -6,12 +6,12 @@
 :root{
   --bg:#f3f5f8; --panel:#ffffff; --panel-2:#eef2f6; --ink:#101828; --muted:#5f6b7a; --line:#dde3ea;
   --primary:#1f5fd1; --primary-soft:#e4ecfb; --primary-ink:#143f8f; --accent:#e27d1a;
-  --good:#1f8a4c; --warn:#b8800a; --bad:#b3403a; --pin1:#1f5fd1; --pin2:#2a8f6b;
+  --good:#1f8a4c; --warn:#b8800a; --bad:#b3403a; --pin1:#1f5fd1; --pin2:#2a8f6b; --pin3:#6b7585;
   --shadow:0 1px 2px rgba(16,24,40,.06),0 4px 14px rgba(16,24,40,.06);
   --display:"Inter Tight",system-ui,"Segoe UI",sans-serif; --body:"Source Sans 3",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
 }
-@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --bg:#0f141c; --panel:#171e28; --panel-2:#1f2733; --ink:#e7ecf3; --muted:#9aa6b8; --line:#2a3443; --primary:#6ea0f5; --primary-soft:#1a2740; --primary-ink:#b9cffb; --accent:#f0a050; --good:#4cc07a; --warn:#e2aa3a; --bad:#e06a62; --pin1:#6ea0f5; --pin2:#4fbf93; --shadow:0 1px 2px rgba(0,0,0,.4),0 4px 14px rgba(0,0,0,.35); color-scheme:dark } }
-:root[data-theme="dark"]{ --bg:#0f141c; --panel:#171e28; --panel-2:#1f2733; --ink:#e7ecf3; --muted:#9aa6b8; --line:#2a3443; --primary:#6ea0f5; --primary-soft:#1a2740; --primary-ink:#b9cffb; --accent:#f0a050; --good:#4cc07a; --warn:#e2aa3a; --bad:#e06a62; --pin1:#6ea0f5; --pin2:#4fbf93; --shadow:0 1px 2px rgba(0,0,0,.4),0 4px 14px rgba(0,0,0,.35); color-scheme:dark }
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --bg:#0f141c; --panel:#171e28; --panel-2:#1f2733; --ink:#e7ecf3; --muted:#9aa6b8; --line:#2a3443; --primary:#6ea0f5; --primary-soft:#1a2740; --primary-ink:#b9cffb; --accent:#f0a050; --good:#4cc07a; --warn:#e2aa3a; --bad:#e06a62; --pin1:#6ea0f5; --pin2:#4fbf93; --pin3:#98a2b3; --shadow:0 1px 2px rgba(0,0,0,.4),0 4px 14px rgba(0,0,0,.35); color-scheme:dark } }
+:root[data-theme="dark"]{ --bg:#0f141c; --panel:#171e28; --panel-2:#1f2733; --ink:#e7ecf3; --muted:#9aa6b8; --line:#2a3443; --primary:#6ea0f5; --primary-soft:#1a2740; --primary-ink:#b9cffb; --accent:#f0a050; --good:#4cc07a; --warn:#e2aa3a; --bad:#e06a62; --pin1:#6ea0f5; --pin2:#4fbf93; --pin3:#98a2b3; --shadow:0 1px 2px rgba(0,0,0,.4),0 4px 14px rgba(0,0,0,.35); color-scheme:dark }
 *{box-sizing:border-box}
 html,body{height:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.45}
@@ -38,7 +38,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .card:hover,.card:focus-visible{border-color:var(--primary)}
 .card.active{border-color:var(--primary);box-shadow:0 0 0 2px var(--primary-soft),var(--shadow)}
 .pin{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;color:#fff;font-family:var(--mono);font-weight:600;font-size:14px;background:var(--pin1)}
-.pin.t2{background:var(--pin2)}
+.pin.t2{background:var(--pin2)}.pin.t3{background:var(--pin3)}
 .card h3{font-family:var(--display);font-size:15px;margin:0 0 2px;line-height:1.2}
 .card .addr{color:var(--muted);font-size:13px}
 .card .kv{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:6px;font-size:13px}
@@ -116,7 +116,7 @@ td:first-child{font-weight:600;width:24%}
       <button role="tab" id="tab-compare" aria-selected="false" data-view="compare">Compare</button>
       <button role="tab" id="tab-tour" aria-selected="false" data-view="tour">Tour</button>
     </div>
-    <div class="meta">Draft for client review · 9 Nov 2026 · 3 sites</div>
+    <div class="meta">Draft for client review · Revised 10 Nov 2026 · 3 sites</div>
   </div></div>
 
   <div class="main">
@@ -140,31 +140,34 @@ var SITES=[
   parcel:"183-00-01-29",access:"City Center Blvd frontage; I-64 via J. Clyde Morris Blvd, about 2 minutes",utilities:"Water, sewer and natural gas in City Center Blvd; capacities to confirm",
   capacity:"120,000 to 160,000 SF office with surface parking, or 80,000 to 100,000 SF plus a secured fleet yard",path:"Direct negotiation: purchase or long-term ground lease; 60 to 120 days to agreement",
   drive:{cc:"3 min",pw:"5 min",dil:"3 min",i64:"2 min"},miles:{cc:"under 1",dil:"about 1",pw:"about 1.5"},
-  fit:{acre:"y",prox:"y",zone:"y",ready:"y",speed:"y",incent:"p",amen:"y",access:"y"},
+  fit:{acre:"y",prox:"y",zone:"y",ready:"y",speed:"y",yard:"y",incent:"p",amen:"y",access:"y"},
   assess:"The strongest match to VNG's criteria. A single vacant parcel, already zoned for office use, at a City Center address, within a mile of the existing office, with no demolition or remediation. The owner has held it idle for nearly a decade with no announced plan, which supports either an outright purchase or a long-term ground lease; a carve-out that leaves the owner a future medical pad is available as a negotiating tool.",
   status:"Owner identified. Outreach to the owner's finance and legal leadership has begun. Parcel file ordered.",
   dd:["Title and the 2016 deed","Wetland delineation and Chesapeake Bay Preservation Area buffers","Stormwater and geotechnical","Traffic at City Center Blvd","C-2 permitted uses and any proffers from the earlier rezoning"]},
- {id:2,tier:1,name:"City Center Expansion Area",short:"City Center Expansion",addr:"East of City Center at Oyster Point, between Canon Blvd and Rock Landing Dr",lat:37.072,lon:-76.478,
-  acres:"About 38 acres publicly held; 10 to 15 acre carve-out",zoning:"C-4 Oyster Point Business District; mixed-use, commercial and employment uses by right",owner:"City of Newport News and its Economic Development Authority",
-  parcel:"Multiple city and EDA parcels",access:"Canon Blvd and Rock Landing Dr; I-64 via J. Clyde Morris Blvd",utilities:"Municipal services in adjacent streets; extensions and phasing per the city's master plan",
-  capacity:"A 10 to 15 acre carve-out supports the same program as Site 1",path:"Public disposition: proposal to the EDA, master plan conformance, City Council approval; 9 to 18 months",
-  drive:{cc:"1 min",pw:"4 min",dil:"3 min",i64:"3 min"},miles:{cc:"adjacent",dil:"about 1",pw:"about 1.5"},
-  fit:{acre:"y",prox:"y",zone:"y",ready:"p",speed:"n",incent:"y",amen:"y",access:"y"},
-  assess:"Equal to Site 1 on address, amenity and zoning, and the city has said publicly it wants employment-generating development here. The difference is process and time. Public ownership also opens the door to performance-based incentives that a private sale does not.",
-  status:"Conversation opened with the Department of Development. Summit site book and preferred disposition structure requested.",
-  dd:["Master plan conformance and design standards","Infrastructure phasing and cost sharing","Parcel configuration and frontage","Incentive eligibility","Timeline to council action"]},
- {id:3,tier:2,name:"Jefferson Avenue at Bland Boulevard",short:"Jefferson at Bland",addr:"12470, 12490 and 12500 Jefferson Ave, Newport News, VA 23602 (remainder of former Ferguson campus)",lat:37.115,lon:-76.502,
-  acres:"About 12 acres in two parcels after a 20.23-acre carve-out for the owner's store",zoning:"Commercial; confirm district on the remainder parcels after the boundary line adjustment",owner:"Private corporate owner (national retailer); acquired the 32.37-acre campus July 2025",
-  parcel:"Boundary line adjustment pending",access:"Jefferson Ave and Bland Blvd frontage; direct I-64 interchange, Exit 255",utilities:"Fully served former corporate campus; existing buildings being demolished",
-  capacity:"Supports the office program; fleet yard would be tight on 12 acres",path:"Direct negotiation after the owner's store opens (Nov 2026) and parcels are recorded; owner has stated the remainder is for future sale",
-  drive:{cc:"8 min",pw:"10 min",dil:"8 min",i64:"1 min"},miles:{cc:"about 3",dil:"about 3",pw:"about 3.5"},
-  fit:{acre:"y",prox:"p",zone:"p",ready:"p",speed:"p",incent:"p",amen:"y",access:"y"},
-  assess:"The only other Newport News site with interstate access, commercial zoning and retail amenity in walking distance. It meets acreage and zoning and sits three miles up Jefferson Avenue rather than at City Center. Its advantage is certainty of disposition; its constraint is timing.",
-  status:"Owner's eastern real estate development group identified. Outreach begun. Letter of interest to be placed on file.",
-  dd:["Final parcel configuration and acreage after the boundary line adjustment","Cross-access and shared stormwater with the retail parcel","Traffic improvements required under the owner's conditional use permit","Zoning district on the remainder"]}
+ {id:2,tier:2,name:"615 Bland Boulevard",short:"615 Bland Blvd",addr:"615 Bland Blvd at Jefferson Ave, Newport News, VA 23602 (former manufacturing plant)",lat:37.118,lon:-76.5,
+  acres:"27.4 acres, improved; a portion would be demised",zoning:"M-1 Light Industrial; office as a principal use requires a written determination",owner:"Private industrial investor (national firm); acquisition announced Sept 2026; city record still shows the 2007 purchaser",
+  parcel:"111000101",access:"Jefferson Ave and Bland Blvd frontage; I-64 Exit 255 about 1 mile; adjacent to the airport",utilities:"Fully served industrial site with heavy electric and gas from the manufacturing use; capacities to confirm",
+  capacity:"About 366,000 SF single-story plant built 1971, 13 docks, 22-ft clear; 60,000 to 100,000 SF of office could be built out inside or in front, with ample yard",path:"Long-term lease of a demised portion from the new owner, or purchase of a frontage parcel; whole-site purchase unlikely",
+  drive:{cc:"8 min",pw:"10 min",dil:"8 min",i64:"2 min"},miles:{cc:"about 3",dil:"about 3",pw:"about 3.5"},
+  fit:{acre:"y",prox:"p",zone:"p",ready:"p",speed:"p",yard:"y",incent:"p",amen:"y",access:"y"},
+  assess:"An industrial reposition, not a headquarters site, three miles from the City Center area VNG asked for. Its strengths are scale, interstate and airport access, and room for a fleet and materials yard that no City Center parcel can match. The realistic fit is a consolidated operations base with office built out in the existing plant. The new owner plans to lease the building to industrial users, so the paths are a lease of a demised portion or purchase of a frontage parcel.",
+  status:"Owner identified. Outreach to the owner's leasing and acquisitions leadership scheduled. Zoning determination request to be filed.",
+  dd:["Recorded deed to the new owner","Owner's demising and reconfiguration plan and timing","Written zoning determination on general office in M-1","Environmental history of the manufacturing use","Airport height and noise overlays","Structural condition and clear height of the portion to be occupied","Traffic at Jefferson and Bland as adjacent retail opens"]},
+ {id:3,tier:3,name:"Oxford Plaza, 1 Enterprise Parkway",short:"Oxford Plaza, Hampton",addr:"1 Enterprise Pkwy, Hampton, VA 23666 (Hampton Roads Center South Campus)",lat:37.068,lon:-76.404,
+  acres:"5.46 acres, improved; under the 8-acre floor",zoning:"HRC-1 Hampton Roads Center district; general office by right",owner:"Private institutional office owner (regional portfolio); listed for sale and lease since late 2025",
+  parcel:"Hampton parcel record 7001879",access:"Enterprise Pkwy; I-64 at Hampton Roads Center Pkwy and Magruder Blvd",utilities:"Fully served Class A office building; 260 surface spaces",
+  capacity:"63,029 SF rentable, three floors of about 21,000 SF, built 1987, renovated 2010; no land for a yard or a second building",path:"Listed: entire building for lease at $18.00/SF full service, or for sale at a negotiable price; weeks to a lease or contract",
+  drive:{cc:"12 min",pw:"14 min",dil:"12 min",i64:"1 min"},miles:{cc:"about 7",dil:"about 7",pw:"about 8"},
+  fit:{acre:"n",prox:"n",zone:"y",ready:"y",speed:"y",yard:"n",incent:"p",amen:"p",access:"y"},
+  assess:"The fastest and lowest-cost occupancy on the Peninsula and the weakest match to VNG's criteria: Hampton rather than Newport News, seven miles from City Center, under the acreage floor, no room for fleet or materials. It fits only if the Peninsula program is an office of about 150 people with no yard, as a permanent or interim answer.",
+  status:"Listing brokers identified. Sale offering memorandum, occupancy and operating expense base to be requested.",
+  dd:["Owner of record and assessment on the Hampton assessor","Building area (records conflict between 63,029 and 72,444 SF)","Mechanical and roof condition after the 2010 renovation","Parking count and ratio","HRC-1 use table confirmation","City of Hampton incentive eligibility"]}
 ];
-var CRIT=[["acre","Acreage 10 to 15"],["prox","Proximity to City Center and Port Warwick"],["amen","Restaurants and shopping nearby"],["zone","Office or commercial zoning by right"],["access","Interstate access"],["ready","Site readiness"],["speed","Speed to control"],["incent","Incentive potential"]];
+var CRIT=[["acre","Acreage 10 to 15"],["prox","Proximity to City Center and Port Warwick"],["amen","Restaurants and shopping nearby"],["zone","Office or commercial zoning by right"],["access","Interstate access"],["ready","Site readiness"],["speed","Speed to control"],["yard","Fleet and materials yard"],["incent","Incentive potential"]];
 var FITTXT={y:"Meets",p:"Partial",n:"Weak"};
+function badge(s){return s.tier===1?'<span class="fit y">Meets all criteria</span>':s.tier===2?'<span class="fit p">Partial fit</span>':'<span class="fit n">Does not meet acreage or location</span>';}
+function pinc(s){return s.tier===1?'var(--pin1)':s.tier===2?'var(--pin2)':'var(--pin3)';}
+function pincls(s){return s.tier===1?'':s.tier===2?' t2':' t3';}
 var state={view:"map",sel:null,fav:{},notes:{}};
 try{var s=JSON.parse(localStorage.getItem("vng-survey")||"{}");state.fav=s.fav||{};state.notes=s.notes||{};}catch(e){}
 function save(){try{localStorage.setItem("vng-survey",JSON.stringify({fav:state.fav,notes:state.notes}));}catch(e){}}
@@ -175,7 +178,7 @@ function renderCards(){
   var el=document.getElementById("cards");el.innerHTML="";
   SITES.forEach(function(s){
     var b=document.createElement("button");b.className="card"+(state.sel===s.id?" active":"");b.setAttribute("data-id",s.id);
-    b.innerHTML='<div class="pin'+(s.tier===2?' t2':'')+'">'+s.id+'</div><div style="min-width:0"><h3>'+esc(s.name)+'</h3><div class="addr">'+esc(s.addr)+'</div><div class="kv"><span><b>'+esc(s.acres.split(";")[0].split(",")[0])+'</b></span><span>'+esc(s.zoning.split(";")[0])+'</span><span>'+s.miles.cc+' mi to City Center</span></div><div style="margin-top:6px"><span class="fit '+(s.tier===1?'y':'p')+'">'+(s.tier===1?'Meets all criteria':'Meets criteria, farther out')+'</span></div></div><span class="fav'+(state.fav[s.id]?' on':'')+'" title="Save" data-fav="'+s.id+'">'+(state.fav[s.id]?'★':'☆')+'</span>';
+    b.innerHTML='<div class="pin'+pincls(s)+'">'+s.id+'</div><div style="min-width:0"><h3>'+esc(s.name)+'</h3><div class="addr">'+esc(s.addr)+'</div><div class="kv"><span><b>'+esc(s.acres.split(";")[0].split(",")[0])+'</b></span><span>'+esc(s.zoning.split(";")[0])+'</span><span>'+s.miles.cc+' mi to City Center</span></div><div style="margin-top:6px">'+badge(s)+'</div></div><span class="fav'+(state.fav[s.id]?' on':'')+'" title="Save" data-fav="'+s.id+'">'+(state.fav[s.id]?'★':'☆')+'</span>';
     b.addEventListener("click",function(ev){
       if(ev.target.getAttribute("data-fav")){ev.stopPropagation();state.fav[s.id]=!state.fav[s.id];save();renderCards();toast(state.fav[s.id]?"Saved "+s.short:"Removed "+s.short);return;}
       state.sel=s.id;state.view="detail";render();
@@ -184,40 +187,42 @@ function renderCards(){
   });
 }
 function mapSVG(w,h,focus){
-  var lon0=-76.545,lon1=-76.435,lat0=37.035,lat1=37.14;
+  var lon0=-76.545,lon1=-76.37,lat0=37.02,lat1=37.145;
   function X(lon){return 20+(lon-lon0)/(lon1-lon0)*(w-40);} function Y(lat){return 20+(lat1-lat)/(lat1-lat0)*(h-40);}
-  var o='<svg viewBox="0 0 '+w+' '+h+'" role="img" aria-label="Schematic map of the City Center area of Newport News with the three sites">';
+  var o='<svg viewBox="0 0 '+w+' '+h+'" role="img" aria-label="Schematic map of the Peninsula from City Center to Hampton Roads Center with the three sites">';
   o+='<rect width="'+w+'" height="'+h+'" fill="var(--panel-2)"/>';
   // James River edge
-  o+='<polygon points="'+[[37.035,-76.545],[37.14,-76.545],[37.14,-76.53],[37.1,-76.53],[37.06,-76.52],[37.035,-76.5]].map(function(p){return X(p[1])+','+Y(p[0])}).join(' ')+'" fill="var(--primary-soft)"/>';
+  o+='<polygon points="'+[[37.02,-76.545],[37.145,-76.545],[37.145,-76.53],[37.1,-76.53],[37.06,-76.52],[37.03,-76.49],[37.02,-76.47]].map(function(p){return X(p[1])+','+Y(p[0])}).join(' ')+'" fill="var(--primary-soft)"/>';
   o+='<text x="'+(X(-76.54)+6)+'" y="'+Y(37.06)+'" font-family="var(--mono)" font-size="11" fill="var(--muted)" font-style="italic">James River</text>';
   // roads
   function road(pts,lab,dash,li,dx,dy){o+='<polyline points="'+pts.map(function(p){return X(p[1])+','+Y(p[0])}).join(' ')+'" fill="none" stroke="var(--muted)" stroke-width="'+(dash?2.5:1.6)+'" '+(dash?'stroke-dasharray="8 5" ':'')+'opacity=".75"/>';
     var p=pts[li];o+='<text x="'+(X(p[1])+dx)+'" y="'+(Y(p[0])+dy)+'" font-family="var(--mono)" font-size="10.5" fill="var(--muted)">'+lab+'</text>';}
-  road([[37.14,-76.53],[37.125,-76.512],[37.105,-76.482],[37.085,-76.455],[37.065,-76.437]],"I-64",true,3,8,-8);
-  road([[37.135,-76.52],[37.115,-76.502],[37.09,-76.487],[37.07,-76.475],[37.05,-76.46],[37.035,-76.45]],"Jefferson Ave",false,4,8,10);
+  road([[37.145,-76.535],[37.125,-76.512],[37.105,-76.482],[37.085,-76.455],[37.068,-76.432],[37.06,-76.41],[37.047,-76.39],[37.035,-76.372]],"I-64",true,3,8,-8);
+  road([[37.14,-76.522],[37.118,-76.503],[37.09,-76.487],[37.07,-76.475],[37.05,-76.46],[37.02,-76.44]],"Jefferson Ave",false,4,8,10);
+  road([[37.128,-76.52],[37.118,-76.5],[37.11,-76.486]],"Bland Blvd",false,2,6,4);
+  road([[37.112,-76.425],[37.088,-76.407],[37.066,-76.398],[37.045,-76.394],[37.03,-76.392]],"Magruder Blvd",false,1,6,-6);
   road([[37.09,-76.5],[37.082,-76.49],[37.074,-76.478],[37.068,-76.47]],"City Center Blvd",false,0,-112,-6);
   road([[37.05,-76.505],[37.065,-76.49],[37.078,-76.47],[37.09,-76.452]],"J. Clyde Morris Blvd",false,0,-30,16);
   // reference points
-  var refs=[[37.0715,-76.4905,"City Center at Oyster Point","end",-8,14],[37.064,-76.47,"Port Warwick","start",8,14],[37.096,-76.482,"Jefferson Lab / Tech Center","start",7,4],[37.132,-76.493,"Airport","start",7,4],[37.12,-76.515,"Patrick Henry Mall","end",-7,4]];
+  var refs=[[37.0715,-76.4905,"City Center at Oyster Point","end",-8,14],[37.064,-76.47,"Port Warwick","start",8,14],[37.096,-76.482,"Jefferson Lab / Tech Center","start",7,4],[37.134,-76.49,"Airport","start",7,4],[37.124,-76.518,"Patrick Henry Mall","end",-7,4],[37.111,-76.508,"Warehouse club (Nov 2026)","end",-7,14],[37.093,-76.385,"NASA Langley","end",-7,-4],[37.04,-76.395,"Coliseum Central","end",-7,14],[37.028,-76.345,"HAMPTON","start",0,0]];
   refs.forEach(function(r){o+='<circle cx="'+X(r[1])+'" cy="'+Y(r[0])+'" r="4" fill="none" stroke="var(--muted)" stroke-width="1.5"/><text x="'+(X(r[1])+r[4])+'" y="'+(Y(r[0])+r[5])+'" text-anchor="'+r[3]+'" font-family="var(--body)" font-size="11.5" fill="var(--muted)">'+r[2]+'</text>';});
   // VNG office
   o+='<circle cx="'+X(-76.47)+'" cy="'+Y(37.082)+'" r="8" fill="var(--accent)" stroke="var(--panel)" stroke-width="2"/><text x="'+(X(-76.47)+12)+'" y="'+(Y(37.082)-8)+'" font-family="var(--body)" font-size="12" font-weight="600" fill="var(--ink)">VNG office, 746 Diligence Dr</text>';
   // site pins
   SITES.forEach(function(s){var x=X(s.lon),y=Y(s.lat);var act=(focus===s.id);
-    o+='<g class="mpin'+(act?' active':'')+'" data-pin="'+s.id+'" tabindex="0" role="button" aria-label="Site '+s.id+' '+esc(s.name)+'"><circle class="ring" cx="'+x+'" cy="'+y+'" r="20" fill="none" stroke="'+(s.tier===2?'var(--pin2)':'var(--pin1)')+'" stroke-width="2" opacity="0"/><circle cx="'+x+'" cy="'+y+'" r="14" fill="'+(s.tier===2?'var(--pin2)':'var(--pin1)')+'" stroke="var(--panel)" stroke-width="2.5"/><text x="'+x+'" y="'+(y+5)+'" text-anchor="middle" font-family="var(--mono)" font-size="13" font-weight="600" fill="#fff">'+s.id+'</text>';
-    var lx=s.id===1?x-18:x+20, anchor=s.id===1?'end':'start', ly=s.id===2?y+6:(s.id===3?y-20:y-18);
+    o+='<g class="mpin'+(act?' active':'')+'" data-pin="'+s.id+'" tabindex="0" role="button" aria-label="Site '+s.id+' '+esc(s.name)+'"><circle class="ring" cx="'+x+'" cy="'+y+'" r="20" fill="none" stroke="'+pinc(s)+'" stroke-width="2" opacity="0"/><circle cx="'+x+'" cy="'+y+'" r="14" fill="'+pinc(s)+'" stroke="var(--panel)" stroke-width="2.5"/><text x="'+x+'" y="'+(y+5)+'" text-anchor="middle" font-family="var(--mono)" font-size="13" font-weight="600" fill="#fff">'+s.id+'</text>';
+    var lx=(s.id===1||s.id===3)?x-18:x+20, anchor=(s.id===1||s.id===3)?'end':'start', ly=s.id===2?y-20:(s.id===3?y-20:y-18);
     o+='<text x="'+lx+'" y="'+ly+'" text-anchor="'+anchor+'" font-family="var(--body)" font-size="12.5" font-weight="600" fill="var(--ink)">'+esc(s.short)+'</text></g>';});
   o+='</svg>';return o;
 }
 function viewMap(){
   var p=document.getElementById("panel");
-  p.innerHTML='<div class="mapwrap">'+mapSVG(900,620,state.sel)+'</div><div class="maplegend"><span><i style="background:var(--pin1)"></i>Meets all criteria</span><span><i style="background:var(--pin2)"></i>Meets criteria, farther out</span><span><i style="background:var(--accent)"></i>VNG office</span><span><i style="background:none;border:1.5px solid var(--muted)"></i>Reference point</span><span>Schematic. Positions and roads approximate. Click a pin or a card for the property page.</span></div>';
+  p.innerHTML='<div class="mapwrap">'+mapSVG(900,620,state.sel)+'</div><div class="maplegend"><span><i style="background:var(--pin1)"></i>Meets all criteria</span><span><i style="background:var(--pin2)"></i>Partial fit</span><span><i style="background:var(--pin3)"></i>Does not meet acreage or location</span><span><i style="background:var(--accent)"></i>VNG office</span><span><i style="background:none;border:1.5px solid var(--muted)"></i>Reference point</span><span>Schematic. Positions and roads approximate. Click a pin or a card for the property page.</span></div>';
   p.querySelectorAll(".mpin").forEach(function(g){var go=function(){state.sel=+g.getAttribute("data-pin");state.view="detail";render();};g.addEventListener("click",go);g.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();go();}});});
 }
 function fitTable(ids){
   var o='<div class="tablewrap"><table><thead><tr><th>Criterion</th>';ids.forEach(function(i){var s=SITES[i-1];o+='<th>Site '+s.id+': '+esc(s.short)+'</th>';});o+='</tr></thead><tbody>';
-  var rows={acre:function(s){return s.acres.split(";")[0]},prox:function(s){return s.miles.cc+' mi to City Center; '+s.miles.pw+' mi to Port Warwick'},amen:function(s){return s.id===3?'Patrick Henry Mall, Jefferson Commons':'City Center, walkable'},zone:function(s){return s.zoning.split(";")[0]},access:function(s){return s.access.split(";")[1]||s.access},ready:function(s){return s.id===1?'Vacant, served, no demolition':s.id===2?'Infrastructure phasing with city':'Available after owner\'s project and parcel split'},speed:function(s){return s.id===1?'60 to 120 days, private owner':s.id===2?'9 to 18 months, public process':'After late-2026 store opening'},incent:function(s){return s.id===2?'Public land; performance agreement possible':'Standard city and state programs'}};
+  var rows={acre:function(s){return s.acres.split(";")[0]},prox:function(s){return s.miles.cc+' mi to City Center; '+s.miles.pw+' mi to Port Warwick'},amen:function(s){return s.id===1?'City Center, walkable':s.id===2?'Patrick Henry Mall, Jefferson Commons, warehouse club across the street':'Office park; Coliseum Central 3 miles'},zone:function(s){return s.zoning.split(";")[0]},access:function(s){return s.access.split(";")[1]||s.access},ready:function(s){return s.id===1?'Vacant, served, no demolition':s.id===2?'1971 plant; reconfiguration or demolition':'Finished Class A building, available now'},speed:function(s){return s.id===1?'60 to 120 days, private owner':s.id===2?'After the owner sets its demising plan':'Listed; weeks to a lease or contract'},yard:function(s){return s.id===1?'Room on 14.93 acres':s.id===2?'Ample':'None'},incent:function(s){return s.id===1?'Standard city and state programs':s.id===2?'Re-employment of a closed plant; city programs':'City of Hampton programs'}};
   CRIT.forEach(function(c){o+='<tr><td>'+c[1]+'</td>';ids.forEach(function(i){var s=SITES[i-1];o+='<td><span class="fit '+s.fit[c[0]]+'">'+FITTXT[s.fit[c[0]]]+'</span> '+esc(rows[c[0]](s))+'</td>';});o+='</tr>';});
   o+='<tr><td>Drive time to City Center</td>';ids.forEach(function(i){o+='<td>'+SITES[i-1].drive.cc+'</td>';});o+='</tr>';
   o+='<tr><td>Drive time to 746 Diligence Dr</td>';ids.forEach(function(i){o+='<td>'+SITES[i-1].drive.dil+'</td>';});o+='</tr>';
@@ -226,21 +231,21 @@ function fitTable(ids){
 }
 function viewCompare(){
   var p=document.getElementById("panel");
-  p.innerHTML='<div class="detail"><div class="hd"><div><h2>Side-by-side comparison</h2><div class="addr">Three sites against VNG\'s stated criteria. Drive times are approximate off-peak estimates.</div></div></div>'+fitTable([1,2,3])+'<div class="sect"><h4>Recommendation</h4><p>Pursue Site 1 as the primary target and Site 2 in parallel as the public alternative. Running both keeps the private owner\'s price disciplined and gives VNG a fallback the city has already said it wants developed as an employment anchor. Hold Site 3 with a letter of interest on file so VNG is first in line when the parcels are released.</p></div></div>';
+  p.innerHTML='<div class="detail"><div class="hd"><div><h2>Side-by-side comparison</h2><div class="addr">Three sites against VNG\'s stated criteria. Drive times are approximate off-peak estimates.</div></div></div>'+fitTable([1,2,3])+'<div class="sect"><h4>Recommendation</h4><p>Site 1 remains the primary target and the only property that meets every criterion; owner outreach continues and is being escalated. Sites 2 and 3 were nominated for evaluation and each answers a different program: Site 2 only if the Peninsula program includes a fleet and materials yard and can accept a Jefferson Avenue corridor address three miles out; Site 3 only if the program is an office of about 150 people with no yard and Hampton is acceptable. Confirm the program in writing before either goes further.</p></div></div>';
 }
 function viewTour(){
-  var p=document.getElementById("panel");var order=[3,1,2];
-  var o='<div class="tour"><div class="hd"><div><h2 style="font-family:var(--display);font-size:22px;margin:0">Tour day</h2><div class="addr">Half day. Start north at Jefferson and Bland, finish at City Center so the afternoon ends near lunch and the client\'s office. Total driving about 15 minutes.</div></div></div>';
+  var p=document.getElementById("panel");var order=[3,2,1];
+  var o='<div class="tour"><div class="hd"><div><h2 style="font-family:var(--display);font-size:22px;margin:0">Tour day</h2><div class="addr">Half day. Start east at Hampton Roads Center, drive I-64 west to Bland Blvd, finish at City Center so the afternoon ends near lunch and the client\'s office. Total driving about 25 minutes.</div></div></div>';
   order.forEach(function(id,i){var s=SITES[id-1];
-    o+='<div class="stop"><div class="pin'+(s.tier===2?' t2':'')+'">'+s.id+'</div><div><b style="font-family:var(--display)">'+esc(s.name)+'</b><div class="addr">'+esc(s.addr)+'</div><div style="font-size:13.5px;margin-top:4px">'+esc(s.acres)+'. '+esc(s.zoning.split(";")[0])+'. What to look at on site: '+(s.id===1?'frontage on City Center Blvd, tree line and low areas along the rear boundary, proximity to Tech Center.':s.id===2?'edges of the publicly held land along Canon Blvd and Rock Landing Dr, relationship to the City Center core, where a 10 to 15 acre parcel would sit.':'where the two remainder parcels fall relative to the new store pad, Bland Blvd access, and the Jefferson Ave frontage.')+'</div></div></div>';
-    if(i<order.length-1){var nxt=SITES[order[i+1]-1];o+='<div class="leg">Drive to Site '+nxt.id+': about '+(i===0?'8 min via Jefferson Ave':'3 min via City Center Blvd')+'</div>';}
+    o+='<div class="stop"><div class="pin'+pincls(s)+'">'+s.id+'</div><div><b style="font-family:var(--display)">'+esc(s.name)+'</b><div class="addr">'+esc(s.addr)+'</div><div style="font-size:13.5px;margin-top:4px">'+esc(s.acres)+'. '+esc(s.zoning.split(";")[0])+'. What to look at on site: '+(s.id===1?'frontage on City Center Blvd, tree line and low areas along the rear boundary, proximity to Tech Center.':s.id===2?'condition of the plant, which frontage a new office could face, where a fenced yard would sit, truck circulation, and the warehouse club rising across Jefferson Ave.':'lobby and floor plates, the 260-space lot, condition of the 2010 renovation, and the drive to the nearest lunch.')+'</div></div></div>';
+    if(i<order.length-1){var nxt=SITES[order[i+1]-1];o+='<div class="leg">Drive to Site '+nxt.id+': about '+(i===0?'12 min via I-64 west to Exit 255':'8 min via Jefferson Ave')+'</div>';}
   });
-  o+='<div class="sect" style="margin-top:6px"><h4>Bring</h4><ul><li>VNG facilities and operations leads, so the fleet yard question gets answered on site</li><li>Program numbers: headcount to house, parking ratio, yard requirement</li><li>Civil engineer for a first read on wetlands and stormwater at Sites 1 and 3</li></ul></div></div>';
+  o+='<div class="sect" style="margin-top:6px"><h4>Bring</h4><ul><li>VNG facilities and operations leads, so the fleet yard question gets answered on site</li><li>Program numbers: headcount to house, parking ratio, yard requirement</li><li>Civil engineer for a first read on wetlands and stormwater at Site 1 and on site circulation at Site 2</li></ul></div></div>';
   p.innerHTML=o;
 }
 function viewDetail(){
   var s=SITES[state.sel-1];var p=document.getElementById("panel");
-  var o='<div class="detail"><div><button class="back" id="back">← Back to map</button></div><div class="hd"><div class="pin'+(s.tier===2?' t2':'')+'" style="width:44px;height:44px;font-size:18px">'+s.id+'</div><div style="min-width:0;flex:1"><h2>'+esc(s.name)+'</h2><div class="addr">'+esc(s.addr)+'</div></div><div><span class="fit '+(s.tier===1?'y':'p')+'">'+(s.tier===1?'Meets all criteria':'Meets criteria, farther out')+'</span></div></div>';
+  var o='<div class="detail"><div><button class="back" id="back">← Back to map</button></div><div class="hd"><div class="pin'+pincls(s)+'" style="width:44px;height:44px;font-size:18px">'+s.id+'</div><div style="min-width:0;flex:1"><h2>'+esc(s.name)+'</h2><div class="addr">'+esc(s.addr)+'</div></div><div>'+badge(s)+'</div></div>';
   o+='<div class="drive"><span>City Center '+s.drive.cc+'</span><span>Port Warwick '+s.drive.pw+'</span><span>746 Diligence Dr '+s.drive.dil+'</span><span>I-64 '+s.drive.i64+'</span></div>';
   o+='<div class="mapwrap" style="border:1px solid var(--line);border-radius:10px;overflow:hidden">'+mapSVG(900,380,s.id)+'</div>';
   o+='<div class="facts">'+[["Acreage",s.acres],["Zoning",s.zoning],["Ownership",s.owner],["Parcel",s.parcel],["Access",s.access],["Utilities",s.utilities],["Capacity",s.capacity],["Path to control",s.path],["Distance",s.miles.cc+" mi to City Center; "+s.miles.dil+" mi to 746 Diligence Dr; "+s.miles.pw+" mi to Port Warwick"]].map(function(f){return '<div class="fact"><div class="k">'+f[0]+'</div><div class="v">'+esc(f[1])+'</div></div>';}).join("")+'</div>';
@@ -261,9 +266,9 @@ document.querySelectorAll(".tabs button").forEach(function(b){b.addEventListener
 render();
 // Print book: render all sections sequentially into a hidden container used only when printing
 var book=document.createElement("div");book.className="printonly";
-book.innerHTML='<h2 class="ph">Client criteria</h2><p>10 to 15 acres with an 8-acre floor; as close as possible to City Center at Oyster Point and Port Warwick and to VNG\'s office at 746 Diligence Dr; office or commercial zoning by right; non-residential; interstate access. Program of 80,000 to 160,000 SF office at 4 spaces per 1,000 SF, optional fleet yard.</p><h2 class="ph" style="margin-top:12px">Location</h2>'+mapSVG(900,560,null)+
+book.innerHTML='<h2 class="ph">Client criteria</h2><p>10 to 15 acres with an 8-acre floor; as close as possible to City Center at Oyster Point and Port Warwick and to VNG\'s office at 746 Diligence Dr; office or commercial zoning by right; non-residential; interstate access. Program of 80,000 to 160,000 SF office at 4 spaces per 1,000 SF, optional fleet yard. Since the prior draft, two sites were withdrawn (one at VNG\'s direction, one because the owner will not sell) and two nominated properties were added and scored on the same criteria.</p><h2 class="ph" style="margin-top:12px">Location</h2>'+mapSVG(900,560,null)+
  SITES.map(function(s){return '<div class="pbreak"></div><h2 class="ph">Site '+s.id+': '+esc(s.name)+'</h2><div style="color:var(--muted);margin-bottom:8px">'+esc(s.addr)+'</div><div class="facts">'+[["Acreage",s.acres],["Zoning",s.zoning],["Ownership",s.owner],["Parcel",s.parcel],["Access",s.access],["Utilities",s.utilities],["Capacity",s.capacity],["Path to control",s.path],["Distance",s.miles.cc+" mi to City Center; "+s.miles.dil+" mi to 746 Diligence Dr"]].map(function(f){return '<div class="fact"><div class="k">'+f[0]+'</div><div class="v">'+esc(f[1])+'</div></div>';}).join("")+'</div><p style="margin-top:8px"><b>Assessment.</b> '+esc(s.assess)+' <b>Status.</b> '+esc(s.status)+'</p><p><b>Due diligence.</b> '+s.dd.map(esc).join("; ")+'.</p>';}).join("")+
- '<div class="pbreak"></div><h2 class="ph">Comparison</h2>'+fitTable([1,2,3])+'<p style="margin-top:8px"><b>Recommendation.</b> Pursue Site 1 as the primary target and Site 2 in parallel as the public alternative; hold Site 3 with a letter of interest on file.</p><p style="color:var(--muted);font-size:10px;margin-top:10px">Parcel acreage, zoning and ownership from City of Newport News assessor and planning records, council and EDA actions and recorded permit files. Distances and drive times approximate. Nothing in this survey is an offer and no site is under contract. Prepared by CIVITAS CRES for Virginia Natural Gas, 9 November 2026.</p>';
+ '<div class="pbreak"></div><h2 class="ph">Comparison</h2>'+fitTable([1,2,3])+'<p style="margin-top:8px"><b>Recommendation.</b> Site 1 remains the primary target and the only property that meets every criterion. Site 2 stays under evaluation only if the program includes a fleet and materials yard; Site 3 only if the program is an office of about 150 people with no yard and Hampton is acceptable. Confirm the program in writing first.</p><p style="color:var(--muted);font-size:10px;margin-top:10px">Parcel acreage, zoning and ownership from City of Newport News and City of Hampton assessor and planning records, council and EDA actions, recorded permit files, the acquiring owner\'s public announcement for Site 2 and brokerage listing records for Sites 2 and 3. Distances and drive times approximate. Nothing in this survey is an offer and no site is under contract. Prepared by CIVITAS CRES for Virginia Natural Gas, revised 10 November 2026.</p>';
 document.querySelector(".app").appendChild(book);
 })();
 </script>
