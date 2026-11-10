@@ -97,14 +97,14 @@ td.mono{font-family:var(--mono);font-size:.8rem;white-space:nowrap}
 <body>
 <div class="wrap">
 <header>
-  <p class="eyebrow">Live test · Sterling Tax Management · Virginia commercial property tax appeals</p>
+  <p class="eyebrow">Live test · Sterling Tax Management · Virginia and Central Texas commercial property tax appeals</p>
   <h1>Sterling Tax Pipeline Engine</h1>
   <p>Three plays find the people who feel a commercial assessment before the owner does. Claude scores each lead and writes why it fits. You approve or reject here. Claude enriches the approved ones, drafts the first touch in your voice, and enrolls them once a sending mailbox is linked.</p>
-  <p class="meta">Operator: Barrett Franklin · Data: Apollo, Virginia assessor calendars · Engine runs in Claude</p>
+  <p class="meta">Operators: Barrett Franklin (Virginia) · Jeremy (Austin metro) · Data: Apollo, assessor and appraisal district calendars · Engine runs in Claude</p>
 </header>
 
 <div class="strip" id="strip">
-  <div class="tile"><div class="k">Matches found</div><div class="v" id="t-matches">5,351</div><div class="d">across three plays, Virginia only</div></div>
+  <div class="tile"><div class="k">Matches found</div><div class="v" id="t-matches">8,377</div><div class="d">three plays, Virginia 5,351 and Austin metro 3,026</div></div>
   <div class="tile"><div class="k">In queue</div><div class="v" id="t-queue">–</div><div class="d">scored, awaiting your call</div></div>
   <div class="tile"><div class="k">Approved</div><div class="v" id="t-approved">–</div><div class="d">Claude enriches and drafts</div></div>
   <div class="tile"><div class="k">Rejected</div><div class="v" id="t-rejected">–</div><div class="d">trains the scoring</div></div>
@@ -120,6 +120,9 @@ td.mono{font-family:var(--mono);font-size:.8rem;white-space:nowrap}
 <h2>Approval queue</h2>
 <div class="toolbar">
   <label for="f-play" class="eyebrow" style="margin:0">Play</label>
+  <label for="f-owner" class="eyebrow" style="margin:0">Operator</label>
+  <select id="f-owner"><option value="all">Both</option><option value="Barrett">Barrett (Virginia)</option><option value="Jeremy">Jeremy (Austin)</option></select>
+  <label for="f-play" class="eyebrow" style="margin:0">Play</label>
   <select id="f-play"><option value="all">All plays</option><option value="p1">CRE property managers and brokers</option><option value="p2">CPAs and tax directors</option><option value="p3">Owners, developers, asset managers</option></select>
   <label for="f-status" class="eyebrow" style="margin:0">Show</label>
   <select id="f-status"><option value="pending">Pending</option><option value="approved">Approved</option><option value="rejected">Rejected</option><option value="all">Everything</option></select>
@@ -128,6 +131,7 @@ td.mono{font-family:var(--mono);font-size:.8rem;white-space:nowrap}
 <div class="queue" id="queue"><div class="empty">Loading the queue…</div></div>
 
 <h2>The signal of record: when the notice lands</h2>
+<h3 style="margin-top:14px">Virginia (Barrett)</h3>
 <p>Virginia assesses locally and every locality runs its own calendar. The notice date is the trigger. A property manager who gets a 12 percent increase in the mail has 30 to 60 days to act, and almost none of them have an appraiser lined up. Sterling's pitch window is the 60 days before the notice, which for most of Virginia is right now through January.</p>
 <div class="tablewrap"><table>
 <tr><th>Locality</th><th>Notices mailed</th><th>First appeal due</th><th>Board of Equalization / Review due</th><th>Source</th></tr>
@@ -142,6 +146,15 @@ td.mono{font-family:var(--mono);font-size:.8rem;white-space:nowrap}
 <tr><td>Prince William County</td><td class="mono">March</td><td class="mono">Jun 1 (2026)</td><td class="mono">Jul 1 (2026)</td><td>County site</td></tr>
 <tr><td>City of Richmond</td><td class="mono">on or about Jul 1 (2027 values)</td><td class="mono">Aug 31, 2026 (closed)</td><td class="mono">Nov 30, 2026 (open now)</td><td>City assessor site, verified</td></tr>
 </table></div>
+<h3 style="margin-top:22px">Central Texas (Jeremy)</h3>
+<p>Texas runs one statewide clock under the Tax Code. The appraisal district must mail a notice of appraised value by May 1 for any increase, and the protest is due May 15 or 30 days after the notice date, whichever is later. Appraisal Review Board hearings run May through July. Jeremy's selling window is January through April, and the strongest commercial argument in Texas is unequal appraisal under Section 41.43(b), which Virginia does not have.</p>
+<div class="tablewrap"><table>
+<tr><th>Appraisal district</th><th>Notices mailed</th><th>Protest due</th><th>ARB hearings</th><th>Source</th></tr>
+<tr><td>Travis CAD (Austin)</td><td class="mono">mid-April, by May 1</td><td class="mono">May 15 or 30 days after notice</td><td class="mono">May to Jul</td><td>Tax Code 25.19 and 41.44; mailing date to confirm on TCAD site</td></tr>
+<tr><td>Williamson CAD (Round Rock, Georgetown, Cedar Park, Leander, Hutto)</td><td class="mono">April, by May 1</td><td class="mono">May 15 or 30 days after notice</td><td class="mono">May to Jul</td><td>Same statute; confirm on WCAD site</td></tr>
+<tr><td>Hays CAD (San Marcos, Kyle, Buda)</td><td class="mono">around Apr 15</td><td class="mono">May 15 or 30 days after notice</td><td class="mono">May to Jul</td><td>Same statute; third-party mailing estimate</td></tr>
+</table></div>
+<div class="notice"><strong>Texas licensing, read before Jeremy sends anything.</strong> Representing an owner in a protest for compensation is property tax consulting under Occupations Code Chapter 1152 and requires TDLR registration as a Property Tax Consultant, sponsored by a Senior Property Tax Consultant, with an exam. Exempt: Texas-licensed attorneys, CPAs, and employees of the property owner. Sterling either registers Jeremy, partners with a registered Senior PTC, or sells through CPAs who can represent their own clients. Decide this before the first Austin engagement, not after.</div>
 <p class="note" style="font-size:.86rem;color:var(--muted)">Richmond runs a July-to-November cycle unlike every other locality here: 2027 notices went out this summer, office review closed August 31, and the Board of Equalization window is open until November 30, 2026, with hearings in January. That is a live three-week play for Richmond owners. Newport News, Suffolk, Portsmouth and Loudoun are not yet in the table. Claude adds localities as plays expand. Dates marked 2026 are last cycle and will shift a few days.</p>
 
 <h2>What happens when you approve</h2>
@@ -162,9 +175,9 @@ td.mono{font-family:var(--mono);font-size:.8rem;white-space:nowrap}
   const $=s=>document.querySelector(s);
   const state={db:null,leads:[],decisions:{},plays:{},log:[],busy:{}};
   const PLAY_META={
-    p1:{n:"PLAY 1",title:"CRE property managers and leasing brokers",count:"3,805",who:"Property managers, directors of property management, leasing SVPs and principal brokers at commercial firms headquartered in Virginia, 1 to 1,000 staff.",why:"They see the tax bill in the operating statement and the vacancy on the rent roll. A manager with a half-empty office building knows the income approach does not support the assessment before anyone else does.",signals:["Assessment notice lands in their locality (calendar below)","Property listed for lease more than 180 days","Managed asset sold below assessed value in the last 12 months","Firm added managed square footage or a new third-party management contract"],draft:"{{first_name}}, quick one about the {{locality}} notices that land {{notice_month}}.\n\nWhen a managed building is sitting under-leased or carrying deferred maintenance, the income approach rarely supports the number on the notice, and the appeal window is 30 to 60 days.\n\nDo you have assets in the portfolio where occupancy or condition does not match last year's assessment?\n\nBarrett Franklin\nSterling Tax Management"},
-    p2:{n:"PLAY 2",title:"CPAs and tax directors with real estate clients",count:"345",who:"Tax partners, tax directors and principals at Virginia accounting firms of 11 to 500 staff. Scored up when the firm has a real estate or construction practice.",why:"The CPA sees the real estate tax line on every client's return and gets the call when it jumps. They cannot do the appraisal work. They refer it. One CPA relationship is ten owners.",signals:["Firm lists a real estate or construction industry practice","Firm's clients are concentrated in a locality with a reassessment this cycle","Partner posts or speaks on real estate cost segregation or property tax","Firm is hiring real estate tax staff"],draft:"{{first_name}}, a question for your real estate clients rather than for you.\n\n{{locality}} assessment notices go out {{notice_month}}. When a client's commercial assessment jumps and the building is under-leased or in rough shape, the appeal is winnable but the window is short, and most owners call their CPA first.\n\nDo you have a referral path for that today, or do those calls end with the client paying the bill?\n\nBarrett Franklin\nSterling Tax Management"},
-    p3:{n:"PLAY 3",title:"Owners, developers and asset managers",count:"1,201",who:"Owners, presidents, CFOs, controllers and directors of asset management at Virginia real estate development, investment and multifamily firms, 1 to 500 staff.",why:"The owner pays the bill and signs the appeal. They know which assets are under-leased or in disrepair. They rarely know the deadline until it has passed.",signals:["Assessment notice lands in a locality where they hold assets","Portfolio includes office or retail with reported vacancy","Recent acquisition below assessed value (tax basis reset argument)","Deferred capital projects or code enforcement activity on an asset"],draft:"{{first_name}}, {{locality}} mails assessment notices {{notice_month}}, and the appeal window closes 30 to 60 days later.\n\nFor an under-leased or deferred-maintenance asset, the income approach usually supports a lower number than the notice, but only if the file is ready before the notice lands.\n\nIs there an asset in the {{company}} portfolio where occupancy or condition does not match the current assessment?\n\nBarrett Franklin\nSterling Tax Management"}
+    p1:{n:"PLAY 1",title:"CRE property managers and leasing brokers",count:"3,805 Virginia · 2,090 Austin metro",who:"Property managers, directors of property management, leasing SVPs and principal brokers at commercial firms headquartered in Virginia, 1 to 1,000 staff.",why:"They see the tax bill in the operating statement and the vacancy on the rent roll. A manager with a half-empty office building knows the income approach does not support the assessment before anyone else does.",signals:["Assessment notice lands in their locality (calendar below)","Property listed for lease more than 180 days","Managed asset sold below assessed value in the last 12 months","Firm added managed square footage or a new third-party management contract"],draft:"{{first_name}}, quick one about the {{locality}} notices that land {{notice_month}}.\n\nWhen a managed building is sitting under-leased or carrying deferred maintenance, the income approach rarely supports the number on the notice, and the appeal window is 30 to 60 days.\n\nDo you have assets in the portfolio where occupancy or condition does not match last year's assessment?\n\nBarrett Franklin\nSterling Tax Management"},
+    p2:{n:"PLAY 2",title:"CPAs and tax directors with real estate clients",count:"345 Virginia · 106 Austin metro",who:"Tax partners, tax directors and principals at Virginia accounting firms of 11 to 500 staff. Scored up when the firm has a real estate or construction practice.",why:"The CPA sees the real estate tax line on every client's return and gets the call when it jumps. They cannot do the appraisal work. They refer it. One CPA relationship is ten owners.",signals:["Firm lists a real estate or construction industry practice","Firm's clients are concentrated in a locality with a reassessment this cycle","Partner posts or speaks on real estate cost segregation or property tax","Firm is hiring real estate tax staff"],draft:"{{first_name}}, a question for your real estate clients rather than for you.\n\n{{locality}} assessment notices go out {{notice_month}}. When a client's commercial assessment jumps and the building is under-leased or in rough shape, the appeal is winnable but the window is short, and most owners call their CPA first.\n\nDo you have a referral path for that today, or do those calls end with the client paying the bill?\n\nBarrett Franklin\nSterling Tax Management"},
+    p3:{n:"PLAY 3",title:"Owners, developers and asset managers",count:"1,201 Virginia · 830 Austin metro",who:"Owners, presidents, CFOs, controllers and directors of asset management at Virginia real estate development, investment and multifamily firms, 1 to 500 staff.",why:"The owner pays the bill and signs the appeal. They know which assets are under-leased or in disrepair. They rarely know the deadline until it has passed.",signals:["Assessment notice lands in a locality where they hold assets","Portfolio includes office or retail with reported vacancy","Recent acquisition below assessed value (tax basis reset argument)","Deferred capital projects or code enforcement activity on an asset"],draft:"{{first_name}}, {{locality}} mails assessment notices {{notice_month}}, and the appeal window closes 30 to 60 days later.\n\nFor an under-leased or deferred-maintenance asset, the income approach usually supports a lower number than the notice, but only if the file is ready before the notice lands.\n\nIs there an asset in the {{company}} portfolio where occupancy or condition does not match the current assessment?\n\nBarrett Franklin\nSterling Tax Management"}
   };
   const STATUS_LABEL={approved:"Approved",rejected:"Rejected",pending:"Pending"};
 
@@ -174,7 +187,7 @@ td.mono{font-family:var(--mono);font-size:.8rem;white-space:nowrap}
       const m=PLAY_META[id]; const p=state.plays[id]||{}; const on=p.status!=="paused";
       const d=document.createElement("div"); d.className="play";
       d.innerHTML=`<div class="n">${m.n}</div><h3>${m.title}</h3>
-        <div class="count"><b>${m.count}</b> matches in Apollo today</div>
+        <div class="count"><b>${m.count}</b> in Apollo today</div>
         <div class="lbl">Who</div><div style="font-size:.88rem">${m.who}</div>
         <div class="lbl">Why they buy</div><div style="font-size:.88rem">${m.why}</div>
         <div class="lbl">Signals Claude watches</div><ul>${m.signals.map(s=>`<li>${s}</li>`).join("")}</ul>
@@ -192,12 +205,12 @@ td.mono{font-family:var(--mono);font-size:.8rem;white-space:nowrap}
   }
   function decisionOf(id){ const d=state.decisions[id]; return d&&d.decision||"pending"; }
   function renderQueue(){
-    const fp=$("#f-play").value, fs=$("#f-status").value;
+    const fp=$("#f-play").value, fs=$("#f-status").value, fo=$("#f-owner").value;
     const all=state.leads.slice().sort((a,b)=>(b.score||0)-(a.score||0)||(a.org||"").localeCompare(b.org||""));
     const tot={pending:0,approved:0,rejected:0};
     all.forEach(l=>{tot[decisionOf(l.id)]++;});
     $("#t-queue").textContent=tot.pending; $("#t-approved").textContent=tot.approved; $("#t-rejected").textContent=tot.rejected;
-    const rows=all.filter(l=>(fp==="all"||l.play===fp)&&(fs==="all"||decisionOf(l.id)===fs));
+    const rows=all.filter(l=>(fp==="all"||l.play===fp)&&(fs==="all"||decisionOf(l.id)===fs)&&(fo==="all"||(l.owner||"Barrett")===fo));
     $("#counts").textContent=`${rows.length} shown · ${tot.pending} pending · ${tot.approved} approved · ${tot.rejected} rejected`;
     const q=$("#queue"); q.innerHTML="";
     if(!state.leads.length){ q.innerHTML='<div class="empty">The queue is empty. Claude fills it on the next play run.</div>'; return; }
@@ -208,6 +221,7 @@ td.mono{font-family:var(--mono);font-size:.8rem;white-space:nowrap}
       const pills=[`<span class="pill acc">${PLAY_META[l.play]?PLAY_META[l.play].n:l.play}</span>`,
         l.hasEmail?'<span class="pill good">email on file</span>':'<span class="pill warn">no email, phone route</span>',
         l.region?`<span class="pill info">${l.region}</span>`:"",
+        `<span class="pill mute">${l.owner||"Barrett"}</span>`,
         l.flag?`<span class="pill bad">${l.flag}</span>`:""].join("");
       card.innerHTML=`<div class="score">${l.score}<small>of 5</small></div>
         <div class="who"><div class="name">${l.first} ${l.last||""}</div><div class="title">${l.title}</div><div class="org">${l.org}</div>
@@ -234,6 +248,7 @@ td.mono{font-family:var(--mono);font-size:.8rem;white-space:nowrap}
   function flash(msg,err){ const n=$("#dbnotice"); n.textContent=msg; n.className="notice"+(err?" err":""); n.hidden=false; }
 
   $("#f-play").addEventListener("change",renderQueue);
+  $("#f-owner").addEventListener("change",renderQueue);
   $("#f-status").addEventListener("change",renderQueue);
   renderPlays(); renderQueue();
 
