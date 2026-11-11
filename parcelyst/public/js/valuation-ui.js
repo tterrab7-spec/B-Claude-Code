@@ -84,7 +84,7 @@
     inp.sales = inp.sales || {}; inp.sales.comps = inp.sales.comps || []; inp.income = inp.income || {}; inp.income.rentRoll = inp.income.rentRoll || [];
     el.form.innerHTML = '<div class="row"><span class="small muted">Valuing as</span><div class="seg" id="v-type"><button type="button" data-type="residential" aria-pressed="' + res + '">Residential</button><button type="button" data-type="commercial" aria-pressed="' + !res + '">Commercial</button></div></div>' +
       groups().map(function (g) {
-        if (g[0] === '__comps') return gridHtml('v-comps', 'Comparable sales', res ? COMP_COLS_RES : COMP_COLS_COM, inp.sales.comps, 'data-c', '<button class="btn btn-line btn-sm" type="button" id="c-suggest">Suggest from database</button><button class="btn btn-line btn-sm" type="button" id="c-paste">Paste CSV</button><button class="btn btn-ink btn-sm" type="button" id="c-add">Add comp</button>', 'Three to six closed sales within the last 12 months (24 for commercial). Adjustment percentages are positive when the comparable is inferior to the subject. Enter each comparable\'s assessed value to run the uniformity test.');
+        if (g[0] === '__comps') return gridHtml('v-comps', 'Comparable sales', res ? COMP_COLS_RES : COMP_COLS_COM, inp.sales.comps, 'data-c', '<button class="btn btn-line btn-sm" type="button" id="c-suggest">Pull market evidence</button><button class="btn btn-line btn-sm" type="button" id="c-paste">Paste CSV</button><button class="btn btn-ink btn-sm" type="button" id="c-add">Add comp</button>', 'Three to six closed sales within the last 12 months (24 for commercial). Adjustment percentages are positive when the comparable is inferior to the subject. Enter each comparable\'s assessed value to run the uniformity test.');
         if (g[0] === '__roll') return gridHtml('v-roll', 'Rent roll', ROLL_COLS, inp.income.rentRoll, 'data-r', '<button class="btn btn-ink btn-sm" type="button" id="r-add">Add line</button>', 'Enter rent as $/SF/yr, or as monthly rent per unit with a count for multifamily. A rent of 0 marks the space vacant.');
         return '<fieldset class="panel panel-pad" style="border:1px solid var(--line);margin:0"><legend class="eyebrow" style="padding:0 6px">' + esc(g[0]) + '</legend><div class="grid vfields" style="gap:12px">' + g[1].map(fieldHtml).join('') + '</div>' + (g[2] ? '<p class="xs muted" style="margin-top:10px">' + esc(g[2]) + '</p>' : '') + '</fieldset>';
       }).join('');
@@ -103,7 +103,7 @@
       var k = e.target.getAttribute(attr); if (!k) return;
       var tr = e.target.closest('tr'), row = rows[+tr.getAttribute('data-i')], v = read(e.target.getAttribute('data-t'), e.target.value);
       if (v === undefined) delete row[k]; else row[k] = v;
-      if (attr === 'data-r') { if (k === 'rentPsfYr' && v !== undefined) delete row.rentMonthly; if (k === 'rentMonthly' && v !== undefined) delete row.rentPsfYr; row.vacant = !((row.rentPsfYr || 0) > 0 || (row.rentMonthly || 0) > 0); }
+      if (attr === 'data-r') { if (state.inputs.income) delete state.inputs.income.modeled; if (k === 'rentPsfYr' && v !== undefined) delete row.rentMonthly; if (k === 'rentMonthly' && v !== undefined) delete row.rentPsfYr; row.vacant = !((row.rentPsfYr || 0) > 0 || (row.rentMonthly || 0) > 0); }
       touch();
     }
     tb.addEventListener('input', on); tb.addEventListener('change', on);
@@ -154,15 +154,22 @@
   }
 
   function suggest() {
-    var S = state.inputs.subject || {}, res = isRes();
-    U.api('POST', '/api/comps', { subject: { assetType: res ? (S.propertyType || 'SFR') : CLASS_ASSET[S.assetClass || 'industrial'], sf: S.sf, yearBuilt: S.yearBuilt, zip: state.inputs.zip, market: state.inputs.marketId || (state.result && state.result.assumptions.marketId), locality: state.inputs.localityId || (state.result && state.result.assumptions.localityId), address: state.inputs.address } }).then(function (j) {
-      if (!j.comps.length) return U.toast(j.message || 'No recent sales of this type were found nearby. Enter comparables manually.', true);
-      U.modal('<span class="eyebrow">Candidate sales</span><h3>Pick comparables to add</h3>' + (j.demo ? '<div class="notice warn xs"><div>These are synthetic demo records. Connect a data provider or import sold data to get real sales.</div></div>' : '') +
-        '<div class="stack" style="gap:8px">' + j.comps.map(function (c, i) { return '<label class="check" style="align-items:flex-start"><input type="checkbox" data-pick="' + i + '" checked><span><strong>' + esc(c.address) + '</strong><span class="xs muted" style="display:block">' + esc(c.saleDate) + ' · ' + F.usd(c.salePrice) + (c.sf ? ' · ' + F.n(c.sf) + ' SF · $' + (c.salePrice / c.sf).toFixed(0) + '/SF' : '') + (c.yearBuilt ? ' · built ' + c.yearBuilt : '') + '</span></span></label>'; }).join('') + '</div>' +
-        '<div class="row"><button class="btn btn-primary" id="pick-go">Add selected</button><button class="btn btn-line" data-close>Cancel</button></div>', function (body, close) {
-        body.querySelector('#pick-go').onclick = function () { body.querySelectorAll('[data-pick]:checked').forEach(function (b) { state.inputs.sales.comps.push(j.comps[+b.getAttribute('data-pick')]); }); close(); renderForm(); touch(); };
+    var btn = el.form.querySelector('#c-suggest'); btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Pulling…';
+    U.api('POST', '/api/valuation/evidence', { inputs: state.inputs }).then(function (j) {
+      var all = j.listings.concat(j.sold);
+      function line(c, i) { return '<label class="check" style="align-items:flex-start"><input type="checkbox" data-pick="' + i + '"' + (c.source === 'Demo record' ? '' : ' checked') + '><span><strong>' + esc(c.address) + '</strong> ' + (c.isListing ? '<span class="chip plat">Asking</span>' : c.source === 'Demo record' ? '<span class="tag-demo">Demo</span>' : '<span class="chip good">Sold</span>') + '<span class="xs muted" style="display:block">' + (c.isListing ? '' : esc(c.saleDate) + ' · ') + F.usd(c.salePrice) + (c.sf ? ' · ' + F.n(c.sf) + ' SF · $' + (c.salePrice / c.sf).toFixed(0) + '/SF' : '') + (c.capRate ? ' · ' + F.pct(c.capRate, 2) + ' cap' : '') + (c.yearBuilt ? ' · built ' + c.yearBuilt : '') + '</span></span></label>'; }
+      U.modal('<span class="eyebrow">Market evidence</span><h3>Choose what to bring into the file</h3>' + j.notes.map(function (n) { return '<div class="notice xs"><div>' + esc(n) + '</div></div>'; }).join('') +
+        (all.length ? '<div class="stack" style="gap:8px">' + all.map(line).join('') + '</div>' : '<p class="small muted">No comparable candidates were found. Enter closed sales manually or paste a CSV.</p>') +
+        (j.proForma ? '<hr class="divider"><label class="check" style="align-items:flex-start"><input type="checkbox" id="pf-use" checked><span><strong>Model the income approach from market rent</strong><span class="xs muted" style="display:block">' + esc(j.proForma.basis) + '. Replace it with the real rent roll when you have it.</span></span></label>' : '') +
+        '<div class="row"><button class="btn btn-primary" id="pick-go">Add to file</button><button class="btn btn-line" data-close>Cancel</button></div>', function (body, close) {
+        body.querySelector('#pick-go').onclick = function () {
+          body.querySelectorAll('[data-pick]:checked').forEach(function (b) { state.inputs.sales.comps.push(all[+b.getAttribute('data-pick')]); });
+          var pf = body.querySelector('#pf-use');
+          if (pf && pf.checked) { var I = state.inputs.income = state.inputs.income || {}; I.enabled = true; I.rentRoll = j.proForma.rentRoll; I.modeled = true; if (I.marketRentPsf === undefined) I.marketRentPsf = j.proForma.marketRentPsf; }
+          close(); renderForm(); touch();
+        };
       });
-    }).catch(U.errorHandler);
+    }).catch(U.errorHandler).finally(function () { var b2 = el.form.querySelector('#c-suggest'); if (b2) { b2.disabled = false; b2.textContent = 'Pull market evidence'; } });
   }
 
   var CSV_MAP = { address: ['address', 'property address', 'street address', 'location'], saleDate: ['sale date', 'sold date', 'close date', 'closing date', 'date'], salePrice: ['sale price', 'sold price', 'close price', 'price'], sf: ['sf', 'sqft', 'building sf', 'gla', 'living area', 'square feet', 'rba', 'building size'], units: ['units'], lotAcres: ['acres', 'lot acres', 'land acres'], yearBuilt: ['year built', 'built'], beds: ['beds', 'bedrooms'], baths: ['baths', 'bathrooms'], garage: ['garage'], assessed: ['assessed', 'assessed value', 'assessment'], capRate: ['cap rate', 'cap'], noi: ['noi'], occupancyPct: ['occupancy', 'occupancy %', 'leased %'], distanceMi: ['distance', 'miles'], rent: ['rent', 'monthly rent'] };

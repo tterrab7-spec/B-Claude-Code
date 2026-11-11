@@ -287,6 +287,26 @@
       return { comps: comps, market: loc.market.id, demo: comps.some(function (c) { return c.source === 'Demo record'; }) };
     });
 
+    // ---------- automated market evidence: sold records + live listings + market-rent income model ----------
+    route('POST', '/api/valuation/evidence', async function (ctx, b) {
+      var u = requireUser(ctx), inp = b.inputs || {}, a = PValuation.normalize(inp), S = a.subject, notes = [];
+      var ASSET = { industrial: 'Industrial', retail: 'Retail', office: 'Office', multifamily: 'Multifamily 5+', 'self-storage': 'Self-Storage', 'mixed-use': 'Mixed-Use' };
+      var subj = { type: S.type, assetType: S.type === 'commercial' ? ASSET[S.assetClass] : S.propertyType, sf: S.sf, yearBuilt: S.yearBuilt, zip: a.zip, address: a.address, locality: a.localityId };
+      var sold = a.marketId ? PValuation.suggestComps(recordsFor(u, a.marketId), subj, { limit: 6 }) : [];
+      if (sold.some(function (c) { return c.source === 'Demo record'; })) notes.push('Sold candidates marked "Demo record" are synthetic. Do not use them in a client file.');
+      var listings = [];
+      if (hooks.listings && S.type === 'commercial' && a.city && a.state) {
+        try {
+          consume(u, 'lookups');
+          var raw = await hooks.listings({ city: a.city, state: a.state, assetClass: S.assetClass });
+          listings = PValuation.listingsToComps(raw, subj, { effectiveDate: a.assignment.effectiveDate, limit: 8 });
+          notes.push(raw.length + ' active ' + S.assetClass + ' listings found in ' + a.city + '; ' + listings.length + ' are close enough in size to use. Listings are asking prices, discounted ' + Math.round(PValuation.ASKING_DISCOUNT.commercial * 100) + '% for negotiation.');
+        } catch (e) { if (e.status === 402) throw e; notes.push('Live listings could not be pulled: ' + e.message); }
+      } else if (S.type === 'commercial') notes.push(hooks.listings ? 'Enter the city and state to pull live listings.' : 'Live LoopNet/Crexi listings are not connected on this copy (set APIFY_TOKEN on the server).');
+      var pf = (!inp.income || !inp.income.rentRoll || !inp.income.rentRoll.length) ? PValuation.marketProForma(inp) : null;
+      return { sold: sold, listings: listings, proForma: pf, notes: notes };
+    });
+
     // ---------- saved searches ----------
     route('GET', '/api/searches', function (ctx) { return { searches: store.listSearches(requireUser(ctx).id) }; });
     route('POST', '/api/searches', function (ctx, b) {

@@ -101,3 +101,22 @@ test('valuation: band of investment and uniformity ratio', () => {
   assert.ok(r.equity && r.equity.count === 4 && r.equity.subjectRatio > r.equity.medianRatio);
   assert.strictEqual(r.assessment.recommendation.label, 'Appeal supported');
 });
+
+test('valuation: listings become discounted comps and lower confidence; modeled income is flagged', () => {
+  const subject = { type: 'commercial', assetClass: 'industrial', sf: 10000, zip: '23607', address: '1 Test St' };
+  const comps = V.listingsToComps([
+    { address: '2 A St', askingPrice: 1000000, sf: 9000, zip: '23607', source: 'Crexi' }, { address: '3 B St', askingPrice: 1200000, sf: 12000, source: 'LoopNet' },
+    { address: '4 C St', askingPrice: 900000, sf: 8000 }, { address: 'too big', askingPrice: 9000000, sf: 90000 }, { address: 'no size', askingPrice: 500000 }, { address: '1 Test St', askingPrice: 1, sf: 10000 }
+  ], subject, { effectiveDate: '2026-11-01' });
+  assert.strictEqual(comps.length, 3);
+  assert.ok(comps.every((c) => c.isListing && c.conditionsAdjPct === -0.08));
+  const inputs = { kind: 'valuation', city: 'Newport News', state: 'VA', zip: '23607', assignment: { effectiveDate: '2026-11-01' }, subject, sales: { comps }, cost: { enabled: false }, income: {} };
+  const pf = V.marketProForma(inputs);
+  assert.ok(pf && pf.modeled && pf.rentRoll[0].rentPsfYr > 0);
+  inputs.income = { rentRoll: pf.rentRoll, modeled: true };
+  const r = V.analyze(inputs);
+  const texts = r.reconciliation.factors.map((f) => f.text).join('|');
+  assert.ok(/asking prices/.test(texts) && /modeled from market rent/.test(texts));
+  assert.ok(r.score < 70, 'automated evidence alone must not reach appeal-grade confidence');
+  assert.ok(r.reconciliation.final > 0);
+});

@@ -98,7 +98,7 @@
         distanceMi: num(c.distanceMi, null), occupancyPct: num(c.occupancyPct, null), noi: num(c.noi, null), capRate: num(c.capRate, null), rent: num(c.rent, null),
         assessed: num(c.assessed, null), rightsAdjPct: num(c.rightsAdjPct, 0), financingAdjPct: num(c.financingAdjPct, 0), conditionsAdjPct: num(c.conditionsAdjPct, 0),
         expendAfterSale: num(c.expendAfterSale, 0), locationAdjPct: num(c.locationAdjPct, 0), otherAdjPct: num(c.otherAdjPct, 0), otherAdj: num(c.otherAdj, 0),
-        source: c.source || '', note: c.note || '', weightOverride: num(c.weight, null)
+        source: c.source || '', note: c.note || '', weightOverride: num(c.weight, null), isListing: !!c.isListing
       };
     });
     var r = sl.rates || {}, ppsf = median(comps.map(function (c) { return c.sf ? c.salePrice / c.sf : null; })), medPrice = median(comps.map(function (c) { return c.salePrice; }));
@@ -142,7 +142,7 @@
       deductLeaseUp: inc.deductLeaseUp !== false, downtimeMonths: num(inc.downtimeMonths, 6), tiNewPsf: num(inc.tiNewPsf, cls === 'office' ? 40 : cls === 'retail' ? 20 : 5), lcPct: num(inc.lcPct, 0.05), leaseTermYears: num(inc.leaseTermYears, 5),
       deferredMaintenance: num(inc.deferredMaintenance, 0),
       discountRate: num(inc.discountRate, null), exitCap: num(inc.exitCap, null), holdYears: Math.round(num(inc.holdYears, 10)), rentGrowth: num(inc.rentGrowth, 0.03), expenseGrowth: num(inc.expenseGrowth, 0.03),
-      monthlyRent: num(inc.monthlyRent, null), grm: num(inc.grm, null)
+      monthlyRent: num(inc.monthlyRent, null), grm: num(inc.grm, null), modeled: !!inc.modeled
     };
 
     // ----- cost
@@ -371,6 +371,12 @@
       else if (sales.cov > 0.05) hit(4, 'Moderate spread in adjusted sales (COV ' + pct(sales.cov) + ')');
       if (sales.maxAgeYears > (S.type === 'residential' ? 1 : 2)) hit(5, 'Oldest comparable is ' + Math.round(sales.maxAgeYears * 12) + ' months old');
     } else if (S.type === 'residential') hit(25, 'No sales comparison for a residential property');
+    if (salesRow.weight > 0) {
+      var listingWeight = sales.comps.reduce(function (t, c) { return t + (c.isListing ? c.weight : 0); }, 0);
+      if (listingWeight > 0.5) hit(12, 'Sales comparison rests mainly on asking prices, not closed sales');
+      else if (listingWeight > 0) hit(5, 'Some comparables are asking prices, not closed sales');
+    }
+    if (income.developed && a.income.modeled && rows[1].weight > 0) hit(12, 'Income is modeled from market rent, not the actual rent roll');
     if (S.type === 'commercial' && !income.developed) hit(20, 'Income approach not developed for an income property');
     if (developed.length === 1) hit(8, 'Single approach to value');
     if (developed.length > 1 && final) {
@@ -466,7 +472,46 @@
     return out.slice(0, opts.limit || 8).map(function (x) { return x.comp; });
   }
 
+  // ---------------------------------------------------------------- automated market evidence
+  var ASKING_DISCOUNT = { residential: 0.03, commercial: 0.08 }; // typical gap between asking and closing price; editable per comp
+
+  // Turn active for-sale listings into comparables: asking price less a negotiation discount.
+  function listingsToComps(listings, subject, opts) {
+    opts = opts || {};
+    var sf = num(subject.sf, 0), eff = opts.effectiveDate || new Date().toISOString().slice(0, 10), disc = opts.discount !== undefined ? opts.discount : ASKING_DISCOUNT[subject.type === 'residential' ? 'residential' : 'commercial'];
+    var subjAddr = String(subject.address || '').toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 12), out = [];
+    (listings || []).forEach(function (l) {
+      var price = num(l.askingPrice, 0), lsf = num(l.sf, 0);
+      if (!(price > 0) || !(lsf > 0)) return;
+      if (sf && (lsf < sf / 3 || lsf > sf * 3)) return;
+      if (subjAddr && String(l.address || '').toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 12) === subjAddr) return;
+      var d = (sf ? Math.abs(Math.log(lsf / sf)) : 0.5) + (l.zip && subject.zip && l.zip === subject.zip ? 0 : 0.4) + (num(l.daysOnMarket, 0) > 365 ? 0.3 : 0);
+      out.push({ d: d, comp: { address: l.address + (l.city ? ', ' + l.city : ''), saleDate: eff, salePrice: price, sf: lsf, yearBuilt: l.yearBuilt || '', capRate: l.capRate || '', noi: l.noi || '', condition: 3, quality: 3, conditionsAdjPct: -disc, isListing: true,
+        source: 'Active listing, asking price (' + (l.source || 'listing site') + ')', note: (l.daysOnMarket ? l.daysOnMarket + ' days on market. ' : '') + (l.url || '') } });
+    });
+    out.sort(function (p, q) { return p.d - q.d; });
+    return out.slice(0, opts.limit || 8).map(function (x) { return x.comp; });
+  }
+
+  // A market-rent income model for a commercial subject with no rent roll on file.
+  function marketProForma(inputs) {
+    var a = normalize(inputs), S = a.subject;
+    if (S.type !== 'commercial' || !a.marketId) return null;
+    var m = PMarkets.byId(a.marketId), ref = m.commercial[S.assetClass]; if (!ref) return null;
+    var roll, occ = S.occupancyPct !== null ? S.occupancyPct : 1 - ref.vacancy;
+    if (S.assetClass === 'multifamily') {
+      if (!S.units) return null;
+      roll = [{ label: 'All units at market rent (modeled)', count: S.units, sf: S.sf || 0, rentMonthly: Math.round(PMarkets.fmr(m, 2) * 0.95), leaseType: 'GROSS' }];
+    } else {
+      if (!S.sf || !ref.rentPsf) return null;
+      var lt = S.assetClass === 'office' ? 'MG' : S.assetClass === 'self-storage' ? 'GROSS' : 'NNN', leased = Math.round(S.sf * Math.min(1, occ));
+      roll = [{ label: 'Leased space at market rent (modeled)', sf: leased, rentPsfYr: ref.rentPsf, leaseType: lt }];
+      if (S.sf - leased > 0) roll.push({ label: 'Vacant (modeled)', sf: S.sf - leased, rentPsfYr: 0, leaseType: lt, vacant: true });
+    }
+    return { rentRoll: roll, marketRentPsf: ref.rentPsf || 0, vacancyPct: ref.vacancy, capRate: ref.cap, modeled: true, basis: m.name + ' ' + S.assetClass + ' benchmarks (' + m.asOf + '): ' + (ref.rentPsf ? '$' + ref.rentPsf + '/SF rent, ' : '') + pct(ref.vacancy, 0) + ' vacancy, ' + pct(ref.cap, 2) + ' cap rate' };
+  }
+
   if (PEngine.registerKind) PEngine.registerKind('valuation', analyze);
 
-  return { analyze: analyze, normalize: normalize, fromRecord: fromRecord, suggestComps: suggestComps, roundValue: roundValue, PURPOSES: PURPOSES, CLASSES: CLASSES, RES_TYPES: RES_TYPES, CONDITION: CONDITION, COST_REF: COST_REF };
+  return { analyze: analyze, normalize: normalize, fromRecord: fromRecord, suggestComps: suggestComps, listingsToComps: listingsToComps, marketProForma: marketProForma, ASKING_DISCOUNT: ASKING_DISCOUNT, roundValue: roundValue, PURPOSES: PURPOSES, CLASSES: CLASSES, RES_TYPES: RES_TYPES, CONDITION: CONDITION, COST_REF: COST_REF };
 });

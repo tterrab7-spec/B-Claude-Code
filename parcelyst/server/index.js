@@ -47,6 +47,7 @@ const service = createService(store, {
     return providers.lookup(address);
   },
   saveProperty: (rec) => store.saveSharedProperty(rec),
+  listings: process.env.APIFY_TOKEN ? providers.apifyListings : null,
   checkout: async (user, product, baseUrl) => {
     const row = require('./db').one('SELECT * FROM users WHERE id = ?', user.id);
     return billing.checkout(row, product, baseUrl);

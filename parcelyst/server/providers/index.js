@@ -41,7 +41,8 @@ const enabled = () => ({
   rentcast: !!process.env.RENTCAST_API_KEY,
   attom: !!process.env.ATTOM_API_KEY,
   regrid: !!process.env.REGRID_TOKEN,
-  fred: !!process.env.FRED_API_KEY
+  fred: !!process.env.FRED_API_KEY,
+  apify: !!process.env.APIFY_TOKEN
 });
 
 // ---------------- Census geocoder ----------------
@@ -170,6 +171,36 @@ async function liveRates(fallback) {
   return { rates: out, sources, live: true };
 }
 
+// ---------------- Apify: active LoopNet + Crexi listings ----------------
+// Pay-per-result (about $0.02 per listing). One pull per city + asset class is cached for 7 days.
+const APIFY_CRE_ACTOR = process.env.APIFY_CRE_ACTOR || 'kazkn~commercial-real-estate-brokerage-intel';
+const APIFY_CLASS = { industrial: 'industrial', retail: 'retail', office: 'office', multifamily: 'multifamily', 'mixed-use': 'mixed-use', 'self-storage': 'specialty' };
+function pub(v) { if (v === null || v === undefined || v === 'not public' || v === '') return null; const n = typeof v === 'number' ? v : parseFloat(String(v).replace(/[$,%\s]|\/SF/gi, '')); return isNaN(n) ? null : n; }
+function streetFromUrl(url) { const m = String(url || '').match(/loopnet\.[a-z.]+\/Listing\/([^/]+)\//i); if (!m) return null; return m[1].replace(/-[A-Z]{2}$/, '').split('-').filter((w) => w).join(' '); }
+function normalizeListing(l, cls) {
+  let address = l.address && l.address !== 'not public' ? String(l.address) : '';
+  const street = streetFromUrl(l.listing_url);
+  if (street && !/^\d/.test(address)) address = street; else address = address.split(',')[0];
+  const cap = pub(l.cap_rate !== undefined ? l.cap_rate : l.normalized_cap_rate !== undefined ? l.normalized_cap_rate : l.cap_rate_percent);
+  return { address, city: l.city && l.city !== 'not public' ? l.city : '', zip: l.zip && l.zip !== 'not public' ? String(l.zip) : '', askingPrice: pub(l.asking_amount_usd), sf: pub(l.building_size_sqft), assetClass: cls,
+    capRate: cap === null ? null : cap > 1 ? cap / 100 : cap, noi: pub(l.noi), yearBuilt: pub(l.year_built), daysOnMarket: pub(l.days_on_market), url: l.listing_url || '', source: l.source === 'crexi' ? 'Crexi' : l.source === 'loopnet' ? 'LoopNet' : (l.source || '') };
+}
+async function apifyListings({ city, state, assetClass }) {
+  const key = 'apify:cre:' + [city, state, assetClass].join('|').toLowerCase();
+  const hit = cacheGet(key); if (hit) return hit;
+  const ctl = new AbortController(); const t = setTimeout(() => ctl.abort(), 150000);
+  try {
+    const res = await fetch(`https://api.apify.com/v2/acts/${APIFY_CRE_ACTOR}/run-sync-get-dataset-items?token=${encodeURIComponent(process.env.APIFY_TOKEN)}&maxTotalChargeUsd=${process.env.APIFY_MAX_USD_PER_PULL || 2}`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: ctl.signal,
+      body: JSON.stringify({ city, state, assetClasses: APIFY_CLASS[assetClass] ? [APIFY_CLASS[assetClass]] : [], transactionTypes: ['sale'], maxResultsPerSource: Number(process.env.APIFY_LISTINGS_PER_SOURCE || 30), includeListingDetails: false })
+    });
+    if (!res.ok) throw new Error('Apify returned HTTP ' + res.status);
+    const out = (await res.json()).map((l) => normalizeListing(l, assetClass)).filter((l) => l.askingPrice);
+    cacheSet(key, out, 7 * 86400);
+    return out;
+  } finally { clearTimeout(t); }
+}
+
 // ---------------- composite lookup ----------------
 async function lookup(address) {
   const tried = [], errors = [];
@@ -188,4 +219,4 @@ async function lookup(address) {
   return { record: merged.address ? merged : null, tried, errors };
 }
 
-module.exports = { enabled, lookup, geocode, rentcastLookup, rentcastArea, rentcastListings, attomLookup, regridLookup, liveRates, cacheGet, cacheSet };
+module.exports = { apifyListings, normalizeListing, enabled, lookup, geocode, rentcastLookup, rentcastArea, rentcastListings, attomLookup, regridLookup, liveRates, cacheGet, cacheSet };
