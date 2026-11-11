@@ -8,9 +8,10 @@
  */
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) {
-    module.exports = factory(require('./engine.js'), require('./markets.js'), require('./plans.js'), require('./scoring.js'), require('./defaults.js'), require('./csv.js'));
-  } else root.PService = factory(root.PEngine, root.PMarkets, root.PPlans, root.PScoring, root.PDefaults, root.PCsv);
-})(typeof self !== 'undefined' ? self : this, function (PEngine, PMarkets, PPlans, PScoring, PDefaults, PCsv) {
+    var PVal = require('./valuation.js'); // registers the 'valuation' analysis kind
+    module.exports = factory(require('./engine.js'), require('./markets.js'), require('./plans.js'), require('./scoring.js'), require('./defaults.js'), require('./csv.js'), PVal);
+  } else root.PService = factory(root.PEngine, root.PMarkets, root.PPlans, root.PScoring, root.PDefaults, root.PCsv, root.PValuation);
+})(typeof self !== 'undefined' ? self : this, function (PEngine, PMarkets, PPlans, PScoring, PDefaults, PCsv, PValuation) {
   'use strict';
 
   function HttpError(status, msg, code, extra) { var e = new Error(msg); e.status = status; e.code = code; e.extra = extra; return e; }
@@ -30,7 +31,7 @@
     var m = result.metrics || {};
     return { score: result.score, verdict: result.verdict.label, tone: result.verdict.tone, price: result.assumptions.price,
       cap: m.cap !== undefined ? m.cap : null, cfMonthly: m.cfMonthly !== undefined ? m.cfMonthly : null, irr: m.irr !== undefined ? m.irr : (m.leveredIrr !== undefined ? m.leveredIrr : null),
-      lots: m.lots || null, address: result.assumptions.address, city: result.assumptions.city, state: result.assumptions.state };
+      lots: m.lots || null, headline: result.headline || null, value: m.value || null, address: result.assumptions.address, city: result.assumptions.city, state: result.assumptions.state };
   }
 
   function createService(store, hooks) {
@@ -274,6 +275,16 @@
       var r = await rates();
       return { record: visible ? rec : maskRecord(rec), masked: !visible, inputs: PDefaults.build(rec, { rates: r.rates, rateSources: r.sources }), kind: PDefaults.kindOf(rec),
         scores: { investor: PScoring.investorScore(rec), agent: PScoring.agentScore(rec), land: PScoring.landScore(rec) } };
+    });
+
+    // ---------- comparable-sale candidates for the valuation tool ----------
+    route('POST', '/api/comps', function (ctx, b) {
+      var u = requireUser(ctx);
+      var subj = b.subject || {};
+      var loc = (subj.market && PMarkets.byId(subj.market)) ? { market: PMarkets.byId(subj.market) } : PMarkets.findByZip(subj.zip);
+      if (!loc || !loc.market) return { comps: [], message: 'Candidate sales are available inside covered markets. Enter comparables manually or paste a CSV.' };
+      var comps = PValuation.suggestComps(recordsFor(u, loc.market.id), subj, { limit: 8 });
+      return { comps: comps, market: loc.market.id, demo: comps.some(function (c) { return c.source === 'Demo record'; }) };
     });
 
     // ---------- saved searches ----------

@@ -42,4 +42,46 @@
       }
     }
   };
+
+  // Desktop valuation samples. Fictional subjects and comparables for illustration only.
+  window.PSamples.valuationResidential = {
+    kind: 'valuation',
+    inputs: {
+      kind: 'valuation', address: '2208 Sparrow Rd', city: 'Chesapeake', state: 'VA', zip: '23320', marketId: 'hampton-roads', localityId: 'chesapeake',
+      assignment: { client: 'Sample homeowner', purpose: 'assessment', effectiveDate: '2026-11-01', interest: 'Fee simple', preparedBy: '', firm: 'Sterling Tax Management', fileNo: 'SAMPLE-R1' },
+      subject: { type: 'residential', propertyType: 'SFR', sf: 2180, lotAcres: 0.26, yearBuilt: 1996, beds: 4, baths: 2.5, garage: 2, condition: 3, quality: 3, parcelId: 'Sample' },
+      assessment: { total: 438600, land: 135000, improvements: 303600, taxYear: '2026', feePct: 0.30 },
+      sales: { comps: [
+        { address: '2311 Wren Ct', saleDate: '2026-08-14', salePrice: 392000, sf: 2090, lotAcres: 0.24, yearBuilt: 1994, beds: 4, baths: 2.5, garage: 2, condition: 3, quality: 3, distanceMi: 0.3, assessed: 371400, source: 'Sample' },
+        { address: '1904 Heron Way', saleDate: '2026-06-02', salePrice: 409500, sf: 2310, lotAcres: 0.28, yearBuilt: 1998, beds: 4, baths: 2.5, garage: 2, condition: 4, quality: 3, distanceMi: 0.5, assessed: 386000, source: 'Sample' },
+        { address: '2450 Sparrow Rd', saleDate: '2026-03-21', salePrice: 379000, sf: 2040, lotAcres: 0.25, yearBuilt: 1995, beds: 4, baths: 2, garage: 2, condition: 3, quality: 3, distanceMi: 0.2, assessed: 362800, source: 'Sample' },
+        { address: '817 Kestrel Ln', saleDate: '2026-09-30', salePrice: 401000, sf: 2240, lotAcres: 0.23, yearBuilt: 1997, beds: 4, baths: 2.5, garage: 2, condition: 3, quality: 3, distanceMi: 0.7, assessed: 380200, source: 'Sample' },
+        { address: '3022 Osprey Dr', saleDate: '2025-12-10', salePrice: 368500, sf: 1980, lotAcres: 0.22, yearBuilt: 1993, beds: 3, baths: 2.5, garage: 1, condition: 3, quality: 3, distanceMi: 0.9, assessed: 349900, source: 'Sample' }
+      ] },
+      income: { enabled: false }, cost: { landValue: 135000 }
+    }
+  };
+  window.PSamples.valuationCommercial = {
+    kind: 'valuation',
+    inputs: {
+      kind: 'valuation', address: '8400 Sanford Dr', city: 'Henrico', state: 'VA', zip: '23228', marketId: 'richmond', localityId: 'henrico',
+      assignment: { client: 'Sample owner LLC', purpose: 'assessment', effectiveDate: '2026-11-01', interest: 'Fee simple', preparedBy: '', firm: 'Sterling Tax Management', fileNo: 'SAMPLE-C1' },
+      subject: { type: 'commercial', assetClass: 'industrial', sf: 42000, lotAcres: 3.8, yearBuilt: 2001, condition: 3, quality: 3, occupancyPct: 0.857, zoning: 'M-1', parcelId: 'Sample' },
+      assessment: { total: 5650000, land: 1050000, improvements: 4600000, taxYear: '2026', feePct: 0.30 },
+      sales: { comps: [
+        { address: '2700 Distribution Dr, Henrico', saleDate: '2026-05-18', salePrice: 5150000, sf: 46500, yearBuilt: 2003, condition: 3, quality: 3, occupancyPct: 1.0, distanceMi: 2.1, capRate: 0.0665, assessed: 4780000, source: 'Sample' },
+        { address: '1120 Dabney Rd, Richmond', saleDate: '2025-11-06', salePrice: 3480000, sf: 31200, yearBuilt: 1996, condition: 3, quality: 3, occupancyPct: 0.92, distanceMi: 3.4, capRate: 0.0705, assessed: 3310000, source: 'Sample' },
+        { address: '5601 Lewis Rd, Sandston', saleDate: '2026-02-27', salePrice: 6900000, sf: 58000, yearBuilt: 2008, condition: 4, quality: 3, occupancyPct: 1.0, distanceMi: 8.6, capRate: 0.0640, assessed: 6420000, source: 'Sample' },
+        { address: '9950 Maryland Dr, Henrico', saleDate: '2026-08-08', salePrice: 4275000, sf: 38400, yearBuilt: 1999, condition: 3, quality: 3, occupancyPct: 0.88, distanceMi: 1.6, capRate: 0.0690, assessed: 4050000, source: 'Sample' }
+      ] },
+      income: { enabled: true, rentBasis: 'market', marketRentPsf: 9.25, vacancyPct: 0.05, creditLossPct: 0.01, capRate: 0.0675,
+        rentRoll: [
+          { label: 'Tenant A (distribution)', sf: 21000, rentPsfYr: 8.90, leaseType: 'NNN', leaseEndYears: 4.5, escalation: 0.03 },
+          { label: 'Tenant B (contractor supply)', sf: 15000, rentPsfYr: 9.40, leaseType: 'NNN', leaseEndYears: 2.0, escalation: 0.03 },
+          { label: 'Suite C', sf: 6000, rentPsfYr: 0, leaseType: 'NNN', vacant: true }
+        ],
+        expenses: { taxes: 48025, insurance: 13000, cam: 40000, utilities: 0, repairs: 14000, payroll: 0, other: 0 }, mgmtPct: 0.03, reservesPsf: 0.20 },
+      cost: { landValue: 1050000 }
+    }
+  };
 })();

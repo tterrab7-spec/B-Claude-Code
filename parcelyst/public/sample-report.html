@@ -20,8 +20,8 @@
 <main>
 <section class="section" style="padding-bottom:24px"><div class="wrap stack" style="gap:16px">
   <span class="eyebrow">Sample report</span><h1>See exactly what you get.</h1>
-  <p class="lede">Three illustrative deals, rendered by the same engine the app uses. Change the property type to see residential, commercial and land reports.</p>
-  <div class="row"><div class="seg" role="group" aria-label="Report type"><button type="button" data-s="residential" aria-pressed="true">Residential rental</button><button type="button" data-s="commercial" aria-pressed="false">Industrial (NNN)</button><button type="button" data-s="land" aria-pressed="false">Land / lots</button></div><a class="btn btn-line btn-sm" id="open-in" href="app/analyze.html">Open in analyzer</a></div>
+  <p class="lede">Illustrative deals rendered by the same engine the app uses: three investment reports and two desktop valuation reviews.</p>
+  <div class="row"><div class="seg" role="group" aria-label="Report type"><button type="button" data-s="residential" aria-pressed="true">Residential rental</button><button type="button" data-s="commercial" aria-pressed="false">Industrial (NNN)</button><button type="button" data-s="land" aria-pressed="false">Land / lots</button><button type="button" data-s="valuationResidential" aria-pressed="false">Valuation review: house</button><button type="button" data-s="valuationCommercial" aria-pressed="false">Valuation review: industrial</button></div><a class="btn btn-line btn-sm" id="open-in" href="app/analyze.html">Open in analyzer</a></div>
 </div></section>
 <section style="padding-bottom:80px"><div class="wrap"><div id="report"></div></div></section>
 </main>
@@ -32,6 +32,7 @@
 <script src="js/shared/scoring.js"></script>
 <script src="js/shared/defaults.js"></script>
 <script src="js/shared/csv.js"></script>
+<script src="js/shared/valuation.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/samples.js"></script>
 <script src="js/report.js"></script>
@@ -41,10 +42,10 @@ function show(k) {
   var s = PSamples[k];
   PReport.render(document.getElementById('report'), PEngine.analyze(s.inputs), {});
   document.querySelectorAll('[data-s]').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-s') === k); });
-  document.getElementById('open-in').onclick = function (e) { e.preventDefault(); try { sessionStorage.setItem('parcelyst-pending', JSON.stringify({ inputs: s.inputs, kind: k })); } catch (x) {} location.href = 'app/analyze.html?sample=' + k; };
+  document.getElementById('open-in').onclick = function (e) { e.preventDefault(); try { sessionStorage.setItem('parcelyst-pending', JSON.stringify({ inputs: s.inputs, kind: k })); } catch (x) {} location.href = (s.kind === 'valuation' ? 'app/valuation.html' : 'app/analyze.html') + '?sample=' + k; };
 }
 document.querySelectorAll('[data-s]').forEach(function (b) { b.addEventListener('click', function () { show(b.getAttribute('data-s')); }); });
-show(location.hash === '#commercial' ? 'commercial' : location.hash === '#land' ? 'land' : 'residential');
+show(location.hash === '#commercial' ? 'commercial' : location.hash === '#land' ? 'land' : location.hash === '#valuation' ? 'valuationCommercial' : 'residential');
 
 </script>
 </body>

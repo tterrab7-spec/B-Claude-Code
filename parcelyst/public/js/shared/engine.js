@@ -736,15 +736,27 @@
   function usdS(v) { if (v === null || v === undefined || !isFinite(v)) return 'n/a'; var neg = v < 0; v = Math.abs(v); var s = '$' + Math.round(v).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','); return neg ? '-' + s : s; }
   function pctS(v, d) { if (v === null || v === undefined || !isFinite(v)) return 'n/a'; return (v * 100).toFixed(d === undefined ? 1 : d) + '%'; }
 
+  // Unlevered projection for valuation work: NOI and leasing costs per year plus the forward year.
+  function projectCommercial(input, years) {
+    var a = normCommercial(input), H = years || a.holdYears, rows = [];
+    for (var y = 1; y <= H + 1; y++) { var q = comYear(a, y); rows.push({ year: y, noi: q.noi, tilc: q.tilc, egi: q.egi }); }
+    return { rows: rows.slice(0, H), fwdNoi: rows[H].noi, assumptions: a };
+  }
+
+  // Other modules (valuation.js) register additional analysis kinds here.
+  var KINDS = {};
+  function registerKind(kind, fn) { KINDS[kind] = fn; }
+
   function analyze(input) {
     var k = (input && input.kind) || 'residential';
+    if (KINDS[k]) return KINDS[k](input);
     if (k === 'commercial') return analyzeCommercial(input);
     if (k === 'land') return analyzeLand(input);
     return analyzeResidential(input);
   }
 
   return {
-    analyze: analyze, analyzeResidential: analyzeResidential, analyzeCommercial: analyzeCommercial, analyzeLand: analyzeLand,
+    analyze: analyze, registerKind: registerKind, projectCommercial: projectCommercial, analyzeResidential: analyzeResidential, analyzeCommercial: analyzeCommercial, analyzeLand: analyzeLand,
     pmt: pmt, balanceAfter: balanceAfter, irr: irr, npv: npv, solve: solve, verdict: verdict,
     fmt: { usd: usdS, pct: pctS }, COST_SEG: COST_SEG, DEFAULT_RATES: DEFAULT_RATES
   };

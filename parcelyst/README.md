@@ -15,7 +15,7 @@ cd parcelyst
 npm install
 cp .env.example .env          # optional; it runs without any keys
 BILLING_MODE=dev npm start    # http://localhost:3000
-npm test                      # 11 tests: engine math + API, paywalls, imports, webhooks
+npm test                      # 17 tests: engine math, valuation, API, paywalls, imports, webhooks
 ```
 
 With no keys the app runs end to end: accounts, analyses, reports, finders on a synthetic demo dataset
@@ -60,6 +60,32 @@ server/             Express app, SQLite store, Stripe billing, data provider ada
 public/             site + app (no build step, no framework)
 test/               node:test suites
 ```
+
+## Desktop Valuation Review
+
+`/app/valuation.html` produces a three-approach value opinion and tests it against the tax assessment.
+Built for assessment-review work (Sterling Tax Management) and usable for estate, listing and internal work.
+
+- **Sales comparison**: adjustment grid. Transactional adjustments in sequence (rights, financing, conditions
+  of sale, market conditions), then property adjustments. Comps are weighted by gross adjustment, recency and
+  distance, and flagged past 15% net / 25% gross.
+- **Income**: stabilized direct capitalization on market or contract rent, cap-rate support (market benchmark,
+  comp-extracted, band of investment, debt coverage), a tax-loaded cap rate for assessment work, lease-up and
+  deferred-maintenance deductions, and a DCF cross-check. Gross rent multiplier for 1-4 units.
+- **Cost**: replacement cost new less age-life, functional and external depreciation, plus land.
+- **Reconciliation**: weights by property type, a 0-100 confidence score and a value range that widens as
+  confidence falls.
+- **Assessment test**: over/under assessment, tax reduction, contingency fee, and a uniformity test
+  (assessment-to-sale ratios and COD of the comparables against the subject).
+
+Comparables come from manual entry, a pasted CSV (MLS, CoStar, assessor) or `POST /api/comps`, which ranks sold
+records already in the database. Code: `public/js/shared/valuation.js`, `public/js/valuation-ui.js`, and the
+`valuation()` renderer in `public/js/report.js`.
+
+**It is not an appraisal.** Every report says so. Before selling it, have counsel confirm what a non-appraiser
+may deliver for a fee in each state (Virginia: Code Title 54.1, Chapter 20.1) and whether a licensed appraiser
+should sign the reviewer block. Replacement costs and adjustment rates are reference defaults, not a cost-service
+subscription.
 
 ## Engine checks
 

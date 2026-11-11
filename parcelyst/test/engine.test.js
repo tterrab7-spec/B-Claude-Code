@@ -55,3 +55,49 @@ test('land residual: asking at the static residual leaves exactly the required m
   assert.strictEqual(r1.metrics.lots, 105);
   assert.ok(Math.abs(r2.metrics.margin - 0.18) < 0.002);
 });
+
+const V = require('../public/js/shared/valuation.js');
+
+test('valuation: identical comps return the comp price; superior comp is adjusted down', () => {
+  const base = { kind: 'valuation', zip: '23320', assignment: { effectiveDate: '2026-11-01' }, subject: { type: 'residential', sf: 2000, yearBuilt: 2000, beds: 4, baths: 2, condition: 3, quality: 3 }, cost: { enabled: false }, income: { enabled: false },
+    sales: { rates: { timePctPerYear: 0 }, comps: [1, 2, 3].map(() => ({ salePrice: 400000, saleDate: '2026-10-01', sf: 2000, yearBuilt: 2000, beds: 4, baths: 2, condition: 3 })) } };
+  const r = E.analyze(base);
+  assert.strictEqual(r.reconciliation.final, 400000);
+  base.sales.comps[0].sf = 2200; base.sales.rates.glaPerSf = 80;
+  const r2 = V.analyze(base);
+  assert.strictEqual(Math.round(r2.sales.comps[0].adjusted), 400000 - 200 * 80);
+});
+
+test('valuation: market-conditions adjustment compounds from sale date to effective date', () => {
+  const r = V.analyze({ kind: 'valuation', assignment: { effectiveDate: '2026-11-01' }, subject: { type: 'residential', sf: 1800 }, cost: { enabled: false }, income: { enabled: false },
+    sales: { rates: { timePctPerYear: 0.05 }, comps: [{ salePrice: 300000, saleDate: '2025-11-01', sf: 1800 }] } });
+  assert.ok(Math.abs(r.sales.comps[0].adjusted - 315000) < 60);
+});
+
+test('valuation: tax-loaded cap rate removes the dependence on the current tax bill', () => {
+  const mk = (taxes) => V.analyze({ kind: 'valuation', zip: '23228', assignment: { purpose: 'assessment', effectiveDate: '2026-11-01' }, subject: { type: 'commercial', assetClass: 'office', sf: 20000, yearBuilt: 2000 }, assessment: { total: 3000000, taxRate: 0.01 }, cost: { enabled: false }, sales: { comps: [] },
+    income: { capRate: 0.08, loadedCap: true, marketRentPsf: 20, vacancyPct: 0.1, creditLossPct: 0, mgmtPct: 0, reservesPsf: 0, deductLeaseUp: false, rentRoll: [{ label: 'A', sf: 20000, rentPsfYr: 20, leaseType: 'GROSS' }], expenses: { taxes, insurance: 10000, cam: 60000, utilities: 0, repairs: 0, payroll: 0, other: 0 } } });
+  const a = mk(30000), b = mk(60000);
+  assert.ok(Math.abs(a.income.value - b.income.value) < 1, 'value must not move with the entered tax expense');
+  assert.ok(Math.abs(a.income.loaded.loadedCap - 0.09) < 1e-9);
+  assert.ok(Math.abs(a.income.value - (400000 * 0.9 - 70000) / 0.09) < 1);
+});
+
+test('valuation: cost approach and assessment test', () => {
+  const r = V.analyze({ kind: 'valuation', assignment: { effectiveDate: '2026-11-01' }, subject: { type: 'residential', sf: 2000, yearBuilt: 2006 }, assessment: { total: 500000, taxRate: 0.01 }, income: { enabled: false }, sales: { comps: [] },
+    cost: { landValue: 100000, baseCostPsf: 150, localMultiplier: 1, siteImprovements: 0, softPct: 0, incentivePct: 0, economicLife: 50, effectiveAge: 10 } });
+  assert.strictEqual(Math.round(r.cost.value), 100000 + 300000 * 0.8);
+  assert.strictEqual(r.reconciliation.final, 340000);
+  assert.ok(Math.abs(r.assessment.variance - 160000) < 1 && Math.abs(r.assessment.annualSavings - 1600) < 1);
+  assert.notStrictEqual(r.assessment.recommendation.label, 'Appeal supported', 'low confidence must not produce a supported appeal');
+});
+
+test('valuation: band of investment and uniformity ratio', () => {
+  global.window = {}; require('../public/js/samples.js');
+  const r = V.analyze(global.window.PSamples.valuationCommercial.inputs);
+  const band = r.income.capSupport.rows.find((x) => x.key === 'band');
+  const mc = E.pmt(r.assumptions.income.loanRate, 25, 1) * 12;
+  assert.ok(Math.abs(band.rate - (0.65 * mc + 0.35 * 0.09)) < 1e-9);
+  assert.ok(r.equity && r.equity.count === 4 && r.equity.subjectRatio > r.equity.medianRatio);
+  assert.strictEqual(r.assessment.recommendation.label, 'Appeal supported');
+});

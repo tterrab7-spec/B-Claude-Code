@@ -36,7 +36,7 @@
 var id = PUI.qs('id'), F = PUI.fmt, data = null;
 function actions() {
   var a = document.getElementById('r-actions');
-  a.innerHTML = '<a class="btn btn-line btn-sm" href="analyze.html?id=' + encodeURIComponent(id) + '">Edit assumptions</a>' + (data.unlocked ? '<button class="btn btn-line btn-sm" id="share">Copy share link</button><button class="btn btn-ink btn-sm" id="pdf">Download PDF</button>' : '');
+  a.innerHTML = '<a class="btn btn-line btn-sm" href="' + (data.analysis.kind === 'valuation' ? 'valuation' : 'analyze') + '.html?id=' + encodeURIComponent(id) + '">' + (data.analysis.kind === 'valuation' ? 'Edit review' : 'Edit assumptions') + '</a>' + (data.unlocked ? '<button class="btn btn-line btn-sm" id="share">Copy share link</button><button class="btn btn-ink btn-sm" id="pdf">Download PDF</button>' : '');
   if (data.unlocked) {
     a.querySelector('#pdf').onclick = function () { window.print(); };
     a.querySelector('#share').onclick = function () { PUI.api('POST', '/api/analyses/' + id + '/share', {}).then(function (j) { var full = j.url.indexOf('http') === 0 ? j.url : location.origin + j.url; (navigator.clipboard ? navigator.clipboard.writeText(full) : Promise.reject()).then(function () { PUI.toast('Share link copied'); }).catch(function () { PUI.modal('<h3>Share link</h3><input class="input" readonly value="' + PUI.esc(full) + '" onclick="this.select()"><button class="btn btn-line" data-close>Done</button>'); }); }).catch(PUI.errorHandler); };

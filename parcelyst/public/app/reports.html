@@ -18,7 +18,7 @@
 
 <main>
   <div class="page-head"><div class="stack" style="gap:6px"><span class="eyebrow">Reports</span><h1>Saved analyses</h1></div><a class="btn btn-primary" href="analyze.html">New analysis</a></div>
-  <div class="row" style="margin-bottom:14px"><input class="input" id="flt" placeholder="Filter by address" style="max-width:320px" aria-label="Filter"><div class="seg" role="group" aria-label="Type"><button type="button" data-k="" aria-pressed="true">All</button><button type="button" data-k="residential" aria-pressed="false">Residential</button><button type="button" data-k="commercial" aria-pressed="false">Commercial</button><button type="button" data-k="land" aria-pressed="false">Land</button></div></div>
+  <div class="row" style="margin-bottom:14px"><input class="input" id="flt" placeholder="Filter by address" style="max-width:320px" aria-label="Filter"><div class="seg" role="group" aria-label="Type"><button type="button" data-k="" aria-pressed="true">All</button><button type="button" data-k="residential" aria-pressed="false">Residential</button><button type="button" data-k="commercial" aria-pressed="false">Commercial</button><button type="button" data-k="land" aria-pressed="false">Land</button><button type="button" data-k="valuation" aria-pressed="false">Valuation</button></div></div>
   <div id="list"><div class="skeleton" style="height:200px"></div></div>
 </main>
 
@@ -38,7 +38,7 @@ function draw() {
   if (!rows.length) { document.getElementById('list').innerHTML = '<div class="notice"><div>' + (all.length ? 'No analyses match.' : 'No saved analyses yet. <a href="analyze.html">Analyze a property</a> and save it.') + '</div></div>'; return; }
   document.getElementById('list').innerHTML = '<div class="table-wrap"><table class="t"><thead><tr><th>Score</th><th>Property</th><th>Type</th><th class="n">Price</th><th class="n">Key metric</th><th>Status</th><th>Updated</th><th></th></tr></thead><tbody>' + rows.map(function (a) {
     var s = a.summary || {}, t = PUI.toneOfScore(s.score);
-    var key = a.kind === 'land' ? (s.lots ? s.lots + ' lots' : '') : a.kind === 'commercial' ? 'Cap ' + F.pct(s.cap, 2) : F.usd(s.cfMonthly) + '/mo';
+    var key = a.kind === 'valuation' ? PUI.esc(s.headline || '') : a.kind === 'land' ? (s.lots ? s.lots + ' lots' : '') : a.kind === 'commercial' ? 'Cap ' + F.pct(s.cap, 2) : F.usd(s.cfMonthly) + '/mo';
     return '<tr class="click" data-id="' + a.id + '"><td><span class="score-badge tone-' + t + '">' + (s.score === undefined ? '-' : s.score) + '</span></td><td><strong>' + esc(a.title) + '</strong><div class="xs muted">' + esc(s.verdict || '') + '</div></td><td>' + esc(a.kind) + '</td><td class="n">' + F.usd(s.price) + '</td><td class="n">' + key + '</td><td>' + (a.unlocked ? '<span class="chip good">Full report</span>' : '<span class="chip">Summary</span>') + (a.shareToken ? ' <span class="chip plat">Shared</span>' : '') + '</td><td class="xs muted">' + esc((a.updatedAt || '').slice(0, 10)) + '</td><td><button class="btn btn-ghost btn-sm" data-del="' + a.id + '" aria-label="Delete">Delete</button></td></tr>';
   }).join('') + '</tbody></table></div>';
 }

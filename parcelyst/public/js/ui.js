@@ -33,7 +33,7 @@
       return r.json();
     })).then(function () { return 'server'; }).catch(function () {
       var need = [];
-      ['markets', 'plans', 'engine', 'scoring', 'defaults', 'csv'].forEach(function (k) { if (!window['P' + { markets: 'Markets', plans: 'Plans', engine: 'Engine', scoring: 'Scoring', defaults: 'Defaults', csv: 'Csv' }[k]]) need.push(k); });
+      ['markets', 'plans', 'engine', 'scoring', 'defaults', 'csv', 'valuation'].forEach(function (k) { if (!window['P' + { markets: 'Markets', plans: 'Plans', engine: 'Engine', scoring: 'Scoring', defaults: 'Defaults', csv: 'Csv', valuation: 'Valuation' }[k]]) need.push(k); });
       var chain = Promise.resolve();
       need.concat(['seed', 'service']).forEach(function (k) { chain = chain.then(function () { return window['P' + k.charAt(0).toUpperCase() + k.slice(1)] ? null : loadScript(BASE + 'js/shared/' + k + '.js'); }); });
       return chain.then(function () { return loadScript(BASE + 'js/demo-backend.js'); }).then(function () { demo = window.PDemoBackend; return 'demo'; });
@@ -130,7 +130,7 @@
     var f = document.createElement('footer'); f.className = 'site-footer';
     f.innerHTML = '<div class="wrap"><div class="cols">' +
       '<div class="stack"><a class="brand" href="' + ROOT + 'index.html">' + MARK + '<span>' + BRAND + '</span></a><p class="muted small" style="max-width:34ch">Underwriting, off-market deal finding and listing prospecting for residential, commercial and land. Live in Hampton Roads and Richmond.</p></div>' +
-      '<div><h4>Product</h4><ul><li><a href="' + ROOT + 'app/analyze.html">Analyze a property</a></li><li><a href="' + ROOT + 'app/finder.html?mode=investor">Deal Finder</a></li><li><a href="' + ROOT + 'app/finder.html?mode=agent">Listing Prospector</a></li><li><a href="' + ROOT + 'app/finder.html?mode=land">Land Finder</a></li></ul></div>' +
+      '<div><h4>Product</h4><ul><li><a href="' + ROOT + 'app/analyze.html">Analyze a property</a></li><li><a href="' + ROOT + 'app/valuation.html">Desktop Valuation Review</a></li><li><a href="' + ROOT + 'app/finder.html?mode=investor">Deal Finder</a></li><li><a href="' + ROOT + 'app/finder.html?mode=agent">Listing Prospector</a></li><li><a href="' + ROOT + 'app/finder.html?mode=land">Land Finder</a></li></ul></div>' +
       '<div><h4>Company</h4><ul><li><a href="' + ROOT + 'about.html">About</a></li><li><a href="' + ROOT + 'pricing.html">Pricing</a></li><li><a href="' + ROOT + 'markets.html">Markets</a></li><li><a href="' + ROOT + 'faq.html">FAQ</a></li></ul></div>' +
       '<div><h4>Legal</h4><ul><li><a href="' + ROOT + 'terms.html">Terms</a></li><li><a href="' + ROOT + 'privacy.html">Privacy</a></li><li><a href="' + ROOT + 'methodology.html">Methodology</a></li></ul></div>' +
       '</div><div class="legal"><span>&copy; ' + new Date().getFullYear() + ' ' + BRAND + '. Analysis is informational and is not financial, legal or tax advice.</span><span>Not affiliated with any MLS. Equal Housing Opportunity.</span></div></div>';
@@ -147,7 +147,8 @@
     pipeline: '<path d="M4 6h16M4 12h10M4 18h6"/>',
     import: '<path d="M12 3v12m0 0-4-4m4 4 4-4M4 21h16"/>',
     account: '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',
-    reports: '<path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/>'
+    reports: '<path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/>',
+    valuation: '<path d="M12 3v18M5 7h14M5 7l-3 7a3.5 3.5 0 0 0 6 0zM19 7l-3 7a3.5 3.5 0 0 0 6 0zM8 21h8"/>'
   };
   function icon(k) { return '<svg viewBox="0 0 24 24" aria-hidden="true">' + ICONS[k] + '</svg>'; }
   function appShell(active, opts) {
@@ -155,7 +156,7 @@
     var main = document.querySelector('main');
     var shell = document.createElement('div'); shell.className = 'app';
     var nav = [
-      ['grp', 'Workspace'], ['dashboard.html', 'Dashboard', 'dash'], ['analyze.html', 'Analyze', 'analyze'], ['reports.html', 'Reports', 'reports'],
+      ['grp', 'Workspace'], ['dashboard.html', 'Dashboard', 'dash'], ['analyze.html', 'Analyze', 'analyze'], ['valuation.html', 'Valuation Review', 'valuation'], ['reports.html', 'Reports', 'reports'],
       ['grp', 'Find'], ['finder.html?mode=investor', 'Deal Finder', 'finder', 'finder'], ['finder.html?mode=agent', 'Listing Prospector', 'agent', 'prospector'], ['finder.html?mode=land', 'Land Finder', 'land', 'landFinder'],
       ['pipeline.html', 'Pipeline', 'pipeline'], ['imports.html', 'List Import', 'import'],
       ['grp', 'Account'], ['account.html', 'Plan & Settings', 'account']

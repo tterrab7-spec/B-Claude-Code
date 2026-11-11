@@ -74,3 +74,16 @@ test('stripe webhook signature verification', () => {
   assert.ok(billing.verifySignature(body, `t=${t},v1=${sig}`, 'whsec_x'));
   assert.ok(!billing.verifySignature(body, `t=${t},v1=${sig}`, 'whsec_y'));
 });
+
+test('valuation review saves, summarizes and suggests comps through the API', async () => {
+  const s = await h('POST', '/api/auth/signup', {}, { email: 'v@test.co', password: 'password123' });
+  const tok = s.session.token;
+  global.window = {}; require('../public/js/samples.js');
+  const a = await h('POST', '/api/analyze', {}, { inputs: global.window.PSamples.valuationResidential.inputs, title: 'Valuation review: sample' }, tok);
+  assert.strictEqual(a.status, 200);
+  assert.strictEqual(a.json.result.kind, 'valuation');
+  const list = await h('GET', '/api/analyses', {}, null, tok);
+  assert.ok(/Assessed .* over/.test(list.json.analyses[0].summary.headline));
+  const c = await h('POST', '/api/comps', {}, { subject: { assetType: 'SFR', sf: 1800, zip: '23320', market: 'hampton-roads' } }, tok);
+  assert.ok(c.json.comps.length > 0 && c.json.comps[0].salePrice > 0);
+});

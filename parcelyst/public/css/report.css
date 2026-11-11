@@ -48,6 +48,9 @@
 .brand-strip { display: flex; gap: 14px; align-items: center; padding: 14px 18px; border: 1px solid var(--line); border-radius: var(--r); background: var(--sheet); }
 .brand-strip img { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; }
 
+.sig { padding-top: 34px; } .sig-line { border-top: 1px solid var(--ink); margin-bottom: 6px; }
+.rsec td em { font-style: normal; color: var(--ink-2); }
+
 @media print {
   @page { size: letter; margin: 0.5in; }
   body { background: #fff !important; font-size: 11pt; }
