@@ -202,7 +202,8 @@
   function lookup(address, kind) {
     el.status.innerHTML = '<span class="spinner"></span> Pulling records for ' + esc(address) + '…';
     U.api('POST', '/api/lookup', { address: address }).then(function (j) {
-      el.status.innerHTML = j.record ? (j.record.source === 'demo' ? '<div class="notice warn"><div>This is a synthetic demo record. Replace its figures with the real subject data.</div></div>' : '') : '<div class="notice warn"><div>No record found. Enter the subject details below.</div></div>';
+      el.status.innerHTML = j.record ? (j.record.source === 'demo' ? '<div class="notice warn"><div>This is a synthetic demo record. Replace its figures with the real subject data.</div></div>' : '') : '<div class="notice warn"><div><strong>No public record was pulled for this address.</strong> <span id="v-why">Enter the subject details below.</span> The address is filled in for you; everything else can be typed in from the listing, the assessor card and the rent roll.</div></div>';
+      if (!j.record) U.config().then(function (c) { var p = c.providers || {}, w = document.getElementById('v-why'); if (!w) return; w.textContent = c.mode === 'demo' ? 'This demo copy has no live property data connected, so only its synthetic sample records can be looked up.' : !(p.rentcast || p.attom || p.regrid) ? 'No property data provider is connected to this server yet (RentCast, ATTOM or Regrid).' : 'The connected data providers returned nothing for it, which is common for commercial property.'; });
       var parts = address.split(',');
       var rec = j.record || { address: parts[0].trim(), city: (parts[1] || '').trim(), state: ((parts[2] || '').trim().split(' ')[0] || '').toUpperCase(), zip: ((address.match(/\b\d{5}\b/) || [])[0] || '') };
       return blank(kind === 'commercial' ? 'commercial' : 'residential', rec).then(start);
